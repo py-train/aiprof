@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Generative AI Landscape</title>
+  <style>
+    /* ========== THEME VARIABLES ========== */
+    :root {
+      --font-family-display: 'Segoe UI', Arial, sans-serif;
+      --font-weight-display: 700;
+      --font-family-content: 'Segoe UI', Arial, sans-serif;
+      --font-weight-content: 400;
+      --font-size-content: 16px;
+      --line-height-content: 1.5;
+    }
+
+    /* DARK THEME (DEFAULT) */
+    body.theme-dark {
+      --color-bg-base: #0f172a;
+      --color-bg-elevated: #020617;
+      --color-bg-surface: #1e293b;
+      --color-bg-muted: #334155;
+      --color-text-primary: #f1f5f9;
+      --color-text-secondary: #cbd5e1;
+      --color-text-muted: #94a3b8;
+      --color-text-accent: #38bdf8;
+      --color-primary: #38bdf8;
+      --color-primary-foreground: #0f172a;
+    }
+
+    /* LIGHT THEME */
+    body.theme-light {
+      --color-bg-base: #ffffff;
+      --color-bg-elevated: #f8fafc;
+      --color-bg-surface: #f1f5f9;
+      --color-bg-muted: #e2e8f0;
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #475569;
+      --color-text-muted: #64748b;
+      --color-text-accent: #0284c7;
+      --color-primary: #0284c7;
+      --color-primary-foreground: #ffffff;
+    }
+
+    /* ========== BASE STYLES ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-content);
+      font-weight: var(--font-weight-content);
+      font-size: var(--font-size-content);
+      line-height: var(--line-height-content);
+      overflow-x: hidden;
+    }
+
+    /* ========== SLIDE CONTAINER ========== */
+    .slide {
+      width: 960px;
+      height: 540px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== LAYOUT UTILITIES ========== */
+    .row { flex-direction: row; }
+    .col { flex-direction: column; }
+    .center {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .space-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .items-end { align-items: flex-end; }
+    .fill-width { flex: 1; }
+    .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+    /* ========== SPACING ========== */
+    .gap-sm { gap: 0.5rem; }
+    .gap-md { gap: 1rem; }
+    .gap-lg { gap: 1.5rem; }
+    .gap-xl { gap: 2rem; }
+    .gap-2xl { gap: 3rem; }
+
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .p-8 { padding: 2rem; }
+    .p-12 { padding: 3rem; }
+    .p-16 { padding: 4rem; }
+
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-8 { margin-bottom: 2rem; }
+    .mb-12 { margin-bottom: 3rem; }
+
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-8 { margin-top: 2rem; }
+
+    /* ========== TYPOGRAPHY ========== */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-family-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+
+    .text-6xl { font-size: 3.75rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-base { font-size: 1rem; }
+    .text-sm { font-size: 0.875rem; }
+
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+    .font-medium { font-weight: 500; }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    /* ========== LISTS ========== */
+    ul, ol {
+      margin-left: 2rem;
+      line-height: 1.8;
+    }
+
+    ul li { list-style: disc; }
+    ol li { list-style: decimal; }
+
+    li { margin-bottom: 0.75rem; }
+    li:last-child { margin-bottom: 0; }
+
+    /* ========== CARDS ========== */
+    .card-rect {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+
+    .card-mini {
+      padding: 1rem;
+      border-radius: 0;
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+  <!-- Slide 1: Title Slide -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h1 class="text-6xl mb-4" style="color: #38bdf8;">The Generative AI Landscape</h1>
+    <p class="text-2xl mb-12" style="color: #cbd5e1;">Evolution, Models & Market Dynamics</p>
+    <p class="text-sm" style="color: #94a3b8;">AI for Professionals • June, 2026</p>
+  </section>
+
+  <!-- Slide 2: What Is Generative AI? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What Is Generative AI?</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Definition:</strong> AI systems trained to generate new content from learned patterns</li>
+      <li><strong style="color: #38bdf8;">Capabilities:</strong> Text, images, code, audio, video, structured data</li>
+      <li><strong style="color: #38bdf8;">Training:</strong> Learns from massive datasets using transformer architectures</li>
+      <li><strong style="color: #38bdf8;">Output:</strong> Human-like, contextually relevant, probabilistic completions</li>
+    </ul>
+  </section>
+
+  <!-- Slide 3: Evolution - ML to LLMs (Part 1) -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Evolution: ML → Deep Learning</h2>
+    <div class="row gap-lg">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9;">
+        <h4 style="color: #38bdf8;">Traditional ML (1990s-2010s)</h4>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">Spam filters, decision trees, SVM. Pattern matching on structured data.</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9;">
+        <h4 style="color: #38bdf8;">Neural Networks (2010s)</h4>
+        <p style="color: #cbd5e1; font-size: 0.95rem;">CNNs for images, RNNs for sequences. Medical imaging breakthrough.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Evolution - Transformers -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">2017: The Transformer Revolution</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">"Attention is All You Need":</strong> Parallelizable architecture, long-range context</li>
+      <li><strong style="color: #38bdf8;">Efficiency:</strong> Train on massive data efficiently (GPUs, TPUs)</li>
+      <li><strong style="color: #38bdf8;">Impact:</strong> Foundation for BERT, GPT series, modern LLMs</li>
+    </ul>
+  </section>
+
+  <!-- Slide 5: Foundation Models Explained -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Foundation Models vs LLMs</h2>
+    <div class="row gap-lg">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9;">
+        <h4 style="color: #38bdf8;">Foundation Models</h4>
+        <p style="color: #cbd5e1; font-size: 0.9rem;">Pre-trained on massive unlabeled data. General-purpose base for downstream tasks.</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9;">
+        <h4 style="color: #38bdf8;">Large Language Models</h4>
+        <p style="color: #cbd5e1; font-size: 0.9rem;">Foundation models specialized for text. Billions+ parameters, human-like language.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: LLM Growth - Scale Explosion -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 style="color: #38bdf8; margin-bottom: 2rem;">LLM Growth: The Scaling Law</h2>
+    <p style="color: #cbd5e1; font-size: 1.1rem; margin-bottom: 1rem;">
+      <strong>2018: BERT</strong> → 340M parameters
+    </p>
+    <p style="color: #cbd5e1; font-size: 1.1rem; margin-bottom: 1rem;">
+      <strong>2023: GPT-4</strong> → 170 Trillion parameters
+    </p>
+    <p style="color: #94a3b8; font-size: 0.95rem;">5 years = 500,000x growth in scale</p>
+  </section>
+
+  <!-- Slide 7: GenAI Model Types -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key GenAI Model Types (2026)</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Text:</strong> GPT-4, Claude 3, Gemini Pro</li>
+      <li><strong style="color: #38bdf8;">Vision:</strong> DALL-E 3, Midjourney, Flux</li>
+      <li><strong style="color: #38bdf8;">Multimodal:</strong> GPT-4V, Claude 3.5, Gemini Ultra (process text + image + audio)</li>
+      <li><strong style="color: #38bdf8;">Code:</strong> Claude for Developers, GitHub Copilot, DeepSeek</li>
+    </ul>
+  </section>
+
+  <!-- Slide 8: API-Based Services -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Leading API-Based Services</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.95rem;">
+        <h5 style="color: #38bdf8;">OpenAI</h5>
+        <p style="color: #cbd5e1;">GPT-4o, 800M+ ChatGPT users, $13B revenue (30% enterprise)</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.95rem;">
+        <h5 style="color: #38bdf8;">Anthropic</h5>
+        <p style="color: #cbd5e1;">Claude 3.5, 300K business customers, $7B revenue (80% B2B)</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.95rem;">
+        <h5 style="color: #38bdf8;">Google</h5>
+        <p style="color: #cbd5e1;">Gemini, integrated Workspace, bundled pricing</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Open-Source Ecosystem -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Open-Source & HuggingFace Hub</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">HuggingFace:</strong> Model hub with 500K+ open models (Llama 2, Mistral, Phi)</li>
+      <li><strong style="color: #38bdf8;">Transformers Library:</strong> PyTorch/TensorFlow implementations</li>
+      <li><strong style="color: #38bdf8;">Trade-off:</strong> Self-hosting complexity vs. cost savings & privacy</li>
+    </ul>
+  </section>
+
+  <!-- Slide 10: What Is an AI Agent? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">From LLMs to AI Agents</h2>
+    <div class="row gap-lg">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9;">
+        <h4 style="color: #38bdf8;">LLM App</h4>
+        <p style="color: #cbd5e1; font-size: 0.9rem;">User → Prompt → LLM → Response (stateless)</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9;">
+        <h4 style="color: #38bdf8;">AI Agent</h4>
+        <p style="color: #cbd5e1; font-size: 0.9rem;">Observe → Think → Act → Loop with tools (agentic)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: Agentic AI Frameworks -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agentic AI Ecosystems</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">LangChain:</strong> Framework for building agent chains with tool calling</li>
+      <li><strong style="color: #38bdf8;">LangGraph:</strong> Multi-agent orchestration with stateful graphs</li>
+      <li><strong style="color: #38bdf8;">LlamaIndex:</strong> RAG-focused agents for document intelligence</li>
+      <li><strong style="color: #38bdf8;">LangSmith:</strong> Observability & debugging for agents</li>
+    </ul>
+  </section>
+
+  <!-- Slide 12: Vector Stores & RAG -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Vector Databases & RAG</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Chroma</h5>
+        <p style="color: #cbd5e1;">Local-first, easy to embed</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">FAISS</h5>
+        <p style="color: #cbd5e1;">Meta's efficient similarity search</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Pinecone</h5>
+        <p style="color: #cbd5e1;">Managed cloud vector DB</p>
+      </div>
+    </div>
+    <p class="text-lg mt-6" style="color: #cbd5e1;">All enable <strong style="color: #38bdf8;">Retrieval-Augmented Generation (RAG)</strong> for grounded AI</p>
+  </section>
+
+  <!-- Slide 13: 2026 GenAI Trends -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">GenAI Trends 2026</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Agentic Systems:</strong> From chat to autonomous workflows</li>
+      <li><strong style="color: #38bdf8;">Multimodal Intelligence:</strong> Text + image + audio + video processing</li>
+      <li><strong style="color: #38bdf8;">Synthetic Data:</strong> Privacy-preserving, domain-specific generation</li>
+      <li><strong style="color: #38bdf8;">Domain Models:</strong> Smaller, fine-tuned models outperforming general LLMs</li>
+    </ul>
+  </section>
+
+  <!-- Slide 14: Market Dynamics: OpenAI vs Anthropic -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Market Dynamics: Business Models</h2>
+    <div class="row gap-lg">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">OpenAI</h5>
+        <p style="color: #cbd5e1;"><strong>Strategy:</strong> Consumer + Enterprise</p>
+        <p style="color: #cbd5e1;"><strong>Revenue:</strong> $13B/yr (broad market)</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Anthropic</h5>
+        <p style="color: #cbd5e1;"><strong>Strategy:</strong> Enterprise-first (80%)</p>
+        <p style="color: #cbd5e1;"><strong>Revenue:</strong> $7B/yr (B2B focus)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 15: Enterprise Integration -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Enterprise Adoption in 2026</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">From Pilot to Production:</strong> Operationalization phase reached</li>
+      <li><strong style="color: #38bdf8;">Governance Frameworks:</strong> Ethical AI, compliance, guardrails critical</li>
+      <li><strong style="color: #38bdf8;">Multi-Vendor Strategy:</strong> Organizations avoid single-vendor lock-in</li>
+      <li><strong style="color: #38bdf8;">Domain Specialization:</strong> Healthcare, finance, manufacturing have custom models</li>
+    </ul>
+  </section>
+
+  <!-- Slide 16: Key Takeaways -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key Takeaways</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>GenAI is <strong style="color: #38bdf8;">multimodal, agentic, and autonomous</strong> by 2026</li>
+      <li>Transformers + scale laws = foundation for all modern AI</li>
+      <li>Ecosystem maturity: APIs, open-source, and frameworks all thriving</li>
+      <li>Next frontier: Agents with tool-calling, memory, and planning</li>
+    </ul>
+  </section>
+
+  <!-- Slide 17: Course Roadmap -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h2 class="mb-8" style="color: #38bdf8;">Next: Deep Dives</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">Anatomy of LLMs → Context Engineering → Copilot</p>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">RAG → Agentic Design Patterns → LangChain/LangGraph</p>
+    <p class="text-sm mt-8" style="color: #94a3b8;">Let's build agents that reason, act, and scale.</p>
+  </section>
+
+</body>
+</html>

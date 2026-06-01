@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Prerequisite Check – ML, DL & GenAI Flip Cards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1726;
+      color: #f5f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #f5f7fb;
+    }
+    .subtitle {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #aeb8d0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      perspective: 1000px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 210px;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .front {
+      background: linear-gradient(135deg, #1f3b73, #243b53);
+      border: 1px solid #2f4f8f;
+    }
+    .back {
+      background: linear-gradient(135deg, #172b4d, #102542);
+      border: 1px solid #2d3f6f;
+      transform: rotateY(180deg);
+    }
+    .q-type {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffb347;
+      margin-bottom: 4px;
+    }
+    .difficulty {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .easy { background-color: #2d5f3f; color: #90ee90; }
+    .medium { background-color: #5f4d2d; color: #ffd700; }
+    .hard { background-color: #5f2d2d; color: #ff6b6b; }
+    .question {
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .options {
+      font-size: 13px;
+      text-align: left;
+      color: #d4ddf5;
+    }
+    .answer-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9fd5ff;
+      margin-bottom: 6px;
+    }
+    .answer {
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .note {
+      font-size: 12px;
+      color: #b3bedb;
+      text-align: left;
+    }
+    .hint {
+      font-size: 11px;
+      color: #8bb9ff;
+      margin-top: 4px;
+      text-align: left;
+      font-style: italic;
+    }
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #8e9ac0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prerequisite Check Flip Cards</h1>
+  <div class="subtitle">
+    AI basics (ML, DL, Generative AI, Agentic AI) basics check and warm-up
+    <div>
+        <tiny>Click/tap each card to reveal the answer</tiny>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. What does “AI” stand for?
+          </div>
+          <div class="options">
+              A. Automated Internet<br/>
+              B. Artificial Intelligence<br/>
+              C. Advanced Interface<br/>
+              D. Augmented Information
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              B. Artificial Intelligence
+          </div>
+          <div class="note">
+              --
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+              Q. Which of the following is the best description of Generative AI?
+          </div>
+          <div class="options">
+              A. AI that only stores data<br/>
+              B. AI that can create new content such as text, images, or code<br/>
+              C. AI that only works on spreadsheets<br/>
+              D. AI that only follows fixed rules without learning<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              B. AI that can create new content such as text, images, or code<br/>
+          </div>
+          <div class="note">
+              --
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+              Q. Which of the following usually improves the quality of an AI response the most?
+          </div>
+          <div class="options">
+              A. Making the prompt shorter and vaguer<br/>
+              B. Giving clear context, task, and constraints<br/>
+              C. Using all capital letters<br/>
+              D. Asking multiple unrelated questions at once<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              B. Giving clear context, task, and constraints<br/>
+          </div>
+          <div class="note">
+              --
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+              Q. What is a “hallucination” in AI?
+          </div>
+          <div class="options">
+              A. When the AI refuses to answer
+              B. When the AI takes too long to respond
+              C. When the AI repeats the question
+              D. When the AI generates false or made-up information confidently
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              D. When the AI generates false or made-up information confidently
+          </div>
+          <div class="note">
+              --
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+              Q. Which task is a good example of using AI productively at work?
+          </div>
+          <div class="options">
+              A. Asking AI to guess confidential company data
+              B. Asking AI to approve legal contracts in an automated flow not needing human intervention
+              C. Asking AI to summarize a long document
+              D. Asking AI to replace all human judgment
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              C. Asking AI to summarize a long document
+          </div>
+          <div class="note">
+              --
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+              Q. What is RAG in modern AI systems?
+          </div>
+          <div class="options">
+              A. Retrieval-Augmented Generation
+              B. Random Answer Generator
+              C. Response Analysis Graph
+              D. Recursive AI Gateway
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              A. Retrieval-Augmented Generation
+          </div>
+          <div class="note">
+              --
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. What is the term for a model that predicts the next token or word in a sequence of text?
+          </div>
+          <div class="hint">
+            Common in modern chat-based AI systems.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            A large language model (LLM).
+          </div>
+          <div class="note">
+            LLMs are generative models trained to predict the next token in text given previous context.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. Which statement best describes <strong>generative AI</strong>?
+          </div>
+          <div class="options">
+            A. AI that only classifies existing data into categories<br/>
+            B. AI that generates new content such as text, images, or audio<br/>
+            C. AI that only optimizes numerical functions<br/>
+            D. AI that runs database queries faster
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B. AI that generates new content such as text, images, or audio.
+          </div>
+          <div class="note">
+            Generative AI models create original, coherent outputs after learning patterns from large training datasets.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. The practice of writing effective instructions for AI tools.
+          </div>
+          <div class="hint">
+            Some consider this a craft/skill, some consider it engineering
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Prompting
+          </div>
+          <div class="note">
+            Prompting(or Prompt Engineering or Context Engineering) 
+            is the practice of writing effective instructions for AI
+             tools to elicit desired responses.
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. The amount of input information an AI model can handle at once.
+          </div>
+          <div class="hint">
+              
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Context window
+          </div>
+          <div class="note">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. Incorrect or fabricated information produced by an AI model.
+          </div>
+          <div class="hint">
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Hallucination
+          </div>
+          <div class="note">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Q8 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. What do we call the basic units that an LLM actually reads instead of raw characters or words?
+          </div>
+          <div class="hint">
+            These are produced by a tokenizer before the model processes your prompt.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Tokens.
+          </div>
+          <div class="note">
+            Tokenization breaks text into discrete units called tokens, which are then mapped to numerical IDs for the model.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. Embeddings are numeric vectors that represent the meaning of tokens or text segments in a continuous space.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            Embeddings map tokens into a vector space where semantically similar items are close together.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. Which factor most strongly drives the need for GPUs/TPUs in deep learning?
+          </div>
+          <div class="options">
+            A. Very small models<br/>
+            B. Large numbers of matrix operations for many parameters and layers<br/>
+            C. Need to store training logs<br/>
+            D. Requirement to serve static web pages
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B. Large numbers of matrix operations for many parameters and layers.
+          </div>
+          <div class="note">
+            Deep learning models require heavy parallel computation for training due to deep architectures and huge datasets.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">Fill in the blank</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. A generative pre-trained transformer (GPT) is a type of large ________ model.
+          </div>
+          <div class="hint">
+            These models power many modern chat-based AI tools.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Language.
+          </div>
+          <div class="note">
+            GPT is a large language model (LLM) architecture designed for generative tasks in natural language.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. In the context of LLMs, what is a "context window"?
+          </div>
+          <div class="options">
+            A. The total number of training epochs<br/>
+            B. The maximum amount of text (in tokens) the model can attend to in a single request<br/>
+            C. The number of GPUs available<br/>
+            D. A UI element for showing responses
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B. The maximum amount of text (in tokens) the model can attend to in a single request.
+          </div>
+          <div class="note">
+            LLMs do not have true memory; they only use information inside their current context window.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. Prompt engineering is about designing effective inputs to guide generative models toward useful outputs.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            Prompt engineering focuses on how to structure instructions, examples, and constraints to steer generative models.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. A method where AI retrieves external information 
+            before generating an answer.
+          </div>
+          <div class="hint">
+            Effectively, this allows the model to "look up" 
+            or "retrieve"information beyond its training data 
+            and context window. 
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Retrieval-Augmented Generation (RAG)
+          </div>
+          <div class="note">
+            Retrieval-Augmented Generation (RAG) is a method 
+            where AI retrieves external information before 
+            generating an answer.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. Unfair skew in AI outputs caused by data or design issues.
+          </div>
+          <div class="hint">
+              
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Bias
+          </div>
+          <div class="note">
+              
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. AI systems that create new text, images, audio, or code.
+          </div>
+          <div class="hint">
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Generative AI
+          </div>
+          <div class="note">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. AI systems that create new text, images, audio, or code.
+          </div>
+          <div class="hint">
+              
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Generative AI
+          </div>
+          <div class="note">
+              
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. A system that can generate human-like text based on patterns learned from large amounts of language data.
+          </div>
+          <div class="hint">
+              
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              LLM
+          </div>
+          <div class="note">
+              
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- Q16 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+              Q. A small sample  included in a prompt to guide the model.
+          </div>
+          <div class="hint">
+              
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+              Example (or Few-shot Example)
+          </div>
+          <div class="note">
+              
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. Which statement best describes <strong>machine learning</strong>?
+          </div>
+          <div class="options">
+            A. Hand-coded rules that never change<br/>
+            B. Algorithms that learn patterns from data to make predictions<br/>
+            C. A graphics library for visualizations<br/>
+            D. A database for storing training data
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B. Algorithms that learn patterns from data to make predictions.
+          </div>
+          <div class="note">
+            Machine learning trains models to improve performance on a task using experience from data.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. Deep learning is a specialized subset of machine learning that uses multi-layered neural networks.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            Deep learning uses neural networks with many layers to automatically learn features from raw data.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Q3 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. Which type of data is deep learning especially good at handling?
+          </div>
+          <div class="options">
+            A. Only small, structured tables<br/>
+            B. Large volumes of unstructured data like images, audio, and text<br/>
+            C. Only time-series sensor data<br/>
+            D. Noisy numerical data must be removed first
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B. Large volumes of unstructured data like images, audio, and text.
+          </div>
+          <div class="note">
+            Deep learning shines with high-volume, unstructured data using layered neural networks and large compute.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            Q. In traditional supervised learning, the model is trained on labeled examples of inputs and outputs.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            Supervised learning uses input–label pairs to learn a mapping that generalizes to new data.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty medium">Medium</div>
+          <div class="question">
+            Q. Which is a key difference between classic ML and deep learning?
+          </div>
+          <div class="options">
+            A. ML needs labeled data, DL does not<br/>
+            B. ML automatically learns features, DL needs manual feature engineering<br/>
+            C. ML often needs manual feature engineering, DL learns features directly from raw data<br/>
+            D. There is no difference; they are identical
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C. ML often needs manual feature engineering, DL learns features directly from raw data.
+          </div>
+          <div class="note">
+            Deep learning models can self-learn representations using multiple neural network layers.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. Which scenario is a classic <strong>discriminative</strong> ML task, not generative?
+          </div>
+          <div class="options">
+            A. Generating a new marketing email<br/>
+            B. Creating a synthetic image of a product<br/>
+            C. Classifying emails as spam or not spam<br/>
+            D. Writing a product description from scratch
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C. Classifying emails as spam or not spam.
+          </div>
+          <div class="note">
+            Discriminative models map inputs to labels; generative models create new content similar to training data.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="difficulty hard">Hard</div>
+          <div class="question">
+            Q. Before we talk about "agents", what is the generic term for an AI program that perceives its environment and takes actions to achieve a goal?
+          </div>
+          <div class="hint">
+            This term appears in many AI glossaries and will be extended in this training.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            An AI agent (or simply, an agent).
+          </div>
+          <div class="note">
+            An agent is a system that perceives its environment and acts upon it to achieve goals; agentic AI builds on this idea.
+          </div>
+        </div>
+      </div>
+    </div>
+  
+
+  </div>
+
+  <div class="footer">
+    These Questions are a pre-session diagnostic to break ice 
+    and gauge familiarity with ML, DL, LLMs, and GenAI before 
+    diving into AI, GenAI, and agentic AI.
+  </div>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+    });
+  </script>
+</body>
+</html>
