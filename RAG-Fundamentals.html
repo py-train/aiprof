@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG Fundamentals - Document Intelligence</title>
+  <style>
+    /* ========== THEME VARIABLES ========== */
+    :root {
+      --font-family-display: 'Segoe UI', Arial, sans-serif;
+      --font-weight-display: 700;
+      --font-family-content: 'Segoe UI', Arial, sans-serif;
+      --font-weight-content: 400;
+      --font-size-content: 16px;
+      --line-height-content: 1.5;
+    }
+
+    /* DARK THEME (DEFAULT) */
+    body.theme-dark {
+      --color-bg-base: #0f172a;
+      --color-bg-elevated: #020617;
+      --color-bg-surface: #1e293b;
+      --color-bg-muted: #334155;
+      --color-text-primary: #f1f5f9;
+      --color-text-secondary: #cbd5e1;
+      --color-text-muted: #94a3b8;
+      --color-text-accent: #38bdf8;
+      --color-primary: #38bdf8;
+      --color-primary-foreground: #0f172a;
+    }
+
+    /* ========== BASE STYLES ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-content);
+      font-weight: var(--font-weight-content);
+      font-size: var(--font-size-content);
+      line-height: var(--line-height-content);
+      overflow-x: hidden;
+    }
+
+    /* ========== SLIDE CONTAINER ========== */
+    .slide {
+      width: 960px;
+      height: 540px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== LAYOUT UTILITIES ========== */
+    .row { flex-direction: row; }
+    .col { flex-direction: column; }
+    .center {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .space-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .fill-width { flex: 1; }
+    .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+    /* ========== SPACING ========== */
+    .gap-sm { gap: 0.5rem; }
+    .gap-md { gap: 1rem; }
+    .gap-lg { gap: 1.5rem; }
+    .gap-xl { gap: 2rem; }
+
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .p-8 { padding: 2rem; }
+    .p-12 { padding: 3rem; }
+    .p-16 { padding: 4rem; }
+
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-8 { margin-bottom: 2rem; }
+
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-8 { margin-top: 2rem; }
+
+    /* ========== TYPOGRAPHY ========== */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-family-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+
+    .text-6xl { font-size: 3.75rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-base { font-size: 1rem; }
+    .text-sm { font-size: 0.875rem; }
+
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    /* ========== LISTS ========== */
+    ul, ol {
+      margin-left: 2rem;
+      line-height: 1.8;
+    }
+
+    ul li { list-style: disc; }
+    li { margin-bottom: 0.75rem; }
+    li:last-child { margin-bottom: 0; }
+
+    /* ========== CARDS ========== */
+    .card-rect {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ========== CODE BLOCKS ========== */
+    pre {
+      background-color: #1e293b;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+  <!-- Slide 1: Title Slide -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h1 class="text-6xl mb-4" style="color: #38bdf8;">RAG Fundamentals</h1>
+    <p class="text-2xl mb-8" style="color: #cbd5e1;">Retrieval-Augmented Generation for Document Intelligence</p>
+    <p class="text-sm" style="color: #94a3b8;">Agentic AI for Developers • Feb 6-7, 2026 • 2 Hour Module</p>
+  </section>
+
+  <!-- Slide 2: Module Agenda -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Module Agenda</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Why RAG? Limitations of Pure Prompting</li>
+      <li>RAG Architecture &amp; Data Pipeline</li>
+      <li>Embeddings: Vector Representations</li>
+      <li>Vector Databases &amp; Similarity Search</li>
+      <li>Ecosystem: Models, Databases, Frameworks</li>
+    </ul>
+  </section>
+
+  <!-- Slide 3: Why RAG Exists -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Why RAG Exists</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Limitations of Pure Prompting</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Knowledge cutoff:</strong> LLMs frozen in training time</li>
+      <li><strong style="color: #38bdf8;">Hallucinations:</strong> No grounding = invented facts</li>
+      <li><strong style="color: #38bdf8;">Private data:</strong> Can't access internal documents</li>
+      <li><strong style="color: #38bdf8;">Cost:</strong> Fine-tuning expensive vs retrieval</li>
+    </ul>
+  </section>
+
+  <!-- Slide 4: RAG Solution -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">The RAG Solution</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Retrieve First, Then Generate</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Query → Fetch relevant docs → Inject into prompt</li>
+      <li>LLM answers based on provided context</li>
+      <li>Grounded responses with citations</li>
+      <li>Real-time knowledge without retraining</li>
+    </ul>
+  </section>
+
+  <!-- Slide 5: RAG Architecture Visual -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">RAG Architecture Overview</h2>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1770302569/search_images/15fd64e6e5b630a88865065504fdcda398b4ba7a.jpg" alt="RAG Architecture" style="width: 70%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Document ingestion → Embeddings → Vector DB → Retrieval → Generation</p>
+  </section>
+
+  <!-- Slide 6: Real-World Examples -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Real-World RAG Applications</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Enterprise Search</h5>
+        <p style="color: #cbd5e1;">Query internal docs, wikis, Slack</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Support Bots</h5>
+        <p style="color: #cbd5e1;">Answer from knowledge base, tickets</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Legal/Financial</h5>
+        <p style="color: #cbd5e1;">Contract analysis, compliance</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: RAG Data Pipeline -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">RAG Data Pipeline (Indexing)</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Offline: Prepare Your Knowledge Base</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">1. Ingestion:</strong> Load documents (PDFs, HTML, text)</li>
+      <li><strong style="color: #38bdf8;">2. Chunking:</strong> Split into manageable pieces</li>
+      <li><strong style="color: #38bdf8;">3. Embedding:</strong> Convert chunks to vectors</li>
+      <li><strong style="color: #38bdf8;">4. Indexing:</strong> Store in vector database</li>
+    </ul>
+  </section>
+
+  <!-- Slide 8: Ingestion -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 1: Ingestion</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Loading Documents</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Sources:</strong> PDFs, Word docs, Markdown, HTML, APIs</li>
+      <li><strong style="color: #38bdf8;">Tools:</strong> LangChain loaders, Unstructured.io, PyPDF</li>
+      <li><strong style="color: #38bdf8;">Extract:</strong> Raw text, preserve metadata (page, title)</li>
+    </ul>
+  </section>
+
+  <!-- Slide 9: Chunking Strategies -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 2: Chunking Strategies</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">How to Split Documents</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Fixed-size:</strong> 500-1000 chars, simple but breaks context</li>
+      <li><strong style="color: #38bdf8;">Semantic:</strong> Split by paragraphs, sections (better)</li>
+      <li><strong style="color: #38bdf8;">Hierarchical:</strong> Parent-child chunks for multi-scale</li>
+    </ul>
+  </section>
+
+  <!-- Slide 10: Chunking Visual -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Chunking Visualization</h2>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1770302569/search_images/ea90808bd1e0b289067167380d05e536b801b144.jpg" alt="Chunking Strategies" style="width: 70%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Overlap ensures context continuity across chunks</p>
+  </section>
+
+  <!-- Slide 11: Chunking Code Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Chunking Code Example</h2>
+    <pre><code>from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+  chunk_size=1000,
+  chunk_overlap=200,
+  separators=["\n\n", "\n", " ", ""]
+)
+
+chunks = splitter.split_documents(documents)
+print(f"Created {len(chunks)} chunks")</code></pre>
+    <p class="text-sm mt-4" style="color: #94a3b8;">Overlap preserves context between adjacent chunks</p>
+  </section>
+
+  <!-- Slide 12: What Are Embeddings? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 3: Embeddings</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Text → High-Dimensional Vectors</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Definition:</strong> Numerical representations capturing meaning</li>
+      <li><strong style="color: #38bdf8;">Dimension:</strong> 384 to 3072 dimensions typical</li>
+      <li><strong style="color: #38bdf8;">Property:</strong> Similar meaning → Similar vectors</li>
+      <li><strong style="color: #38bdf8;">Example:</strong> "dog" &amp; "puppy" close, "dog" &amp; "car" far</li>
+    </ul>
+  </section>
+
+  <!-- Slide 13: Popular Embedding Models 2026 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Popular Embedding Models (2026)</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">OpenAI text-embedding-3</h5>
+        <p style="color: #cbd5e1;">3072 dims, $0.02/1M tokens</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Cohere Embed v3</h5>
+        <p style="color: #cbd5e1;">1024 dims, rerank-ready</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Mistral Embed</h5>
+        <p style="color: #cbd5e1;">1024 dims, 77.8% accuracy</p>
+      </div>
+    </div>
+    <p class="text-sm mt-4" style="color: #94a3b8;">Open-source: BGE-M3, E5-Mistral, Voyage-lite</p>
+  </section>
+
+  <!-- Slide 14: Embedding Code Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Creating Embeddings (Code)</h2>
+    <pre><code>from langchain.embeddings import OpenAIEmbeddings
+
+embeddings_model = OpenAIEmbeddings(
+  model="text-embedding-3-small"
+)
+
+# Embed single text
+vector = embeddings_model.embed_query("AI agents")
+print(f"Vector dims: {len(vector)}")  # 1536
+
+# Embed documents batch
+doc_vectors = embeddings_model.embed_documents(chunks)</code></pre>
+  </section>
+
+  <!-- Slide 15: Vector Similarity Concept -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Vector Similarity</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Finding "Close" Vectors = Semantic Match</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Cosine Similarity:</strong> Angle between vectors (0 to 1)</li>
+      <li><strong style="color: #38bdf8;">Euclidean Distance:</strong> Straight-line distance</li>
+      <li><strong style="color: #38bdf8;">Dot Product:</strong> Magnitude + direction</li>
+    </ul>
+  </section>
+
+  <!-- Slide 16: Cosine Similarity Visual -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Cosine Similarity Visualization</h2>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1763790252/search_images/1d7ec5b7c33c5a4b7218afa321524bb769f325d5.jpg" alt="Cosine Similarity" style="width: 60%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Smaller angle = higher similarity (0° = identical, 90° = unrelated)</p>
+  </section>
+
+  <!-- Slide 17: Vector Databases -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 4: Vector Databases</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Storing &amp; Searching Embeddings</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Purpose:</strong> Efficient similarity search at scale</li>
+      <li><strong style="color: #38bdf8;">Indexing:</strong> HNSW, IVF for fast retrieval</li>
+      <li><strong style="color: #38bdf8;">Metadata:</strong> Filter by date, category, source</li>
+      <li><strong style="color: #38bdf8;">Top-k Search:</strong> Return k most similar chunks</li>
+    </ul>
+  </section>
+
+  <!-- Slide 18: Vector Database Comparison -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Popular Vector Databases (2026)</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">ChromaDB</h5>
+        <p style="color: #cbd5e1;">2.58ms latency, easy local, Python-first</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">FAISS</h5>
+        <p style="color: #cbd5e1;">0.34ms ultra-fast, Meta, in-memory</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Pinecone</h5>
+        <p style="color: #cbd5e1;">326ms, managed cloud, production-ready</p>
+      </div>
+    </div>
+    <p class="text-sm mt-4" style="color: #94a3b8;">Also: Weaviate, Qdrant, Milvus, pgvector</p>
+  </section>
+
+  <!-- Slide 19: Vector Search Visual -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Vector Similarity Search</h2>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1770302569/search_images/b3db1fabb7145beba3c051424b46135d9f43905a.jpg" alt="Vector Search" style="width: 65%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Query vector finds nearest neighbors in high-dimensional space</p>
+  </section>
+
+  <!-- Slide 20: ChromaDB Code Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">ChromaDB: Store &amp; Query</h2>
+    <pre><code>from langchain.vectorstores import Chroma
+
+vectorstore = Chroma.from_documents(
+  documents=chunks,
+  embedding=embeddings_model,
+  collection_name="docs"
+)
+
+# Query for top 3 results
+results = vectorstore.similarity_search(
+  "What is RAG?", k=3
+)
+print(results[0].page_content)</code></pre>
+  </section>
+
+  <!-- Slide 21: Retrieval Phase -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Retrieval Phase (Query Time)</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Online: Answering User Questions</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">1. Embed Query:</strong> Convert question to vector</li>
+      <li><strong style="color: #38bdf8;">2. Search:</strong> Find top-k similar chunks</li>
+      <li><strong style="color: #38bdf8;">3. Inject Context:</strong> Add chunks to prompt</li>
+      <li><strong style="color: #38bdf8;">4. Generate:</strong> LLM answers with grounding</li>
+    </ul>
+  </section>
+
+  <!-- Slide 22: Similarity Search Types -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Similarity Search Types</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Beyond Basic Vector Search</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Vector-only:</strong> Pure semantic similarity</li>
+      <li><strong style="color: #38bdf8;">Hybrid (BM25 + Vector):</strong> Keyword + semantic</li>
+      <li><strong style="color: #38bdf8;">Metadata Filtering:</strong> Filter by date, source first</li>
+      <li><strong style="color: #38bdf8;">Re-ranking:</strong> Cohere rerank for precision</li>
+    </ul>
+  </section>
+
+  <!-- Slide 23: Hybrid Search Code -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Hybrid Search Example</h2>
+    <pre><code>from langchain.retrievers import EnsembleRetriever
+from langchain.retrievers import BM25Retriever
+
+# Vector retriever
+vector_retriever = vectorstore.as_retriever(k=5)
+
+# Keyword retriever
+bm25_retriever = BM25Retriever.from_documents(chunks)
+
+# Combine both
+ensemble = EnsembleRetriever(
+  retrievers=[vector_retriever, bm25_retriever],
+  weights=[0.5, 0.5]
+)</code></pre>
+  </section>
+
+  <!-- Slide 24: RAG & Context Windows -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">RAG &amp; Context Windows</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">How RAG Extends Model Memory</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Problem:</strong> LLM context limited (4K-2M tokens)</li>
+      <li><strong style="color: #38bdf8;">RAG Solution:</strong> Retrieve only relevant chunks</li>
+      <li><strong style="color: #38bdf8;">Efficiency:</strong> 3-5 chunks (3K tokens) vs entire corpus</li>
+      <li><strong style="color: #38bdf8;">Trade-off:</strong> Retrieval accuracy vs context size</li>
+    </ul>
+  </section>
+
+  <!-- Slide 25: Context Window Diagram -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">RAG Context Injection</h2>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1769614433/search_images/0ff8723a59e3e5f20b45f74ed522c3a8aa6a979d.jpg" alt="RAG Context" style="width: 70%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Retrieved chunks fill context window efficiently</p>
+  </section>
+
+  <!-- Slide 26: Complete RAG Chain -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Complete RAG Chain (Code)</h2>
+    <pre style="font-size: 0.75rem;"><code>from langchain.chains import RetrievalQA
+from langchain.chat_models import ChatOpenAI
+
+llm = ChatOpenAI(model="gpt-4o-mini")
+
+qa_chain = RetrievalQA.from_chain_type(
+  llm=llm,
+  retriever=vectorstore.as_retriever(k=3),
+  return_source_documents=True
+)
+
+response = qa_chain("Explain RAG architecture")
+print(response['result'])
+print(f"Sources: {len(response['source_documents'])}")</code></pre>
+  </section>
+
+  <!-- Slide 27: Query-Retrieval-Answer Flow -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Query → Retrieval → Answer Traceability</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Track Sources:</strong> Which chunks were used?</li>
+      <li><strong style="color: #38bdf8;">Citations:</strong> Return page numbers, URLs</li>
+      <li><strong style="color: #38bdf8;">Confidence:</strong> Similarity scores reveal relevance</li>
+      <li><strong style="color: #38bdf8;">Debugging:</strong> Inspect retrieved context quality</li>
+    </ul>
+  </section>
+
+  <!-- Slide 28: Advanced RAG Techniques -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Advanced RAG Techniques</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Query Expansion:</strong> Generate multiple query variants</li>
+      <li><strong style="color: #38bdf8;">Hypothetical Document:</strong> LLM generates ideal doc, search for it</li>
+      <li><strong style="color: #38bdf8;">Parent-Child Chunks:</strong> Retrieve small, inject large</li>
+      <li><strong style="color: #38bdf8;">Adaptive Retrieval:</strong> Fetch more if answer uncertain</li>
+    </ul>
+  </section>
+
+  <!-- Slide 29: RAG Challenges -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">RAG Challenges &amp; Solutions</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Poor Retrieval</h5>
+        <p style="color: #cbd5e1;">Improve chunking, try hybrid search</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Noise in Context</h5>
+        <p style="color: #cbd5e1;">Use reranking models</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Latency</h5>
+        <p style="color: #cbd5e1;">Cache embeddings, optimize indexes</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 30: RAG Evaluation Metrics -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Evaluating RAG Systems</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Key Metrics</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Retrieval Precision:</strong> Are retrieved chunks relevant?</li>
+      <li><strong style="color: #38bdf8;">Answer Faithfulness:</strong> Does answer match sources?</li>
+      <li><strong style="color: #38bdf8;">Answer Relevance:</strong> Does it address the query?</li>
+      <li><strong style="color: #38bdf8;">Latency:</strong> End-to-end response time</li>
+    </ul>
+  </section>
+
+  <!-- Slide 31: LangChain Ecosystem -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">RAG Frameworks</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">LangChain</h5>
+        <p style="color: #cbd5e1;">Full-stack, chains, agents, integrations</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">LlamaIndex</h5>
+        <p style="color: #cbd5e1;">RAG-focused, data connectors, indexing</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Haystack</h5>
+        <p style="color: #cbd5e1;">NLP pipelines, production-ready</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 32: Production Considerations -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Production RAG Considerations</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Data Freshness:</strong> Incremental updates vs full reindex</li>
+      <li><strong style="color: #38bdf8;">Cost:</strong> Embedding API calls, vector storage</li>
+      <li><strong style="color: #38bdf8;">Monitoring:</strong> Track retrieval quality, latency</li>
+      <li><strong style="color: #38bdf8;">Security:</strong> Access control, data isolation</li>
+    </ul>
+  </section>
+
+  <!-- Slide 33: Hands-On Lab Preview -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Hands-On Lab: Build a RAG System</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">What You'll Build (Next 30 min)</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Load PDF documents (course materials)</li>
+      <li>Chunk &amp; embed with OpenAI</li>
+      <li>Store in ChromaDB</li>
+      <li>Query with traceability</li>
+    </ul>
+  </section>
+
+  <!-- Slide 34: Key Takeaways -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key Takeaways</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>RAG = Retrieval + LLM Generation for grounded answers</li>
+      <li>Pipeline: Ingest → Chunk → Embed → Store → Retrieve</li>
+      <li>Embeddings map text to semantic vector space</li>
+      <li>Vector DBs enable efficient similarity search</li>
+    </ul>
+  </section>
+
+  <!-- Slide 35: Thank You -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h2 class="mb-8" style="color: #38bdf8;">Questions?</h2>
+    <p class="text-xl mb-6" style="color: #cbd5e1;">Let's build your RAG system!</p>
+    <p class="text-sm" style="color: #94a3b8;">Next: Hands-On RAG Lab with Real Documents</p>
+  </section>
+
+</body>
+</html>

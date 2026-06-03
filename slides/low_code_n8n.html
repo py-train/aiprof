@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>Low-Code AI and Workflow Automation with n8n</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #0c1324;
+      --color-bg-deep: #060a14;
+      --color-surface: #172033;
+      --color-text: #eef4ff;
+      --color-text-secondary: #c7d2e6;
+      --color-text-muted: #8e9bb6;
+      --color-accent-1: #5eead4;
+      --color-accent-2: #93c5fd;
+      --color-accent-3: #fbbf24;
+      --color-glass-bg: rgba(255,255,255,0.06);
+      --color-glass-border: rgba(255,255,255,0.1);
+      --color-vignette: rgba(0,0,0,0.42);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #0c1324; --color-text: #eef4ff; --glow-color-rgb: 94,234,212; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { background: var(--color-bg); margin: 0; }
+    body { font-family: 'Inter', sans-serif; color: var(--color-text); overflow: hidden; height: 100vh; width: 100vw; }
+    .deck { width: 100vw; height: 100vh; position: relative; }
+    .slide { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--color-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: scale(0.95); transition: opacity 0.7s ease, transform 0.7s ease; pointer-events: none; overflow: hidden; }
+    .slide.active { opacity: 1; transform: scale(1); pointer-events: all; }
+    .slide > .content { position: relative; z-index: 2; width: 100%; max-width: 1180px; padding: clamp(1.4rem, 3vw, 3rem); }
+    .nav-controls { position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; z-index: 100; background: rgba(15,23,42,0.42); backdrop-filter: blur(12px); padding: 10px 24px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); }
+    .nav-btn { width: 40px; height: 40px; border: none; background: rgba(255,255,255,0.06); color: #5eead4; border-radius: 999px; font-size: 1.2rem; cursor: pointer; display:flex; align-items:center; justify-content:center; }
+    .slide-dots { display:flex; gap:8px; }
+    .slide-dots .dot { width:10px; height:10px; border-radius:999px; background: rgba(255,255,255,0.16); cursor:pointer; transition: all .25s ease; }
+    .slide-dots .dot.active { background:#5eead4; transform:scale(1.25); }
+    .slide-counter { font-size: .8rem; color:#94a3b8; min-width:50px; text-align:center; }
+    .reveal { opacity: 0; transform: translateY(20px); }
+    .gradient-mesh { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); animation: float-slow 14s ease-in-out infinite; }
+    .blob:nth-child(2) { animation: float-drift 18s ease-in-out infinite; }
+    .blob:nth-child(3) { animation: float-slow 20s ease-in-out infinite reverse; }
+    .slide::before {
+      content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 256px 256px; opacity: .03; mix-blend-mode: overlay;
+    }
+    .slide::after {
+      content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,.44) 100%);
+    }
+    .mouse-spotlight { position: fixed; inset: 0; z-index: 99; pointer-events: none; }
+    .text-glow { text-shadow: 0 0 22px rgba(var(--glow-color-rgb),0.35), 0 0 60px rgba(var(--glow-color-rgb),0.15); }
+    .code-chip { border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.05); border-radius: 999px; padding: .38rem .78rem; font-size: .8rem; color: #dbeafe; }
+    .grid-card { background: rgba(255,255,255,.06); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.1); border-radius: 24px; }
+    .mini-flow { display:grid; grid-template-columns: repeat(5,1fr); gap: 12px; align-items:center; }
+    .mini-node { padding: 1rem .9rem; border-radius: 18px; border:1px solid rgba(255,255,255,.12); background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.04)); min-height: 88px; display:flex; flex-direction:column; justify-content:center; }
+    .arrow { text-align:center; color:#5eead4; font-size:1.6rem; opacity:.9; }
+    .two-col { display:grid; grid-template-columns: 1.05fr .95fr; gap: 28px; align-items:stretch; }
+    .three-col { display:grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .four-col { display:grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+    .timeline { position:relative; display:flex; flex-direction:column; gap:18px; margin-top: 1rem; }
+    .timeline::before { content:''; position:absolute; left: 12px; top: 4px; bottom: 4px; width:2px; background: linear-gradient(180deg, #5eead4, rgba(147,197,253,.2)); }
+    .timeline-item { position:relative; padding-left: 42px; }
+    .timeline-item::before { content:''; position:absolute; left:6px; top:8px; width:14px; height:14px; border-radius:999px; background:#5eead4; box-shadow: 0 0 20px rgba(94,234,212,.45); }
+    .n8n-grid { display:grid; grid-template-columns: 1.15fr .85fr; gap: 24px; }
+    .pill { display:inline-flex; align-items:center; gap:.5rem; padding:.38rem .8rem; border-radius:999px; background: rgba(94,234,212,.12); border: 1px solid rgba(94,234,212,.25); color:#bffaf1; font-size: .8rem; }
+    .quote-box { border-left: 3px solid #5eead4; padding: 1rem 1rem 1rem 1.2rem; background: rgba(255,255,255,.04); border-radius: 0 18px 18px 0; }
+    .stack { display:flex; flex-direction:column; gap:14px; }
+    .icon-badge { width: 42px; height: 42px; border-radius: 14px; background: rgba(147,197,253,.14); display:flex; align-items:center; justify-content:center; font-size:1.2rem; border:1px solid rgba(147,197,253,.2); }
+    @keyframes float-slow {
+      0% { transform: translate(0,0) scale(1); }
+      25% { transform: translate(60px,-40px) scale(1.08); }
+      50% { transform: translate(-30px,35px) scale(.92); }
+      75% { transform: translate(38px,24px) scale(1.05); }
+      100% { transform: translate(0,0) scale(1); }
+    }
+    @keyframes float-drift {
+      0% { transform: translate(0,0) scale(1) rotate(0deg); }
+      33% { transform: translate(-44px,-60px) scale(1.14) rotate(4deg); }
+      66% { transform: translate(36px,24px) scale(.9) rotate(-2deg); }
+      100% { transform: translate(0,0) scale(1) rotate(0deg); }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+    @media (max-width: 980px) {
+      .two-col, .three-col, .four-col, .n8n-grid, .mini-flow { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .2s !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="mouse-spotlight"></div>
+<div class="deck">
+
+  <div class="slide active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:500px;height:500px;top:-120px;right:-100px;background:#5eead4;opacity:.12"></div>
+      <div class="blob" style="width:360px;height:360px;left:-80px;bottom:-90px;background:#93c5fd;opacity:.11"></div>
+      <div class="blob" style="width:220px;height:220px;left:16%;top:30%;background:#fbbf24;opacity:.1"></div>
+    </div>
+    <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1"></canvas>
+    <div class="content text-center">
+      <div class="reveal text-[120px] mb-5" style="animation: float 3.2s ease-in-out infinite;">🔗</div>
+      <h1 class="reveal font-display text-[clamp(2.8rem,6vw,5.3rem)] font-black tracking-tight bg-linear-to-br from-accent-1 via-accent-2 to-accent-1 bg-clip-text text-transparent">Low-Code AI to Workflow Automation</h1>
+      <p class="reveal mt-4 text-[clamp(1rem,1.8vw,1.35rem)] text-text-secondary max-w-3xl mx-auto">How tool use, orchestration, and no-code builders lead naturally into automation platforms like <span class="text-accent-1 font-semibold">n8n</span></p>
+      <p class="reveal mt-6 uppercase tracking-[0.35em] text-sm text-text-muted">Lead-in module for hands-on workflow building</p>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;right:-80px;top:-50px;background:#5eead4;opacity:.08"></div>
+      <div class="blob" style="width:240px;height:240px;left:-50px;bottom:-50px;background:#93c5fd;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3.1rem)] mb-4">Why this topic matters now</h2>
+      <div class="three-col mt-8">
+        <div class="grid-card p-7 reveal"><div class="icon-badge mb-4">🤖</div><h3 class="text-xl font-semibold mb-3">AI is becoming usable</h3><p class="text-text-secondary">People can now ask, summarize, classify, extract, draft, and search with natural language instead of traditional programming only.</p></div>
+        <div class="grid-card p-7 reveal"><div class="icon-badge mb-4">🧩</div><h3 class="text-xl font-semibold mb-3">Tools are becoming composable</h3><p class="text-text-secondary">Modern work is spread across apps, APIs, databases, emails, chats, CRMs, spreadsheets, and documents.</p></div>
+        <div class="grid-card p-7 reveal"><div class="icon-badge mb-4">⚙️</div><h3 class="text-xl font-semibold mb-3">Automation is becoming accessible</h3><p class="text-text-secondary">Low-code platforms let teams wire those systems together without building everything from scratch in Python or JavaScript.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;right:-120px;bottom:-100px;background:#93c5fd;opacity:.08"></div>
+      <div class="blob" style="width:260px;height:260px;left:-80px;top:-50px;background:#5eead4;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">A simple framing for the audience</h2>
+      <div class="two-col mt-8">
+        <div class="grid-card p-8 reveal">
+          <p class="pill mb-5">Mental model</p>
+          <div class="stack text-lg text-text-secondary">
+            <p><span class="text-text font-semibold">Traditional software:</span> people specify exact rules.</p>
+            <p><span class="text-text font-semibold">AI software:</span> people describe intent, examples, and guardrails.</p>
+            <p><span class="text-text font-semibold">Workflow automation:</span> systems move information and decisions across tools.</p>
+            <p><span class="text-text font-semibold">Low-code AI:</span> combine all three without heavy custom engineering.</p>
+          </div>
+        </div>
+        <div class="grid-card p-8 reveal">
+          <p class="text-sm uppercase tracking-[0.2em] text-text-muted mb-4">Rule of thumb</p>
+          <div class="quote-box text-xl text-text-secondary">
+            Use code when you need maximum custom control. Use low-code when you need speed, visibility, reuse, and easier collaboration across business and technical teams.
+          </div>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <span class="code-chip">Faster prototyping</span>
+            <span class="code-chip">Business-friendly</span>
+            <span class="code-chip">Visual logic</span>
+            <span class="code-chip">Easy iteration</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;right:5%;top:-8%;background:#5eead4;opacity:.08"></div>
+      <div class="blob" style="width:260px;height:260px;left:-5%;bottom:-8%;background:#fbbf24;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">The category progression</h2>
+      <div class="mini-flow mt-10">
+        <div class="mini-node reveal"><strong>1. Single tools</strong><span class="text-text-secondary text-sm mt-2">Chatbot, summarizer, OCR, classifier</span></div>
+        <div class="arrow reveal">→</div>
+        <div class="mini-node reveal"><strong>2. Connected tools</strong><span class="text-text-secondary text-sm mt-2">Prompt + file + database + email</span></div>
+        <div class="arrow reveal">→</div>
+        <div class="mini-node reveal"><strong>3. Automated workflows</strong><span class="text-text-secondary text-sm mt-2">Trigger, process, route, notify, store</span></div>
+      </div>
+      <div class="three-col mt-10">
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold text-lg mb-2">Naming the space</h3><p class="text-text-secondary">No-code means mostly configuration. Low-code means mostly configuration plus some expressions or code.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold text-lg mb-2">Where AI enters</h3><p class="text-text-secondary">AI becomes one step in a larger workflow: classify, extract, enrich, draft, decide, or assist.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold text-lg mb-2">Where value appears</h3><p class="text-text-secondary">Value usually comes from end-to-end business flow, not from the model alone.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;right:-70px;top:-70px;background:#93c5fd;opacity:.08"></div>
+      <div class="blob" style="width:280px;height:280px;left:-70px;bottom:-70px;background:#5eead4;opacity:.07"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">What low-code / no-code means in practice</h2>
+      <div class="four-col mt-8">
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Blocks</h3><p class="text-text-secondary text-sm">Prebuilt nodes or connectors for common apps and services.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Flows</h3><p class="text-text-secondary text-sm">Visual sequences showing how data moves from step to step.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Rules</h3><p class="text-text-secondary text-sm">Conditions, routing, retries, schedules, and transformations.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Escapes</h3><p class="text-text-secondary text-sm">Expressions, JavaScript, APIs, or custom code when needed.</p></div>
+      </div>
+      <div class="grid-card p-8 mt-8 reveal">
+        <p class="text-lg text-text-secondary">A helpful analogy: <span class="text-text font-semibold">spreadsheets democratized calculation</span>; low-code automation democratizes integration and process logic. People still need judgment, structure, and testing, but the barrier to entry becomes much lower.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:340px;height:340px;right:-100px;top:-80px;background:#5eead4;opacity:.09"></div>
+      <div class="blob" style="width:240px;height:240px;left:-80px;bottom:-80px;background:#93c5fd;opacity:.07"></div>
+    </div>
+    <canvas class="particle-canvas-ambient" style="position:absolute;inset:0;z-index:1"></canvas>
+    <div class="content text-center">
+      <p class="reveal uppercase tracking-[0.28em] text-sm text-text-muted mb-5">Transition slide</p>
+      <h2 class="reveal font-display text-[clamp(2.4rem,5vw,4rem)] text-glow">From AI tools to AI workflows</h2>
+      <p class="reveal mt-5 text-[clamp(1rem,1.8vw,1.3rem)] text-text-secondary max-w-3xl mx-auto">The key question changes from “What can this model do?” to “How does work move through the organization?”</p>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;right:-100px;bottom:-90px;background:#fbbf24;opacity:.07"></div>
+      <div class="blob" style="width:260px;height:260px;left:-80px;top:-50px;background:#5eead4;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">Typical AI workflow pattern</h2>
+      <div class="mini-flow mt-10" style="grid-template-columns: repeat(9,1fr);">
+        <div class="mini-node reveal"><strong>Trigger</strong><span class="text-sm text-text-secondary mt-2">Email, form, webhook, schedule</span></div>
+        <div class="arrow reveal">→</div>
+        <div class="mini-node reveal"><strong>Fetch</strong><span class="text-sm text-text-secondary mt-2">Collect data or files</span></div>
+        <div class="arrow reveal">→</div>
+        <div class="mini-node reveal"><strong>AI step</strong><span class="text-sm text-text-secondary mt-2">Extract, classify, summarize</span></div>
+        <div class="arrow reveal">→</div>
+        <div class="mini-node reveal"><strong>Decision</strong><span class="text-sm text-text-secondary mt-2">Route based on rules</span></div>
+        <div class="arrow reveal">→</div>
+        <div class="mini-node reveal"><strong>Action</strong><span class="text-sm text-text-secondary mt-2">Create record, notify, update status</span></div>
+      </div>
+      <div class="three-col mt-10">
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">AI is not the whole system</h3><p class="text-text-secondary">It is one intelligence layer inside a broader business process.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Guardrails still matter</h3><p class="text-text-secondary">Validation, fallbacks, and human review are often required.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Automation means orchestration</h3><p class="text-text-secondary">Connecting services well is often more important than having the fanciest model.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;right:-90px;top:-100px;background:#93c5fd;opacity:.08"></div>
+      <div class="blob" style="width:280px;height:280px;left:-90px;bottom:-90px;background:#5eead4;opacity:.07"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">Enter n8n</h2>
+      <div class="n8n-grid mt-8">
+        <div class="grid-card p-8 reveal">
+          <p class="pill mb-5">Core idea</p>
+          <h3 class="text-2xl font-semibold mb-4">n8n is a workflow automation platform</h3>
+          <div class="stack text-text-secondary">
+            <p>It lets you create workflows visually using nodes connected together.</p>
+            <p>Each node does something specific: trigger, fetch data, transform data, call an API, run AI, branch, or send output.</p>
+            <p>It is popular because it supports low-code flexibility: visual building first, with expressions and code when needed.</p>
+          </div>
+        </div>
+        <div class="grid-card p-8 reveal">
+          <p class="text-sm uppercase tracking-[0.2em] text-text-muted mb-4">Why it resonates</p>
+          <div class="stack">
+            <div class="flex items-start gap-3"><span class="text-accent-1 font-bold">01</span><p class="text-text-secondary">Visual enough for newcomers</p></div>
+            <div class="flex items-start gap-3"><span class="text-accent-1 font-bold">02</span><p class="text-text-secondary">Technical enough for real integrations</p></div>
+            <div class="flex items-start gap-3"><span class="text-accent-1 font-bold">03</span><p class="text-text-secondary">Flexible enough for APIs, data shaping, and AI agents</p></div>
+            <div class="flex items-start gap-3"><span class="text-accent-1 font-bold">04</span><p class="text-text-secondary">Great bridge from no-code experimentation to engineering thinking</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;right:-60px;top:-80px;background:#5eead4;opacity:.08"></div>
+      <div class="blob" style="width:240px;height:240px;left:-40px;bottom:-60px;background:#fbbf24;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">What users do inside n8n</h2>
+      <div class="three-col mt-8">
+        <div class="grid-card p-7 reveal"><h3 class="text-xl font-semibold mb-3">Triggers</h3><p class="text-text-secondary">Start workflows from time schedules, form submissions, webhooks, chats, file uploads, or app events.</p></div>
+        <div class="grid-card p-7 reveal"><h3 class="text-xl font-semibold mb-3">Transformations</h3><p class="text-text-secondary">Map fields, format values, merge records, filter items, branch logic, and prepare payloads.</p></div>
+        <div class="grid-card p-7 reveal"><h3 class="text-xl font-semibold mb-3">Actions</h3><p class="text-text-secondary">Write to sheets, send emails, call APIs, create tickets, update CRMs, or invoke AI models and agents.</p></div>
+      </div>
+      <div class="grid-card p-8 mt-8 reveal">
+        <p class="text-lg text-text-secondary">For teaching purposes, n8n is especially useful because learners can <span class="text-text font-semibold">see the pipeline</span>: what came in, what changed, and what went out at every step.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:340px;height:340px;right:-100px;top:-90px;background:#93c5fd;opacity:.08"></div>
+      <div class="blob" style="width:250px;height:250px;left:-60px;bottom:-60px;background:#5eead4;opacity:.07"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">Where AI fits inside n8n workflows</h2>
+      <div class="two-col mt-8">
+        <div class="grid-card p-8 reveal">
+          <h3 class="text-xl font-semibold mb-4">Common AI tasks</h3>
+          <div class="stack text-text-secondary">
+            <p>Classification: intent, urgency, category, sentiment.</p>
+            <p>Extraction: names, invoice fields, dates, entities, key facts.</p>
+            <p>Generation: email drafts, summaries, suggested replies, formatted reports.</p>
+            <p>Reasoning support: recommendations, next-best action, routing hints.</p>
+          </div>
+        </div>
+        <div class="grid-card p-8 reveal">
+          <h3 class="text-xl font-semibold mb-4">Important caveat</h3>
+          <div class="quote-box text-text-secondary">Use AI for judgment support, not blind trust. The workflow should still include checks such as schema validation, confidence thresholds, rule-based gating, and human review for risky cases.</div>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <span class="code-chip">Validate output</span>
+            <span class="code-chip">Log decisions</span>
+            <span class="code-chip">Add fallback path</span>
+            <span class="code-chip">Escalate edge cases</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;right:-110px;bottom:-110px;background:#5eead4;opacity:.08"></div>
+      <div class="blob" style="width:220px;height:220px;left:-60px;top:-40px;background:#93c5fd;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">A relatable business example</h2>
+      <div class="grid-card p-8 mt-8 reveal">
+        <div class="mini-flow" style="grid-template-columns: repeat(7,1fr);">
+          <div class="mini-node"><strong>Support email</strong><span class="text-sm text-text-secondary mt-2">Incoming customer issue</span></div>
+          <div class="arrow">→</div>
+          <div class="mini-node"><strong>AI classify</strong><span class="text-sm text-text-secondary mt-2">Billing, tech, refund, urgent</span></div>
+          <div class="arrow">→</div>
+          <div class="mini-node"><strong>Route</strong><span class="text-sm text-text-secondary mt-2">Team or queue selection</span></div>
+          <div class="arrow">→</div>
+          <div class="mini-node"><strong>Notify + log</strong><span class="text-sm text-text-secondary mt-2">Create ticket and alert humans</span></div>
+        </div>
+      </div>
+      <div class="three-col mt-8">
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Without automation</h3><p class="text-text-secondary">Manual sorting, copying, forwarding, status tracking, and delayed response.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">With automation</h3><p class="text-text-secondary">Faster triage, consistent categorization, immediate routing, better visibility.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Teaching link</h3><p class="text-text-secondary">This is exactly the kind of flow learners can inspect and then build themselves.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="12">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;right:-100px;top:-100px;background:#5eead4;opacity:.07"></div>
+      <div class="blob" style="width:260px;height:260px;left:-70px;bottom:-60px;background:#93c5fd;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">Why n8n is a good teaching bridge</h2>
+      <div class="three-col mt-8">
+        <div class="grid-card p-7 reveal"><h3 class="text-xl font-semibold mb-3">Visual first</h3><p class="text-text-secondary">Learners can understand sequence, branching, and data movement before deep coding.</p></div>
+        <div class="grid-card p-7 reveal"><h3 class="text-xl font-semibold mb-3">Real concepts underneath</h3><p class="text-text-secondary">They still encounter schemas, JSON, APIs, expressions, variables, and logic.</p></div>
+        <div class="grid-card p-7 reveal"><h3 class="text-xl font-semibold mb-3">Progressive depth</h3><p class="text-text-secondary">Start with drag-and-drop, then add expressions, then lightweight JavaScript, then reusable patterns.</p></div>
+      </div>
+      <div class="grid-card p-8 mt-8 reveal">
+        <p class="text-lg text-text-secondary">In other words, n8n is not merely a shortcut tool. It is a practical <span class="text-text font-semibold">learning surface</span> for modern automation thinking.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="13">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:340px;height:340px;right:-110px;top:-90px;background:#93c5fd;opacity:.08"></div>
+      <div class="blob" style="width:230px;height:230px;left:-70px;bottom:-50px;background:#fbbf24;opacity:.06"></div>
+    </div>
+    <canvas class="particle-canvas-ambient" style="position:absolute;inset:0;z-index:1"></canvas>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">Skills learners quietly build along the way</h2>
+      <div class="four-col mt-8">
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Data thinking</h3><p class="text-text-secondary text-sm">Inputs, outputs, fields, structure, mapping.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Logic</h3><p class="text-text-secondary text-sm">Branching, conditions, retries, exceptions.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Prompting</h3><p class="text-text-secondary text-sm">Clear instructions, structured outputs, evaluation.</p></div>
+        <div class="grid-card p-6 reveal"><h3 class="font-semibold mb-2">Integration</h3><p class="text-text-secondary text-sm">APIs, webhooks, credentials, cross-tool orchestration.</p></div>
+      </div>
+      <div class="timeline reveal">
+        <div class="timeline-item"><h3 class="font-semibold">Stage 1: configure nodes</h3><p class="text-text-secondary">Learn the interface and the shape of workflows.</p></div>
+        <div class="timeline-item"><h3 class="font-semibold">Stage 2: add expressions</h3><p class="text-text-secondary">Reference fields dynamically and make flows adaptive.</p></div>
+        <div class="timeline-item"><h3 class="font-semibold">Stage 3: add code where needed</h3><p class="text-text-secondary">Handle custom logic without moving to a full custom app.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="14">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:330px;height:330px;right:-90px;top:-70px;background:#5eead4;opacity:.08"></div>
+      <div class="blob" style="width:250px;height:250px;left:-70px;bottom:-70px;background:#93c5fd;opacity:.06"></div>
+    </div>
+    <div class="content">
+      <h2 class="reveal font-display text-[clamp(2rem,4vw,3rem)]">What to emphasize before the hands-on guide</h2>
+      <div class="two-col mt-8">
+        <div class="grid-card p-8 reveal">
+          <h3 class="text-xl font-semibold mb-4">Keep the learner mindset simple</h3>
+          <div class="stack text-text-secondary">
+            <p>Every node takes input and produces output.</p>
+            <p>Workflows are just organized chains of transformations and decisions.</p>
+            <p>AI nodes are powerful, but they are only one part of the chain.</p>
+            <p>Good automation depends on clarity, testing, and observability.</p>
+          </div>
+        </div>
+        <div class="grid-card p-8 reveal">
+          <h3 class="text-xl font-semibold mb-4">Lead naturally into the lab</h3>
+          <div class="stack text-text-secondary">
+            <p>First inspect a ready-made workflow.</p>
+            <p>Then identify triggers, fields, decisions, and actions.</p>
+            <p>Then modify prompts, expressions, and routing logic.</p>
+            <p>Finally build a similar workflow for a new business case.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide" data-slide="15">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:500px;height:500px;top:-120px;right:-100px;background:#5eead4;opacity:.13"></div>
+      <div class="blob" style="width:340px;height:340px;left:-80px;bottom:-80px;background:#93c5fd;opacity:.11"></div>
+      <div class="blob" style="width:220px;height:220px;left:22%;top:38%;background:#fbbf24;opacity:.09"></div>
+    </div>
+    <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1"></canvas>
+    <div class="content text-center">
+      <div class="reveal text-[108px] mb-4" style="animation: float 3s ease-in-out infinite;">🧠</div>
+      <h2 class="reveal font-display text-[clamp(2.8rem,5vw,4.6rem)] bg-linear-to-br from-accent-1 via-accent-2 to-accent-1 bg-clip-text text-transparent">Next: build it in n8n</h2>
+      <p class="reveal mt-4 text-[clamp(1rem,1.7vw,1.28rem)] text-text-secondary max-w-3xl mx-auto">The companion guide picks up here: inspect nodes, read expressions, understand JavaScript snippets, and modify a working AI workflow end to end.</p>
+      <p class="reveal mt-6 uppercase tracking-[0.3em] text-sm text-text-muted">From concept → workflow → guided practice</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-controls">
+  <button class="nav-btn" aria-label="Previous slide" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" aria-label="Next slide" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 15</span>
+</div>
+
+<script>
+let current = 1;
+const total = document.querySelectorAll('.slide').length;
+const dotsContainer = document.getElementById('dots');
+const counter = document.getElementById('counter');
+for (let i = 1; i <= total; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 1 ? ' active' : '');
+  dot.onclick = () => goToSlide(i);
+  dotsContainer.appendChild(dot);
+}
+function goToSlide(n) {
+  const prev = document.querySelector('.slide.active');
+  const next = document.querySelector(`.slide[data-slide="${n}"]`);
+  if (prev) prev.classList.remove('active');
+  if (next) { next.classList.add('active'); animateSlide(next); }
+  current = n; updateNav();
+}
+function changeSlide(dir) {
+  let next = current + dir;
+  if (next < 1) next = total;
+  if (next > total) next = 1;
+  goToSlide(next);
+}
+function updateNav() {
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i + 1 === current));
+  counter.textContent = `${current} / ${total}`;
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+});
+let touchStartX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', (e) => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+});
+function animateSlide(slide) {
+  slide.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transition = 'none';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.offsetHeight;
+    const delay = i * 0.08;
+    el.style.transition = `opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0px)';
+  });
+}
+document.addEventListener('mousemove', (e) => {
+  const spotlight = document.querySelector('.mouse-spotlight');
+  const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '94,234,212';
+  spotlight.style.background = `radial-gradient(600px circle at ${e.clientX}px ${e.clientY}px, rgba(${rgb}, 0.06), transparent 40%)`;
+});
+window.initParticles = function(canvas, options) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const setSize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+  setSize();
+  window.addEventListener('resize', setSize);
+  const interactive = options.interactive !== false;
+  const count = options.count || (interactive ? 55 : 18);
+  let mx = -1000, my = -1000;
+  const rgb = getComputedStyle(document.documentElement).getPropertyValue('--glow-color-rgb').trim() || '94,234,212';
+  const [r, g, b] = rgb.split(',').map(Number);
+  const particles = Array.from({ length: count }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.3,
+    size: Math.random() * 2.5 + 0.8,
+    alpha: Math.random() * 0.35 + 0.1
+  }));
+  if (interactive) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mx = e.clientX - rect.left; my = e.clientY - rect.top;
+    });
+    canvas.addEventListener('mouseleave', () => { mx = -1000; my = -1000; });
+  }
+  (function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      if (interactive) {
+        const dx = p.x - mx, dy = p.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120 && dist > 0) {
+          const force = (120 - dist) / 120 * 2;
+          p.vx += (dx / dist) * force * 0.1;
+          p.vy += (dy / dist) * force * 0.1;
+        }
+      }
+      p.vx *= 0.98; p.vy *= 0.98;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width; if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height; if (p.y > canvas.height) p.y = 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(animate);
+  })();
+};
+document.querySelectorAll('.particle-canvas').forEach(c => window.initParticles(c, { interactive: true, count: 55 }));
+document.querySelectorAll('.particle-canvas-ambient').forEach(c => window.initParticles(c, { interactive: false, count: 18 }));
+try { animateSlide(document.querySelector('.slide.active')); } catch (e) {}
+</script>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Agentic AI Fundamentals – Warm-up Flip Cards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1726;
+      color: #f5f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #f5f7fb;
+    }
+    .subtitle {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #aeb8d0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      perspective: 1000px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .front {
+      background: linear-gradient(135deg, #1f3b73, #243b53);
+      border: 1px solid #2f4f8f;
+    }
+    .back {
+      background: linear-gradient(135deg, #172b4d, #102542);
+      border: 1px solid #2d3f6f;
+      transform: rotateY(180deg);
+    }
+    .q-type {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffb347;
+      margin-bottom: 6px;
+    }
+    .question {
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .options {
+      font-size: 13px;
+      text-align: left;
+      color: #d4ddf5;
+    }
+    .answer-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9fd5ff;
+      margin-bottom: 6px;
+    }
+    .answer {
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .note {
+      font-size: 12px;
+      color: #b3bedb;
+      text-align: left;
+    }
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #8e9ac0;
+    }
+    .hint {
+      font-size: 11px;
+      color: #8bb9ff;
+      margin-top: 6px;
+      text-align: left;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>Agentic AI Fundamentals</h1>
+  <div class="subtitle">
+    Warm-up flip cards – click/tap each card to reveal the suggested answer.
+  </div>
+
+  <div class="grid">
+    <!-- Q1 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="question">
+            1. Agentic AI is simply a new name for any Generative AI system like a basic chat-based assistant.
+          </div>
+          <div class="hint">
+            Think about autonomy, goals, and ability to act with tools.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            False.
+          </div>
+          <div class="note">
+            Agentic AI focuses on goal‑driven, tool‑using, and more autonomous systems rather than just conversational response generation.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            2. Which capability most clearly distinguishes an agentic AI system from a basic chat-based GenAI assistant?
+          </div>
+          <div class="options">
+            A. Higher-quality natural language responses<br/>
+            B. Ability to execute multi-step tasks using tools and feedback loops<br/>
+            C. Support for more languages<br/>
+            D. Faster response time
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            B. Ability to execute multi-step tasks using tools and feedback loops.
+          </div>
+          <div class="note">
+            Agentic systems plan, act, and adapt over multiple steps to achieve goals, often using external tools and memory.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="question">
+            3. Which single word best captures the evolution from rules → ML → GenAI → Agentic AI?
+          </div>
+          <div class="hint">
+            Consider how much initiative the system can take on its own.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            Autonomy.
+          </div>
+          <div class="note">
+            Agentic AI increases the level of autonomy compared to earlier generations of AI.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            4. In an enterprise context, which of the following is the best example of an agentic AI use case?
+          </div>
+          <div class="options">
+            A. A static FAQ chatbot on the intranet<br/>
+            B. A document summarizer that processes one file at a time<br/>
+            C. A software development agent that reads tickets, proposes changes, and raises pull requests under human review<br/>
+            D. A spell‑checker in an email client
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            C. A software development agent that reads tickets, proposes changes, and raises pull requests under human review.
+          </div>
+          <div class="note">
+            This scenario combines goals, tools, and multi‑step workflows with human‑in‑the‑loop control.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="question">
+            5. In an agentic AI system, tools can include APIs, databases, search engines, and internal applications.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            Tool‑using agents rely on external systems such as APIs, databases, files, and search to complete tasks.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            6. Which set best represents the core building blocks of an agentic AI system?
+          </div>
+          <div class="options">
+            A. Prompts, tokens, GPUs<br/>
+            B. Agents, goals, tools, memory, environment<br/>
+            C. Dashboards, logs, alerts<br/>
+            D. Datasets, labels, metrics
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            B. Agents, goals, tools, memory, environment.
+          </div>
+          <div class="note">
+            These are typical conceptual components used to describe agentic AI systems.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="question">
+            7. What term describes an agent breaking down a complex business problem into smaller actionable steps?
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            Task decomposition (or planning).
+          </div>
+          <div class="note">
+            Many agent frameworks support task decomposition and planning to handle complex workflows.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            8. Which of the following best describes a multi-agent system?
+          </div>
+          <div class="options">
+            A. Multiple LLM models running on the same GPU<br/>
+            B. A collection of specialized agents that collaborate or coordinate to achieve broader goals<br/>
+            C. An agent that uses multiple prompts<br/>
+            D. A single agent with very large context
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            B. A collection of specialized agents that collaborate or coordinate to achieve broader goals.
+          </div>
+          <div class="note">
+            The course covers single‑agent and multi‑agent patterns for enterprise use cases.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="question">
+            9. Short-term and long-term memory in agents are mainly about how the agent manages context over time and across tasks.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            The program discusses memory, context windows, and external knowledge sources in agentic AI.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            10. Which architecture is commonly associated with agentic AI design patterns?
+          </div>
+          <div class="options">
+            A. React<br/>
+            B. Plan‑and‑Execute<br/>
+            C. Tool‑using agents<br/>
+            D. All of the above
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            D. All of the above.
+          </div>
+          <div class="note">
+            The course covers React, Plan‑and‑Execute, and tool‑using agent architectures as core patterns.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="question">
+            11. Retrieval-Augmented Generation (RAG) can be part of an agent’s strategy to bring in external knowledge safely.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            The course introduces RAG basics and using external knowledge sources in agent workflows.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            12. Which is the most appropriate description of “human-in-the-loop” in agentic AI?
+          </div>
+          <div class="options">
+            A. Humans label all the training data<br/>
+            B. Humans periodically monitor GPUs<br/>
+            C. Humans approve or review key actions or outputs from agents before they are finalized<br/>
+            D. Humans design prompts once and never revisit them
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            C. Humans approve or review key actions or outputs from agents before they are finalized.
+          </div>
+          <div class="note">
+            Guardrails and human‑in‑the‑loop are key safety and governance principles for enterprise agents.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One word / phrase</div>
+          <div class="question">
+            13. Name one popular framework or library for building agentic AI systems.
+          </div>
+          <div class="hint">
+            Think of libraries that orchestrate tools, memory, and LLMs.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            For example: LangChain, AutoGen, Crew AI, or OpenAI Assistants.
+          </div>
+          <div class="note">
+            The course provides an overview of several frameworks for building agents.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True / False</div>
+          <div class="question">
+            14. Enterprise agentic AI design must consider compliance, auditability, and explainability from the start.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+            Governance, safety, and control are central themes of the course for real‑world enterprise deployments.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="question">
+            15. When designing your first enterprise agent, which step should come first?
+          </div>
+          <div class="options">
+            A. Selecting the agent framework<br/>
+            B. Buying more GPUs<br/>
+            C. Defining the business problem, agent goal, inputs, tools, and outputs<br/>
+            D. Choosing a front-end UI theme
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Suggested answer</div>
+          <div class="answer">
+            C. Defining the business problem, agent goal, inputs, tools, and outputs.
+          </div>
+          <div class="note">
+            The capstone in the course starts from a clear business problem and a structured agent blueprint.[file:1]
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Tip for facilitators: Ask participants to vote or discuss their answer before flipping each card to quickly assess familiarity and spark discussion.
+  </div>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+    });
+  </script>
+</body>
+</html>

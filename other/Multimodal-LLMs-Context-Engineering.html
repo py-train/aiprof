@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multimodal LLMs & Context Engineering</title>
+  <style>
+    /* ========== THEME VARIABLES ========== */
+    :root {
+      --font-family-display: 'Segoe UI', Arial, sans-serif;
+      --font-weight-display: 700;
+      --font-family-content: 'Segoe UI', Arial, sans-serif;
+      --font-weight-content: 400;
+      --font-size-content: 16px;
+      --line-height-content: 1.5;
+    }
+
+    /* DARK THEME (DEFAULT) */
+    body.theme-dark {
+      --color-bg-base: #0f172a;
+      --color-bg-elevated: #020617;
+      --color-bg-surface: #1e293b;
+      --color-bg-muted: #334155;
+      --color-text-primary: #f1f5f9;
+      --color-text-secondary: #cbd5e1;
+      --color-text-muted: #94a3b8;
+      --color-text-accent: #38bdf8;
+      --color-primary: #38bdf8;
+      --color-primary-foreground: #0f172a;
+    }
+
+    /* ========== BASE STYLES ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-content);
+      font-weight: var(--font-weight-content);
+      font-size: var(--font-size-content);
+      line-height: var(--line-height-content);
+      overflow-x: hidden;
+    }
+
+    /* ========== SLIDE CONTAINER ========== */
+    .slide {
+      width: 960px;
+      height: 540px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== LAYOUT UTILITIES ========== */
+    .row { flex-direction: row; }
+    .col { flex-direction: column; }
+    .center {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .space-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .fill-width { flex: 1; }
+    .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+    /* ========== SPACING ========== */
+    .gap-sm { gap: 0.5rem; }
+    .gap-md { gap: 1rem; }
+    .gap-lg { gap: 1.5rem; }
+    .gap-xl { gap: 2rem; }
+
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .p-8 { padding: 2rem; }
+    .p-12 { padding: 3rem; }
+    .p-16 { padding: 4rem; }
+
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-8 { margin-bottom: 2rem; }
+
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-8 { margin-top: 2rem; }
+
+    /* ========== TYPOGRAPHY ========== */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-family-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+
+    .text-6xl { font-size: 3.75rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-base { font-size: 1rem; }
+    .text-sm { font-size: 0.875rem; }
+
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    /* ========== LISTS ========== */
+    ul, ol {
+      margin-left: 2rem;
+      line-height: 1.8;
+    }
+
+    ul li { list-style: disc; }
+    li { margin-bottom: 0.75rem; }
+    li:last-child { margin-bottom: 0; }
+
+    /* ========== CARDS ========== */
+    .card-rect {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ========== CODE BLOCKS ========== */
+    pre {
+      background-color: #1e293b;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #cbd5e1;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      color: #38bdf8;
+    }
+
+    .prompt-bad {
+      background-color: #7f1d1d;
+      padding: 1rem;
+      border-left: 4px solid #dc2626;
+      margin-bottom: 1rem;
+    }
+
+    .prompt-good {
+      background-color: #14532d;
+      padding: 1rem;
+      border-left: 4px solid #22c55e;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+  <!-- Slide 1: Title Slide -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h1 class="text-6xl mb-4" style="color: #38bdf8;">Multimodal LLMs &amp; Context Engineering</h1>
+    <p class="text-2xl mb-8" style="color: #cbd5e1;">From Text-Only to Vision, Audio, Video</p>
+    <p class="text-sm" style="color: #94a3b8;">Agentic AI for Developers • Feb 6-7, 2026 • 1.5 Hour Module</p>
+  </section>
+
+  <!-- Slide 2: Module Agenda -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Module Agenda</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>What Are Multimodal LLMs?</li>
+      <li>Leading Models: GPT-4V, Claude 3.5, Gemini</li>
+      <li>Context Engineering Fundamentals</li>
+      <li>Prompt Patterns: Good vs Bad (10+ Examples)</li>
+      <li>System Prompts &amp; Few-Shot Learning</li>
+    </ul>
+  </section>
+
+  <!-- Slide 3: What Are Multimodal LLMs? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What Are Multimodal LLMs?</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Beyond Text: Processing Multiple Input Types</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Text + Image:</strong> Analyze charts, photos, documents</li>
+      <li><strong style="color: #38bdf8;">Text + Audio:</strong> Transcribe, summarize conversations</li>
+      <li><strong style="color: #38bdf8;">Text + Video:</strong> Understand scenes, extract insights</li>
+      <li><strong style="color: #38bdf8;">Use Cases:</strong> Document analysis, accessibility, creative workflows</li>
+    </ul>
+  </section>
+
+  <!-- Slide 4: Multimodal Architecture Visual -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Multimodal AI Architecture</h2>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1764507785/search_images/698bfa76de638e4760823ca47f35bef2f5ab8e67.jpg" alt="Multimodal AI Framework" style="width: 70%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Text, image, audio inputs → Unified embeddings → Single model</p>
+  </section>
+
+  <!-- Slide 5: Leading Multimodal Models 2026 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Leading Multimodal Models (2026)</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">GPT-4V</h5>
+        <p style="color: #cbd5e1;">Broad image understanding, creative tasks, diverse data</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Claude 3.5</h5>
+        <p style="color: #cbd5e1;">Document analysis, PDFs, charts, technical precision</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.9rem;">
+        <h5 style="color: #38bdf8;">Gemini 2.0</h5>
+        <p style="color: #cbd5e1;">Native multimodal, real-time video, audio integration</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: GPT-4V Strengths -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">GPT-4V: Vision Capabilities</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Strength:</strong> Open-ended vision-language tasks</li>
+      <li><strong style="color: #38bdf8;">Use Cases:</strong> Image captioning, visual Q&amp;A, meme interpretation</li>
+      <li><strong style="color: #38bdf8;">API:</strong> OpenAI integration, straightforward for existing users</li>
+      <li><strong style="color: #38bdf8;">Limitation:</strong> Less precise in highly technical domains</li>
+    </ul>
+  </section>
+
+  <!-- Slide 7: Claude 3.5 Specialization -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Claude 3.5: Document Intelligence</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Specialization:</strong> Structured visual content (PDFs, charts)</li>
+      <li><strong style="color: #38bdf8;">Use Cases:</strong> Business docs, financial reports, technical diagrams</li>
+      <li><strong style="color: #38bdf8;">Precision:</strong> 77.2% SWE-bench Verified (coding + docs)</li>
+      <li><strong style="color: #38bdf8;">Trade-off:</strong> Less versatile for creative visual tasks</li>
+    </ul>
+  </section>
+
+  <!-- Slide 8: Gemini 2.0 Native Integration -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Gemini 2.0: Native Multimodal</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Architecture:</strong> Text, image, audio, video from ground up</li>
+      <li><strong style="color: #38bdf8;">Real-time:</strong> Process multimodal inputs during conversations</li>
+      <li><strong style="color: #38bdf8;">Context:</strong> 2M+ token window (longest in 2026)</li>
+      <li><strong style="color: #38bdf8;">Best For:</strong> Collaborative workflows, temporal understanding</li>
+    </ul>
+  </section>
+
+  <!-- Slide 9: What Is Context Engineering? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What Is Context Engineering?</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Crafting the Information Architecture of Prompts</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Definition:</strong> Designing how information is structured &amp; presented to LLMs</li>
+      <li><strong style="color: #38bdf8;">Goal:</strong> Clear intent, reduced ambiguity, better outputs</li>
+      <li><strong style="color: #38bdf8;">Components:</strong> System prompts, examples, constraints, formatting</li>
+    </ul>
+  </section>
+
+  <!-- Slide 10: Context Engineering Principles -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Core Principles</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Eliminate Ambiguity:</strong> Be explicit, not vague</li>
+      <li><strong style="color: #38bdf8;">Provide Examples:</strong> Few-shot learning (2-5 examples)</li>
+      <li><strong style="color: #38bdf8;">Structure Output:</strong> Specify format (JSON, Markdown, lists)</li>
+      <li><strong style="color: #38bdf8;">Set Boundaries:</strong> Define what NOT to do</li>
+    </ul>
+  </section>
+
+  <!-- Slide 11: Bad Prompt Example 1 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Bad Prompt Example #1</h2>
+    <div class="prompt-bad">
+      <p style="color: #fca5a5; font-weight: 600;">❌ Vague Request</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem;">Perform research on the given topic.</pre>
+    </div>
+    <p class="text-lg" style="color: #cbd5e1;"><strong style="color: #dc2626;">Problem:</strong> No clear steps, tools undefined, output format missing</p>
+  </section>
+
+  <!-- Slide 12: Good Prompt Example 1 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Good Prompt Example #1</h2>
+    <div class="prompt-good">
+      <p style="color: #86efac; font-weight: 600;">✅ Explicit Instructions</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem; font-size: 0.8rem;">Perform research on [TOPIC] by:
+1. Break query into 3-5 subtasks
+2. Execute web search for EACH subtask
+3. Document findings in task tracker
+4. Synthesize into comprehensive report</pre>
+    </div>
+  </section>
+
+  <!-- Slide 13: Bad Prompt Example 2 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Bad Prompt Example #2</h2>
+    <div class="prompt-bad">
+      <p style="color: #fca5a5; font-weight: 600;">❌ Underspecified Context</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem;">Write a function to process data.</pre>
+    </div>
+    <p class="text-lg" style="color: #cbd5e1;"><strong style="color: #dc2626;">Problem:</strong> No language, no input/output types, no error handling</p>
+  </section>
+
+  <!-- Slide 14: Good Prompt Example 2 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Good Prompt Example #2</h2>
+    <div class="prompt-good">
+      <p style="color: #86efac; font-weight: 600;">✅ Idiomatic Style Specified</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem; font-size: 0.75rem;">Write a Node.js Express middleware that:
+- Validates incoming JSON (req.body)
+- Checks for required fields: {name, email}
+- Returns 400 with error message if invalid
+- Uses async/await, includes JSDoc comments</pre>
+    </div>
+  </section>
+
+  <!-- Slide 15: Bad Prompt Example 3 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Bad Prompt Example #3</h2>
+    <div class="prompt-bad">
+      <p style="color: #fca5a5; font-weight: 600;">❌ Mixing Concerns</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem;">Summarize the article and also translate
+it to French and create a quiz.</pre>
+    </div>
+    <p class="text-lg" style="color: #cbd5e1;"><strong style="color: #dc2626;">Problem:</strong> Three unrelated tasks → model confused about priority</p>
+  </section>
+
+  <!-- Slide 16: Good Prompt Example 3 -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Good Prompt Example #3</h2>
+    <div class="prompt-good">
+      <p style="color: #86efac; font-weight: 600;">✅ Single Task Focus</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem; font-size: 0.85rem;">Summarize this article in 3 bullet points,
+focusing on key findings and methodology.
+Keep summary under 100 words.</pre>
+    </div>
+    <p class="text-sm mt-4" style="color: #94a3b8;">Then: Create separate prompts for translation and quiz generation</p>
+  </section>
+
+  <!-- Slide 17: System Prompts -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">System Prompts: Setting Agent Behavior</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Persistent Instructions Across Conversation</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Purpose:</strong> Define role, tone, constraints globally</li>
+      <li><strong style="color: #38bdf8;">Example:</strong> "You are a Python expert. Always use type hints."</li>
+      <li><strong style="color: #38bdf8;">Scope:</strong> Applies to all user messages in session</li>
+    </ul>
+  </section>
+
+  <!-- Slide 18: System Prompt Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">System Prompt Example</h2>
+    <div class="prompt-good">
+      <p style="color: #86efac; font-weight: 600;">✅ Agentic System Prompt</p>
+      <pre style="background: transparent; padding: 0; margin-top: 0.5rem; font-size: 0.7rem;">You are a senior Node.js developer assistant.
+- Use ES6+ syntax (const/let, arrow functions)
+- Always include error handling with try/catch
+- Prefer async/await over callbacks
+- Add JSDoc comments for all functions
+- Use Express.js best practices
+- Never use var keyword</pre>
+    </div>
+  </section>
+
+  <!-- Slide 19: Few-Shot Learning -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Few-Shot Learning: Teaching by Example</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">2-5 Examples = Powerful Pattern Recognition</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Zero-shot:</strong> No examples (relies on pretrained knowledge)</li>
+      <li><strong style="color: #38bdf8;">Few-shot:</strong> 2-5 input-output pairs guide behavior</li>
+      <li><strong style="color: #38bdf8;">Best Practice:</strong> Show diverse, canonical examples</li>
+    </ul>
+  </section>
+
+  <!-- Slide 20: Few-Shot Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Few-Shot Prompt Example</h2>
+    <div class="prompt-good" style="font-size: 0.8rem;">
+      <pre style="background: transparent; padding: 0;">Extract sentiment (positive/negative/neutral):
+
+Input: "I love this product!"
+Output: positive
+
+Input: "Terrible customer service."
+Output: negative
+
+Input: "Product arrived on time."
+Output: neutral
+
+Input: "Amazing quality, worth the price!"
+Output: ?</pre>
+    </div>
+  </section>
+
+  <!-- Slide 21: Structured Outputs -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Structured Outputs: JSON, Markdown, Tables</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">JSON:</strong> For API responses, structured data extraction</li>
+      <li><strong style="color: #38bdf8;">Markdown:</strong> For documentation, formatted text</li>
+      <li><strong style="color: #38bdf8;">Tables:</strong> For comparisons, data grids</li>
+      <li><strong style="color: #38bdf8;">Tip:</strong> Specify exact schema in prompt</li>
+    </ul>
+  </section>
+
+  <!-- Slide 22: Structured Output Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Structured Output Example</h2>
+    <div class="prompt-good" style="font-size: 0.75rem;">
+      <pre style="background: transparent; padding: 0;">Extract company info as JSON:
+
+Company: "OpenAI, founded 2015, SF, 
+CEO Sam Altman"
+
+Output format:
+{
+  "name": "string",
+  "founded": "number",
+  "location": "string",
+  "ceo": "string"
+}</pre>
+    </div>
+  </section>
+
+  <!-- Slide 23: Guardrails & Constraints -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Guardrails: What NOT to Do</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Negative Constraints:</strong> "Never include personal opinions"</li>
+      <li><strong style="color: #38bdf8;">Length Limits:</strong> "Keep response under 200 words"</li>
+      <li><strong style="color: #38bdf8;">Content Filters:</strong> "Avoid technical jargon, explain simply"</li>
+      <li><strong style="color: #38bdf8;">Safety:</strong> "Do not generate harmful or biased content"</li>
+    </ul>
+  </section>
+
+  <!-- Slide 24: Anti-Patterns to Avoid -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Prompt Engineering Anti-Patterns</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #dc2626;">❌ Vague asks:</strong> "Make it better" (no criteria)</li>
+      <li><strong style="color: #dc2626;">❌ Underspecified:</strong> Missing format, length, style</li>
+      <li><strong style="color: #dc2626;">❌ Mixing concerns:</strong> Multiple unrelated tasks</li>
+      <li><strong style="color: #dc2626;">❌ Edge case laundry list:</strong> Stuffing all exceptions</li>
+    </ul>
+  </section>
+
+  <!-- Slide 25: Context Window Management -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Managing Context Windows</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Your Working Memory Budget</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Problem:</strong> Long conversations = context overflow</li>
+      <li><strong style="color: #38bdf8;">Solution 1:</strong> Summarize and compress periodically</li>
+      <li><strong style="color: #38bdf8;">Solution 2:</strong> Use RAG to retrieve relevant chunks</li>
+      <li><strong style="color: #38bdf8;">Claude Code:</strong> Auto-compresses history + recent files</li>
+    </ul>
+  </section>
+
+  <!-- Slide 26: RAG for Context Extension -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">RAG: Retrieval-Augmented Generation</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Technique:</strong> Fetch relevant docs from vector DB</li>
+      <li><strong style="color: #38bdf8;">Insert:</strong> Top-k results into prompt context</li>
+      <li><strong style="color: #38bdf8;">Benefit:</strong> Grounded answers without retraining</li>
+      <li><strong style="color: #38bdf8;">Tools:</strong> LangChain, LlamaIndex, Chroma, FAISS</li>
+    </ul>
+  </section>
+
+  <!-- Slide 27: Key Takeaways -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key Takeaways</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Multimodal = Text + Image + Audio + Video (2026 standard)</li>
+      <li>Context engineering = Information architecture for prompts</li>
+      <li>Good prompts: Explicit, structured, example-driven</li>
+      <li>Avoid: Vague asks, mixed concerns, edge case overload</li>
+    </ul>
+  </section>
+
+  <!-- Slide 28: Hands-On Exercise -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h2 class="mb-8" style="color: #38bdf8;">Hands-On Exercise (15 min)</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">Transform a bad prompt into a good prompt</p>
+    <p class="text-lg mb-4" style="color: #cbd5e1;">Practice: Express route middleware generation</p>
+    <p class="text-sm mt-8" style="color: #94a3b8;">Repo: context-engineering-examples.md</p>
+  </section>
+
+</body>
+</html>

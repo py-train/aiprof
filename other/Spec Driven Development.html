@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spec-Driven Development - From Requirements to Production Code</title>
+  <style>
+    /* ========== THEME VARIABLES ========== */
+    :root {
+      --font-family-display: 'Segoe UI', Arial, sans-serif;
+      --font-weight-display: 700;
+      --font-family-content: 'Segoe UI', Arial, sans-serif;
+      --font-weight-content: 400;
+      --font-size-content: 16px;
+      --line-height-content: 1.5;
+    }
+
+    /* DARK THEME (DEFAULT) */
+    body.theme-dark {
+      --color-bg-base: #0f172a;
+      --color-bg-elevated: #020617;
+      --color-bg-surface: #1e293b;
+      --color-bg-muted: #334155;
+      --color-text-primary: #f1f5f9;
+      --color-text-secondary: #cbd5e1;
+      --color-text-muted: #94a3b8;
+      --color-text-accent: #38bdf8;
+      --color-primary: #38bdf8;
+      --color-primary-foreground: #0f172a;
+    }
+
+    /* ========== BASE STYLES ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-content);
+      font-weight: var(--font-weight-content);
+      font-size: var(--font-size-content);
+      line-height: var(--line-height-content);
+      overflow-x: hidden;
+    }
+
+    /* ========== SLIDE CONTAINER ========== */
+    .slide {
+      width: 960px;
+      height: 540px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== LAYOUT UTILITIES ========== */
+    .row { flex-direction: row; }
+    .col { flex-direction: column; }
+    .center {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .space-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .fill-width { flex: 1; }
+    .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+    /* ========== SPACING ========== */
+    .gap-sm { gap: 0.5rem; }
+    .gap-md { gap: 1rem; }
+    .gap-lg { gap: 1.5rem; }
+    .gap-xl { gap: 2rem; }
+
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .p-8 { padding: 2rem; }
+    .p-12 { padding: 3rem; }
+    .p-16 { padding: 4rem; }
+
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-8 { margin-bottom: 2rem; }
+
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-8 { margin-top: 2rem; }
+
+    /* ========== TYPOGRAPHY ========== */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-family-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+
+    .text-6xl { font-size: 3.75rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-base { font-size: 1rem; }
+    .text-sm { font-size: 0.875rem; }
+
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    /* ========== LISTS ========== */
+    ul, ol {
+      margin-left: 2rem;
+      line-height: 1.8;
+    }
+
+    ul li { list-style: disc; }
+    li { margin-bottom: 0.75rem; }
+    li:last-child { margin-bottom: 0; }
+
+    /* ========== CARDS ========== */
+    .card-rect {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ========== CODE BLOCKS ========== */
+    pre {
+      background-color: #1e293b;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      color: #38bdf8;
+    }
+
+    .highlight {
+      background-color: rgba(56, 189, 248, 0.2);
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+  <!-- Slide 1: Title Slide -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h1 class="text-6xl mb-4" style="color: #38bdf8;">Spec-Driven Development</h1>
+    <p class="text-2xl mb-8" style="color: #cbd5e1;">From Requirements to Production Code with AI</p>
+    <p class="text-sm" style="color: #94a3b8;">Agentic AI for Developers • Feb 7, 2026 • Day 2 Session</p>
+  </section>
+
+  <!-- Slide 2: Module Agenda -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Module Agenda</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>What is Spec-Driven Development?</li>
+      <li>The SDD Workflow: Spec → Plan → Tasks</li>
+      <li>Kiro: AWS Spec-Driven AI IDE</li>
+      <li>VS Code Spec Kit: Open Source Toolkit</li>
+    </ul>
+  </section>
+
+  <!-- Slide 3: The Problem with "Vibe Coding" -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">The Problem with "Vibe Coding"</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Why AI Agents Need Structure</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Context Loss:</strong> AI forgets what you asked for</li>
+      <li><strong style="color: #38bdf8;">Drift:</strong> Implementation diverges from intent</li>
+      <li><strong style="color: #38bdf8;">Rework:</strong> Built wrong, rebuild from scratch</li>
+    </ul>
+  </section>
+
+  <!-- Slide 4: What is Spec-Driven Development? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What is Spec-Driven Development?</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">Executable specifications become the single source of truth that AI agents convert into working code, tests, and documentation.</p>
+    <p class="text-lg" style="color: #cbd5e1;">Clear specs → Better AI output → Fewer iterations</p>
+  </section>
+
+  <!-- Slide 5: SDD Three-Phase Workflow -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">The SDD Workflow</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">1. Specification</h5>
+        <p style="color: #cbd5e1;">Clear requirements, acceptance criteria, data models</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">2. Planning</h5>
+        <p style="color: #cbd5e1;">Technical design, architecture, dependencies</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">3. Tasks</h5>
+        <p style="color: #cbd5e1;">Phased implementation steps</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Benefits of SDD -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Why Spec-Driven Development Works</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Clarity:</strong> AI knows what to build and why</li>
+      <li><strong style="color: #38bdf8;">Traceability:</strong> Code links back to requirements</li>
+      <li><strong style="color: #38bdf8;">Quality:</strong> Fewer bugs from misunderstanding</li>
+      <li><strong style="color: #38bdf8;">Docs:</strong> Specs stay current with code</li>
+    </ul>
+  </section>
+
+  <!-- Slide 7: Phase 1 - Specification -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Phase 1: Specification</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">What to Include</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>User stories with acceptance criteria</li>
+      <li>API contracts and data schemas</li>
+      <li>Edge cases and constraints</li>
+      <li>Non-functional requirements (perf, security)</li>
+    </ul>
+  </section>
+
+  <!-- Slide 8: Good vs Bad Specs -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Good Spec vs Bad Spec</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.8rem;">
+        <h5 style="color: #ef4444;">❌ Bad Spec</h5>
+        <p style="color: #cbd5e1;">"Build a user auth system"</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.8rem;">
+        <h5 style="color: #22c55e;">✅ Good Spec</h5>
+        <p style="color: #cbd5e1;">"JWT-based auth with email/password, OAuth (Google), 2FA optional, session timeout 24h"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Phase 2 - Planning -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Phase 2: Technical Planning</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Architecture &amp; Design Decisions</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Tech stack selection (frameworks, libraries)</li>
+      <li>Database schema and relationships</li>
+      <li>Service boundaries and APIs</li>
+      <li>Deployment and infrastructure</li>
+    </ul>
+  </section>
+
+  <!-- Slide 10: Phase 3 - Tasks -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Phase 3: Task Breakdown</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Implementable Chunks</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Break plan into ordered, testable tasks</li>
+      <li>Each task links to spec requirements</li>
+      <li>Clear success criteria per task</li>
+      <li>AI can implement tasks autonomously</li>
+    </ul>
+  </section>
+
+  <!-- Slide 11: Introducing Kiro -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Introducing Kiro</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">AWS Agentic AI IDE with Built-In Spec Mode</p>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1738896729/user_uploads/hfvdslpkr/image.jpg" alt="Kiro IDE" style="width: 60%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+  </section>
+
+  <!-- Slide 12: What is Kiro? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What is Kiro?</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">AI-Native IDE:</strong> Built by AWS for agentic workflows</li>
+      <li><strong style="color: #38bdf8;">Spec Mode:</strong> Integrated spec-driven development</li>
+      <li><strong style="color: #38bdf8;">Codebase Understanding:</strong> Full repo context</li>
+      <li><strong style="color: #38bdf8;">Automated Testing:</strong> Generate &amp; run tests</li>
+    </ul>
+  </section>
+
+  <!-- Slide 13: Kiro Spec Mode Workflow -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Kiro Spec Mode Workflow</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">1. Requirements:</strong> Describe feature in natural language</li>
+      <li><strong style="color: #38bdf8;">2. Design Doc:</strong> Kiro generates high-level design</li>
+      <li><strong style="color: #38bdf8;">3. Review:</strong> Refine specs with AI assistance</li>
+      <li><strong style="color: #38bdf8;">4. Implement:</strong> Kiro generates code from specs</li>
+    </ul>
+  </section>
+
+  <!-- Slide 14: Kiro Example - Requirements -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Kiro: Writing Requirements</h2>
+    <pre style="font-size: 0.7rem;"><code>User Story:
+As a user, I want to upload files and have them chunked 
+automatically so I can process large files efficiently.
+
+Acceptance Criteria:
+- Support file upload via drag-and-drop
+- Chunk files into 5MB segments
+- Display progress bar during processing
+- Generate downloadable chunks as .zip
+- Handle errors gracefully with user feedback</code></pre>
+    <p class="text-sm mt-4" style="color: #94a3b8;">Kiro converts this into structured design doc</p>
+  </section>
+
+  <!-- Slide 15: Kiro Example - Design Doc -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Kiro: Generated Design Doc</h2>
+    <pre style="font-size: 0.68rem;"><code>## Architecture
+- Frontend: React with drag-and-drop library
+- Backend: Node.js Express API
+- Storage: S3 for temporary file storage
+
+## Components
+1. FileUploader (React component)
+2. ChunkingService (backend service)
+3. ProgressTracker (WebSocket for real-time updates)
+
+## Implementation Plan
+Phase 1: Frontend upload UI
+Phase 2: Backend chunking logic
+Phase 3: Progress tracking & download</code></pre>
+  </section>
+
+  <!-- Slide 16: Kiro Iterative Refinement -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Kiro: Iterative Spec Refinement</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">Chat with Kiro to clarify and refine specs</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>"What if user uploads non-text files?"</li>
+      <li>"Should we support custom chunk sizes?"</li>
+      <li>"How to handle network failures mid-upload?"</li>
+    </ul>
+  </section>
+
+  <!-- Slide 17: Kiro Code Generation -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Kiro: From Spec to Code</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Implementation Phase</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Kiro generates complete components</li>
+      <li>Writes unit tests automatically</li>
+      <li>Runs tests in live browser (Playwright)</li>
+      <li>Fixes bugs based on test failures</li>
+    </ul>
+  </section>
+
+  <!-- Slide 18: Kiro Best Practices -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Kiro Best Practices</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Be Specific:</strong> Detailed specs = better code</li>
+      <li><strong style="color: #38bdf8;">Iterate on Specs:</strong> Refine before coding</li>
+      <li><strong style="color: #38bdf8;">Use Examples:</strong> Show what "good" looks like</li>
+      <li><strong style="color: #38bdf8;">Review Output:</strong> Verify generated code</li>
+    </ul>
+  </section>
+
+  <!-- Slide 19: VS Code Spec Kit -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">VS Code Spec Kit</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">Open Source SDD Toolkit for Any AI Assistant</p>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1738896768/user_uploads/gjrbgqzfi/image.jpg" alt="VS Code Spec Kit" style="width: 60%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+  </section>
+
+  <!-- Slide 20: What is Spec Kit? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What is Spec Kit?</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">GitHub Project:</strong> Open source SDD toolkit</li>
+      <li><strong style="color: #38bdf8;">VS Code Extension:</strong> SpecKit Companion</li>
+      <li><strong style="color: #38bdf8;">AI-Agnostic:</strong> Works with Copilot, Cursor, Cody</li>
+      <li><strong style="color: #38bdf8;">Slash Commands:</strong> /specify, /plan, /tasks</li>
+    </ul>
+  </section>
+
+  <!-- Slide 21: Spec Kit Workflow -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Spec Kit Workflow</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">/specify</h5>
+        <p style="color: #cbd5e1;">Create specification document</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">/plan</h5>
+        <p style="color: #cbd5e1;">Generate technical plan</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">/tasks</h5>
+        <p style="color: #cbd5e1;">Break into implementation tasks</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 22: Spec Kit - /specify Command -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Spec Kit: /specify Command</h2>
+    <pre style="font-size: 0.75rem;"><code>You: /specify
+Build a file upload and chunking utility
+
+AI generates spec.md:
+# File Chunking Utility
+
+## Overview
+Web-based tool for splitting large files into chunks
+
+## Requirements
+- Drag-and-drop upload interface
+- Configurable chunk size (1MB-10MB)
+- Progress visualization
+- Download chunks as .zip
+
+## Constraints
+- Max file size: 100MB
+- Browser-based (no server upload)</code></pre>
+  </section>
+
+  <!-- Slide 23: Spec Kit - /plan Command -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Spec Kit: /plan Command</h2>
+    <pre style="font-size: 0.7rem;"><code>You: /plan
+
+AI generates plan.md from spec.md:
+# Technical Plan
+
+## Architecture
+- SPA: React + TypeScript
+- File handling: FileReader API
+- Chunking: Blob.slice()
+- Compression: JSZip library
+
+## File Structure
+src/
+  components/
+    FileUploader.tsx
+    ChunkProgress.tsx
+  utils/
+    chunker.ts
+    zipper.ts</code></pre>
+  </section>
+
+  <!-- Slide 24: Spec Kit - /tasks Command -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Spec Kit: /tasks Command</h2>
+    <pre style="font-size: 0.7rem;"><code>You: /tasks
+
+AI generates tasks.md:
+# Implementation Tasks
+
+## Phase 1: Setup
+- [ ] Initialize React + TypeScript project
+- [ ] Install dependencies (JSZip)
+
+## Phase 2: Upload UI
+- [ ] Create FileUploader component
+- [ ] Implement drag-and-drop
+
+## Phase 3: Chunking
+- [ ] Implement chunker utility
+- [ ] Add progress tracking
+
+## Phase 4: Download
+- [ ] Implement zip generation</code></pre>
+  </section>
+
+  <!-- Slide 25: Spec Kit AI Integration -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Spec Kit: AI Assistant Integration</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Works with Multiple AI Tools</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">GitHub Copilot:</strong> Native VS Code integration</li>
+      <li><strong style="color: #38bdf8;">Cursor:</strong> AI-first editor</li>
+      <li><strong style="color: #38bdf8;">Cody:</strong> Sourcegraph AI assistant</li>
+    </ul>
+  </section>
+
+  <!-- Slide 26: Kiro vs Spec Kit -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Kiro vs Spec Kit</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.8rem;">
+        <h5 style="color: #38bdf8;">Kiro</h5>
+        <p style="color: #cbd5e1;">All-in-one IDE, AWS-powered, live testing, proprietary</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.8rem;">
+        <h5 style="color: #38bdf8;">Spec Kit</h5>
+        <p style="color: #cbd5e1;">Open source, works with any AI, VS Code extension, flexible</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 27: Real-World SDD Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Real-World Example: E-Commerce Checkout</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Spec:</strong> Payment flow with Stripe, 3 steps, mobile-first</li>
+      <li><strong style="color: #38bdf8;">Plan:</strong> React components, Stripe SDK, state machine</li>
+      <li><strong style="color: #38bdf8;">Tasks:</strong> Cart validation → Payment form → Confirmation</li>
+      <li><strong style="color: #38bdf8;">Result:</strong> Built in 6 hours with AI assistance</li>
+    </ul>
+  </section>
+
+  <!-- Slide 28: SDD Benefits Summary -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">SDD Benefits: By the Numbers</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">50% Faster</h5>
+        <p style="color: #cbd5e1;">Feature delivery time</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">70% Fewer Bugs</h5>
+        <p style="color: #cbd5e1;">From misunderstandings</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Always Current</h5>
+        <p style="color: #cbd5e1;">Docs stay in sync</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 29: When to Use SDD -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">When to Use Spec-Driven Development</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Complex Features:</strong> Multi-step workflows</li>
+      <li><strong style="color: #38bdf8;">Team Projects:</strong> Multiple developers</li>
+      <li><strong style="color: #38bdf8;">Client Work:</strong> Frequent requirement changes</li>
+      <li><strong style="color: #38bdf8;">Production Code:</strong> Quality and maintainability matter</li>
+    </ul>
+  </section>
+
+  <!-- Slide 30: Hands-On Lab Preview -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Hands-On Lab: Spec-Driven Feature</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">What You'll Build</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Write specs for a task management feature</li>
+      <li>Generate plan using Kiro or Spec Kit</li>
+      <li>Break into implementation tasks</li>
+      <li>Generate code with AI assistant</li>
+    </ul>
+  </section>
+
+  <!-- Slide 31: Key Takeaways -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key Takeaways</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>SDD = Spec → Plan → Tasks for AI clarity</li>
+      <li>Kiro: AWS integrated spec-driven IDE</li>
+      <li>Spec Kit: Open source toolkit for VS Code</li>
+      <li>Clear specs lead to better code, faster</li>
+    </ul>
+  </section>
+
+  <!-- Slide 32: Thank You -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h2 class="mb-8" style="color: #38bdf8;">Ready to Spec-Drive Your Development?</h2>
+    <p class="text-xl mb-6" style="color: #cbd5e1;">Let's build with clarity and precision!</p>
+    <p class="text-sm" style="color: #94a3b8;">Next: Hands-On Spec-Driven Development Lab</p>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generative & Agentic AI – Flashcard Glossary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* ========== THEME ========== */
+    :root {
+      --bg-base: #020617;
+      --bg-surface: #0f172a;
+      --bg-card: #1e293b;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.2);
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --danger: #dc2626;
+      --success: #22c55e;
+      --radius-lg: 12px;
+      --shadow-soft: 0 16px 40px rgba(15, 23, 42, 0.8);
+      --font-display: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #0f172a, #020617 60%);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem 3rem;
+    }
+
+    /* ========== HEADER ========== */
+    .page-header {
+      max-width: 960px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+    }
+
+    .page-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    /* ========== GRID LAYOUT ========== */
+    .card-grid {
+      max-width: 1100px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    /* ========== FLASH CARD ========== */
+    .flashcard {
+      perspective: 1200px;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .flashcard.flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      padding: 1.25rem 1.25rem 1rem;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(
+        145deg,
+        rgba(15, 23, 42, 0.98),
+        rgba(15, 23, 42, 0.98)
+      );
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: var(--shadow-soft);
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .flashcard-face.front {
+      background: radial-gradient(circle at top, rgba(56,189,248,0.12), #020617);
+    }
+
+    .flashcard-face.back {
+      transform: rotateY(180deg);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .card-tag {
+      font-size: 0.65rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .card-body {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    .card-body p + p {
+      margin-top: 0.35rem;
+    }
+
+    .card-analogy {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-left: 2px solid var(--accent-soft);
+      padding-left: 0.4rem;
+      margin-top: 0.3rem;
+    }
+
+    .card-visual {
+      font-family: "Courier New", monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 6px;
+      padding: 0.4rem 0.45rem;
+      margin-top: 0.45rem;
+      border: 1px solid rgba(15, 23, 42, 0.9);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .flip-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-align: right;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      margin-right: 4px;
+      background: var(--accent);
+    }
+
+    @media (max-width: 600px) {
+      .flashcard-inner {
+        height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <h1 class="page-title">Generative &amp; Agentic AI – Flashcard Glossary</h1>
+    <p class="page-subtitle">Tap a card to flip. Designed for quick conceptual recall.</p>
+    <p class="page-meta">Agentic AI for Developers • 2026</p>
+  </header>
+
+  <section class="card-grid">
+
+    <!-- 1. Artificial Intelligence -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Artificial Intelligence (AI)</h2>
+            <span class="card-tag">Basics</span>
+          </div>
+          <div class="card-body">
+            <p>Machines performing tasks that normally need human-like thinking.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Artificial Intelligence (AI)</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Systems that sense, decide, and act using learned patterns rather than hard-coded rules.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A tireless intern that follows patterns to help with decisions.</p>
+            <div class="card-visual">Input ──► [ AI System ] ──► Output</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 1</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 2. Machine Learning -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Machine Learning (ML)</h2>
+            <span class="card-tag">Basics</span>
+          </div>
+          <div class="card-body">
+            <p>Building AI by learning from examples instead of explicit rules.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Machine Learning (ML)</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Models learn patterns from data and use them to make predictions on new inputs.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Teaching by showing many solved problems, not by explaining formulas.</p>
+            <div class="card-visual">Labeled data ──► [ Learn patterns ] ──► Model</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 1</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 3. Generative AI -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Generative AI</h2>
+            <span class="card-tag">Basics</span>
+          </div>
+          <div class="card-body">
+            <p>Models that can create new text, images, code, or audio.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Generative AI</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Instead of just classifying, they produce original content consistent with what they’ve learned.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A jazz musician improvising new melodies in a familiar style.</p>
+            <div class="card-visual">Prompt ──► [ Generative Model ] ──► New content</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 1</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 4. Large Language Model -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Large Language Model (LLM)</h2>
+            <span class="card-tag">Core</span>
+          </div>
+          <div class="card-body">
+            <p>Huge text models that predict the next token to produce fluent language.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Large Language Model (LLM)</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Trained on massive corpora, they can answer questions, write code, and reason-like by pattern matching.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A super‑autocomplete that has read most of the internet.</p>
+            <div class="card-visual">"Once upon a" ──► [ LLM ] ──► "time..."</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 1–2</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 5. Token -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Token</h2>
+            <span class="card-tag">Core</span>
+          </div>
+          <div class="card-body">
+            <p>The basic text unit an LLM reads (word or piece of word).</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Token</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Models count tokens to manage cost and context, not human words.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Like syllables for the model.</p>
+            <div class="card-visual">"developer" → "de" | "velop" | "er"</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 2</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 6. Prompt -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Prompt</h2>
+            <span class="card-tag">Core</span>
+          </div>
+          <div class="card-body">
+            <p>The instructions and context you send to the model.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Prompt</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Good prompts define role, goal, constraints, and format clearly.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A high‑quality brief to a consultant.</p>
+            <div class="card-visual">User message ──► [ Model ] ──► Response</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 2</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 7. Context Window -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Context Window</h2>
+            <span class="card-tag">Core</span>
+          </div>
+          <div class="card-body">
+            <p>The limited span of tokens the model can see at one time.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Context Window</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Everything outside this window is effectively forgotten for the current response.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> The visible part of a whiteboard; old notes are erased when space runs out.</p>
+            <div class="card-visual">[ Old history ] [ Visible context window ]</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 2</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 8. Embedding -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Embedding</h2>
+            <span class="card-tag">RAG</span>
+          </div>
+          <div class="card-body">
+            <p>A numeric vector representing the meaning of text (or other data).</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Embedding</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Similar meanings map to nearby points in a high‑dimensional space.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Stars in a galaxy: similar ideas cluster together.</p>
+            <div class="card-visual">"dog"  → ●     "puppy" → ●   (close together)</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 2–3</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 9. Vector Space -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Vector Space</h2>
+            <span class="card-tag">RAG</span>
+          </div>
+          <div class="card-body">
+            <p>The multi-dimensional map where embeddings live and distances mean similarity.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Vector Space</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>A coordinate system where nearby points represent related content.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A map of ideas instead of locations.</p>
+            <div class="card-visual">Clusters of ●●● = related topics</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 10. Vector Database -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Vector Database</h2>
+            <span class="card-tag">RAG</span>
+          </div>
+          <div class="card-body">
+            <p>A database built to store embeddings and do fast similarity search.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Vector Database</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Given an embedding, it returns the most similar stored vectors (e.g., document chunks).</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A library that finds “books with a similar vibe.”</p>
+            <div class="card-visual">Query vector ──► [ Vector DB ] ──► Top‑K neighbors</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 11. Cosine Similarity -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Cosine Similarity</h2>
+            <span class="card-tag">RAG</span>
+          </div>
+          <div class="card-body">
+            <p>A score based on the angle between two vectors (directional similarity).</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Cosine Similarity</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Measures how aligned two embeddings are, regardless of their length.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Comparing the orientation of two arrows from the same origin.</p>
+            <div class="card-visual">θ small → cos θ ≈ 1 (similar)\nθ 90° → cos θ = 0 (unrelated)</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3–4</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 12. Chunking -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Chunking</h2>
+            <span class="card-tag">RAG</span>
+          </div>
+          <div class="card-body">
+            <p>Splitting large documents into smaller pieces for embedding and retrieval.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Chunking</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Improves granularity so you retrieve just the relevant sections instead of whole files.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Tearing a book into chapters and sections for better filing.</p>
+            <div class="card-visual">Document → [Chunk 1][Chunk 2][Chunk 3]</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 13. RAG -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Retrieval‑Augmented Generation (RAG)</h2>
+            <span class="card-tag">RAG</span>
+          </div>
+          <div class="card-body">
+            <p>Combining retrieval from a knowledge base with LLM generation.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">RAG</h2>
+            <span class="card-tag">Pattern</span>
+          </div>
+          <div class="card-body">
+            <p>First fetch relevant chunks, then let the LLM answer using that context.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Looking up your notes before explaining the answer.</p>
+            <div class="card-visual">Question → Retrieve chunks → Build prompt → LLM answer</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3–4</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 14. Foundation Model -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Foundation Model</h2>
+            <span class="card-tag">Model</span>
+          </div>
+          <div class="card-body">
+            <p>A broad, general-purpose model used as a base for many tasks.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Foundation Model</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Pretrained on huge data, then adapted to chat, coding, search, and more.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A generalist PhD who can be quickly trained for specific jobs.</p>
+            <div class="card-visual">Base model → (Adapt) → Chatbot / Summarizer / Coder</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 15. Fine-Tuning -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Fine‑Tuning</h2>
+            <span class="card-tag">Model</span>
+          </div>
+          <div class="card-body">
+            <p>Further training a pretrained model on specialised data.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Fine‑Tuning</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Aligns the model with a specific domain or task (e.g., legal, medical).</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Giving a fluent speaker specialist training in contract law.</p>
+            <div class="card-visual">Base LLM + Domain data → Domain LLM</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 3–4</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 16. Instruction Tuning -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Instruction Tuning</h2>
+            <span class="card-tag">Model</span>
+          </div>
+          <div class="card-body">
+            <p>Training a model to better follow natural language instructions.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Instruction Tuning</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Makes the model behave more like a helpful assistant than a plain text predictor.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Teaching someone not just to talk, but to follow directions reliably.</p>
+            <div class="card-visual">(Instruction, Input) → Desired Output pairs</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 4</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 17. Multimodal LLM -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Multimodal LLM</h2>
+            <span class="card-tag">Agents</span>
+          </div>
+          <div class="card-body">
+            <p>A model that understands text plus images, audio, or video together.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Multimodal LLM</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Can reason across different input types in one consistent context.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A colleague who can read your email, screenshot, and voice note together.</p>
+            <div class="card-visual">[Text + Image] → [ Model ] → Answer</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 4</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 18. Tool / Function Calling -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Tool / Function Calling</h2>
+            <span class="card-tag">Agents</span>
+          </div>
+          <div class="card-body">
+            <p>Letting the model call external tools and APIs in structured form.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Tool / Function Calling</h2>
+            <span class="card-tag">Pattern</span>
+          </div>
+          <div class="card-body">
+            <p>The model decides when to invoke tools and passes arguments as JSON-like payloads.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> An assistant that says “I’ll query the database” and actually does so.</p>
+            <div class="card-visual">LLM → {"tool": "getUser", "args": {"id": 42}}</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 4–5</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 19. AI Agent -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">AI Agent</h2>
+            <span class="card-tag">Agents</span>
+          </div>
+          <div class="card-body">
+            <p>An LLM-powered system that loops: observe → think → act, towards a goal.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">AI Agent</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Uses tools and memory, not just single-turn answers.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> A junior engineer who plans steps, executes them, and reports back.</p>
+            <div class="card-visual">State → Reason → Act → New state → …</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 5</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 20. Agentic AI -->
+    <article class="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-face front">
+          <div class="card-header">
+            <h2 class="card-title">Agentic AI</h2>
+            <span class="card-tag">Agents</span>
+          </div>
+          <div class="card-body">
+            <p>The broader approach of building goal-directed, tool-using AI systems.</p>
+          </div>
+          <div class="card-footer">
+            <span><span class="dot"></span>Click to flip</span>
+          </div>
+        </div>
+        <div class="flashcard-face back">
+          <div class="card-header">
+            <h2 class="card-title">Agentic AI</h2>
+            <span class="card-tag">Concept</span>
+          </div>
+          <div class="card-body">
+            <p>Focuses on autonomy, planning, and reliable action loops instead of just single responses.</p>
+            <p class="card-analogy"><strong>Analogy:</strong> Moving from a calculator to a proactive teammate that can manage tasks.</p>
+            <div class="card-visual">Goal → Plan → Use tools → Refine → Deliver</div>
+          </div>
+          <div class="card-footer">
+            <span>Level 5</span>
+            <span class="flip-hint">Tap again to flip back</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <script>
+    // Simple click-to-flip behavior
+    document.querySelectorAll(".flashcard").forEach(card => {
+      card.addEventListener("click", () => {
+        card.classList.toggle("flipped");
+      });
+    });
+  </script>
+</body>
+</html>

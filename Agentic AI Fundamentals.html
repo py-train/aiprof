@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic AI Fundamentals - From Concepts to Implementation</title>
+  <style>
+    /* ========== THEME VARIABLES ========== */
+    :root {
+      --font-family-display: 'Segoe UI', Arial, sans-serif;
+      --font-weight-display: 700;
+      --font-family-content: 'Segoe UI', Arial, sans-serif;
+      --font-weight-content: 400;
+      --font-size-content: 16px;
+      --line-height-content: 1.5;
+    }
+
+    /* DARK THEME (DEFAULT) */
+    body.theme-dark {
+      --color-bg-base: #0f172a;
+      --color-bg-elevated: #020617;
+      --color-bg-surface: #1e293b;
+      --color-bg-muted: #334155;
+      --color-text-primary: #f1f5f9;
+      --color-text-secondary: #cbd5e1;
+      --color-text-muted: #94a3b8;
+      --color-text-accent: #38bdf8;
+      --color-primary: #38bdf8;
+      --color-primary-foreground: #0f172a;
+    }
+
+    /* ========== BASE STYLES ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family-content);
+      font-weight: var(--font-weight-content);
+      font-size: var(--font-size-content);
+      line-height: var(--line-height-content);
+      overflow-x: hidden;
+    }
+
+    /* ========== SLIDE CONTAINER ========== */
+    .slide {
+      width: 960px;
+      height: 540px;
+      margin: 0 auto 20px;
+      display: flex;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== LAYOUT UTILITIES ========== */
+    .row { flex-direction: row; }
+    .col { flex-direction: column; }
+    .center {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .space-between { justify-content: space-between; }
+    .items-center { align-items: center; }
+    .items-start { align-items: flex-start; }
+    .fill-width { flex: 1; }
+    .fill-height { flex: 1; display: flex; flex-direction: column; }
+
+    /* ========== SPACING ========== */
+    .gap-sm { gap: 0.5rem; }
+    .gap-md { gap: 1rem; }
+    .gap-lg { gap: 1.5rem; }
+    .gap-xl { gap: 2rem; }
+
+    .p-4 { padding: 1rem; }
+    .p-6 { padding: 1.5rem; }
+    .p-8 { padding: 2rem; }
+    .p-12 { padding: 3rem; }
+    .p-16 { padding: 4rem; }
+
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-8 { margin-bottom: 2rem; }
+
+    .mt-4 { margin-top: 1rem; }
+    .mt-6 { margin-top: 1.5rem; }
+    .mt-8 { margin-top: 2rem; }
+
+    /* ========== TYPOGRAPHY ========== */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-family-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.25rem; }
+    h3 { font-size: 1.75rem; }
+    h4 { font-size: 1.5rem; }
+    h5 { font-size: 1.25rem; }
+
+    .text-6xl { font-size: 3.75rem; }
+    .text-5xl { font-size: 3rem; }
+    .text-4xl { font-size: 2.25rem; }
+    .text-3xl { font-size: 1.875rem; }
+    .text-2xl { font-size: 1.5rem; }
+    .text-xl { font-size: 1.25rem; }
+    .text-lg { font-size: 1.125rem; }
+    .text-base { font-size: 1rem; }
+    .text-sm { font-size: 0.875rem; }
+
+    .font-bold { font-weight: 700; }
+    .font-semibold { font-weight: 600; }
+
+    .text-center { text-align: center; }
+    .text-left { text-align: left; }
+
+    /* ========== LISTS ========== */
+    ul, ol {
+      margin-left: 2rem;
+      line-height: 1.8;
+    }
+
+    ul li { list-style: disc; }
+    li { margin-bottom: 0.75rem; }
+    li:last-child { margin-bottom: 0; }
+
+    /* ========== CARDS ========== */
+    .card-rect {
+      padding: 1.5rem;
+      border-radius: 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ========== CODE BLOCKS ========== */
+    pre {
+      background-color: #1e293b;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: #cbd5e1;
+      margin: 0;
+    }
+
+    code {
+      font-family: 'Courier New', monospace;
+      color: #38bdf8;
+    }
+
+    .highlight {
+      background-color: rgba(56, 189, 248, 0.2);
+      padding: 0.1rem 0.3rem;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="theme-dark">
+
+  <!-- Slide 1: Title Slide -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h1 class="text-6xl mb-4" style="color: #38bdf8;">Agentic AI Fundamentals</h1>
+    <p class="text-2xl mb-8" style="color: #cbd5e1;">From Concepts to Implementation</p>
+    <p class="text-sm" style="color: #94a3b8;">Agentic AI for Developers • Feb 7, 2026 • Day 2 Session</p>
+  </section>
+
+  <!-- Slide 2: Module Agenda -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Module Agenda</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>What is Agentic AI? Core Concepts</li>
+      <li>Agent Architecture &amp; Components</li>
+      <li>The Agent Loop: Perceive → Reason → Act</li>
+      <li>Agent Patterns: ReAct, Reflection, Planning</li>
+    </ul>
+  </section>
+
+  <!-- Slide 3: Traditional AI vs Agentic AI -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Traditional AI vs Agentic AI</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Traditional AI</h5>
+        <p style="color: #cbd5e1;">Single-turn responses, no memory, task-specific</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Agentic AI</h5>
+        <p style="color: #cbd5e1;">Goal-oriented, autonomous, multi-step reasoning</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: What is Agentic AI? -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">What is Agentic AI?</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Autonomous Systems That Pursue Goals</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Autonomy:</strong> Operate with minimal human oversight</li>
+      <li><strong style="color: #38bdf8;">Goal-Oriented:</strong> Pursue specific objectives</li>
+      <li><strong style="color: #38bdf8;">Adaptive:</strong> Learn and adjust from feedback</li>
+      <li><strong style="color: #38bdf8;">Tool Use:</strong> Call APIs, search, execute code</li>
+    </ul>
+  </section>
+
+  <!-- Slide 5: Key Characteristics -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key Characteristics of AI Agents</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Planning:</strong> Break complex tasks into subtasks</li>
+      <li><strong style="color: #38bdf8;">Reasoning:</strong> Evaluate options and consequences</li>
+      <li><strong style="color: #38bdf8;">Memory:</strong> Retain context across interactions</li>
+      <li><strong style="color: #38bdf8;">Reflection:</strong> Self-critique and improve</li>
+    </ul>
+  </section>
+
+  <!-- Slide 6: Real-World Agent Examples -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Real-World Agent Examples</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Customer Support</h5>
+        <p style="color: #cbd5e1;">Query KB, escalate tickets, track resolution</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Code Assistant</h5>
+        <p style="color: #cbd5e1;">Read codebase, propose fixes, run tests</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Research Agent</h5>
+        <p style="color: #cbd5e1;">Search web, synthesize findings, cite sources</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Agent Architecture Overview -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agent Architecture Components</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">The Building Blocks</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">LLM Brain:</strong> Core reasoning engine (GPT-4, Claude)</li>
+      <li><strong style="color: #38bdf8;">Tools/Actions:</strong> Functions agent can call</li>
+      <li><strong style="color: #38bdf8;">Memory:</strong> Short-term (chat) + long-term (vector DB)</li>
+      <li><strong style="color: #38bdf8;">Orchestrator:</strong> Coordinates loop execution</li>
+    </ul>
+  </section>
+
+  <!-- Slide 8: The Agent Loop -->
+  <section class="slide p-16 col center" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">The Agent Loop</h2>
+    <p class="text-xl mb-4" style="color: #cbd5e1;">Perceive → Reason → Act → Observe</p>
+    <img src="https://pplx-res.cloudinary.com/image/upload/v1738868633/user_uploads/igjyusjrh/image.jpg" alt="Agent Loop" style="width: 60%; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);">
+    <p class="text-sm mt-4" style="color: #94a3b8;">Continuous cycle until goal achieved</p>
+  </section>
+
+  <!-- Slide 9: Perception -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 1: Perception</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Understanding the Environment</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Receive user query or system state</li>
+      <li>Load relevant context from memory</li>
+      <li>Gather available tool/action options</li>
+      <li>Build current state representation</li>
+    </ul>
+  </section>
+
+  <!-- Slide 10: Reasoning -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 2: Reasoning</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Deciding What to Do Next</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>LLM evaluates current state and goal</li>
+      <li>Considers which tool to use (if any)</li>
+      <li>Plans next action with arguments</li>
+      <li>May generate intermediate "thoughts"</li>
+    </ul>
+  </section>
+
+  <!-- Slide 11: Action -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 3: Action</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Executing Decisions</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Call selected tool with parameters</li>
+      <li>Execute function (API call, DB query, search)</li>
+      <li>Or: return final answer to user</li>
+    </ul>
+  </section>
+
+  <!-- Slide 12: Observation -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Step 4: Observation</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Learning from Results</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Receive tool output or error</li>
+      <li>Add observation to agent's context</li>
+      <li>Decide: loop again or finish?</li>
+      <li>Update memory with new information</li>
+    </ul>
+  </section>
+
+  <!-- Slide 13: Agent Loop Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Agent Loop in Action</h2>
+    <pre style="font-size: 0.75rem;"><code>User: "Book a flight to NYC for next Monday"
+
+Cycle 1:
+  Reason: Need to search flights
+  Act: search_flights(destination="NYC", date="2026-02-10")
+  Observe: Found 3 options, prices $200-$350
+
+Cycle 2:
+  Reason: Ask user preference or pick cheapest
+  Act: ask_user("3 flights found. Cheapest at $200?")
+  Observe: User says "yes"
+
+Cycle 3:
+  Reason: Book the flight
+  Act: book_flight(flight_id="AA123", price=200)
+  Observe: Booking confirmed, ID=XYZ789
+  
+Final: "Flight booked! Confirmation: XYZ789"</code></pre>
+  </section>
+
+  <!-- Slide 14: Tool/Function Calling -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Tool/Function Calling</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">How Agents Use External Capabilities</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Define tools with name, description, parameters</li>
+      <li>LLM decides when to call which tool</li>
+      <li>Returns structured JSON with function + args</li>
+      <li>Orchestrator executes and returns result</li>
+    </ul>
+  </section>
+
+  <!-- Slide 15: Tool Definition Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Tool Definition Example</h2>
+    <pre style="font-size: 0.75rem;"><code>tools = [
+  {
+    "name": "search_web",
+    "description": "Search the web for current information",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query"
+        }
+      },
+      "required": ["query"]
+    }
+  }
+]
+
+# LLM output:
+{
+  "tool": "search_web",
+  "arguments": {"query": "2026 AI trends"}
+}</code></pre>
+  </section>
+
+  <!-- Slide 16: Agent Memory Types -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agent Memory Systems</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Short-Term</h5>
+        <p style="color: #cbd5e1;">Current conversation, recent actions</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Long-Term</h5>
+        <p style="color: #cbd5e1;">Vector DB, past sessions, user prefs</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Working Memory</h5>
+        <p style="color: #cbd5e1;">Scratchpad for multi-step tasks</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 17: ReAct Pattern -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agent Pattern: ReAct</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Reason + Act Framework</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Thought:</strong> Agent explains its reasoning</li>
+      <li><strong style="color: #38bdf8;">Action:</strong> Tool call with arguments</li>
+      <li><strong style="color: #38bdf8;">Observation:</strong> Tool result</li>
+      <li>Loop continues with explicit reasoning traces</li>
+    </ul>
+  </section>
+
+  <!-- Slide 18: ReAct Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">ReAct Example</h2>
+    <pre style="font-size: 0.7rem;"><code>Question: "What's the weather in Tokyo?"
+
+Thought: I need to search for current weather in Tokyo.
+Action: search_web("Tokyo weather today")
+Observation: Partly cloudy, 15°C, humidity 60%
+
+Thought: I have the weather data, can answer now.
+Action: Final Answer
+Answer: "Tokyo is currently partly cloudy at 15°C 
+         with 60% humidity."</code></pre>
+    <p class="text-sm mt-4" style="color: #94a3b8;">Explicit reasoning makes debugging easier</p>
+  </section>
+
+  <!-- Slide 19: Reflection Pattern -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agent Pattern: Reflection</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Self-Critique &amp; Improvement</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Agent generates initial answer</li>
+      <li>Reflects: "Is this correct? Complete?"</li>
+      <li>Identifies weaknesses or gaps</li>
+      <li>Iterates to improve response quality</li>
+    </ul>
+  </section>
+
+  <!-- Slide 20: Planning Pattern -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agent Pattern: Planning</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Decompose Before Executing</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Break complex goal into subtasks</li>
+      <li>Create ordered plan of actions</li>
+      <li>Execute plan step-by-step</li>
+      <li>Adapt plan if steps fail</li>
+    </ul>
+  </section>
+
+  <!-- Slide 21: Planning Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">Planning Example</h2>
+    <pre style="font-size: 0.75rem;"><code>Goal: "Research and summarize recent AI papers"
+
+Plan:
+1. Search for "AI research papers 2026"
+2. Extract top 5 paper titles and abstracts
+3. Summarize each paper in 2 sentences
+4. Compile into final report
+
+Execute:
+Step 1: search_web("AI research papers 2026")
+  → Found 10 papers
+Step 2: extract_metadata(papers[:5])
+  → Got titles + abstracts
+Step 3: For each paper, summarize...
+Step 4: Compile final report</code></pre>
+  </section>
+
+  <!-- Slide 22: Multi-Agent Systems -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Multi-Agent Systems</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">Agents Working Together</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Specialization:</strong> Each agent has a role</li>
+      <li><strong style="color: #38bdf8;">Collaboration:</strong> Agents communicate via messages</li>
+      <li><strong style="color: #38bdf8;">Coordination:</strong> Orchestrator manages workflow</li>
+    </ul>
+  </section>
+
+  <!-- Slide 23: Multi-Agent Example -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Multi-Agent Example: Code Review</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Reviewer Agent</h5>
+        <p style="color: #cbd5e1;">Reads code, finds issues</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Tester Agent</h5>
+        <p style="color: #cbd5e1;">Writes &amp; runs tests</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">Documenter Agent</h5>
+        <p style="color: #cbd5e1;">Generates docs</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 24: Agent Frameworks -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Popular Agent Frameworks (2026)</h2>
+    <div class="row gap-md">
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">LangChain Agents</h5>
+        <p style="color: #cbd5e1;">Full-stack, tool integration</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">AutoGen</h5>
+        <p style="color: #cbd5e1;">Multi-agent orchestration</p>
+      </div>
+      <div class="fill-width card-rect" style="background-color: #1e293b; color: #f1f5f9; font-size: 0.85rem;">
+        <h5 style="color: #38bdf8;">CrewAI</h5>
+        <p style="color: #cbd5e1;">Role-based agent teams</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 25: LangChain Agent Code -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-4" style="color: #38bdf8;">LangChain Agent Example</h2>
+    <pre style="font-size: 0.7rem;"><code>from langchain.agents import initialize_agent, Tool
+from langchain.chat_models import ChatOpenAI
+
+tools = [
+  Tool(name="Search", func=search_web, 
+       description="Search the web"),
+  Tool(name="Calculator", func=calculate,
+       description="Do math")
+]
+
+llm = ChatOpenAI(model="gpt-4o")
+agent = initialize_agent(
+  tools, llm, agent_type="zero-shot-react-description"
+)
+
+response = agent.run("What's 15% of 2500 plus Tokyo's temp?")
+print(response)</code></pre>
+  </section>
+
+  <!-- Slide 26: Agent Challenges -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Challenges in Agentic AI</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Reliability:</strong> Agents can fail or loop infinitely</li>
+      <li><strong style="color: #38bdf8;">Cost:</strong> Many LLM calls per task</li>
+      <li><strong style="color: #38bdf8;">Latency:</strong> Multi-step reasoning takes time</li>
+      <li><strong style="color: #38bdf8;">Safety:</strong> Agents need guardrails</li>
+    </ul>
+  </section>
+
+  <!-- Slide 27: Best Practices -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Agent Design Best Practices</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Clear Tools:</strong> Descriptive names &amp; docs</li>
+      <li><strong style="color: #38bdf8;">Max Steps:</strong> Limit loop iterations</li>
+      <li><strong style="color: #38bdf8;">Error Handling:</strong> Graceful fallbacks</li>
+      <li><strong style="color: #38bdf8;">Logging:</strong> Track reasoning traces</li>
+    </ul>
+  </section>
+
+  <!-- Slide 28: Evaluation Metrics -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Evaluating Agent Performance</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li><strong style="color: #38bdf8;">Success Rate:</strong> Did it complete the task?</li>
+      <li><strong style="color: #38bdf8;">Efficiency:</strong> Steps taken vs optimal path</li>
+      <li><strong style="color: #38bdf8;">Answer Quality:</strong> Accuracy, relevance</li>
+      <li><strong style="color: #38bdf8;">Cost:</strong> Tokens used, API calls</li>
+    </ul>
+  </section>
+
+  <!-- Slide 29: Hands-On Lab Preview -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Hands-On Lab: Build Your First Agent</h2>
+    <p class="text-xl mb-4" style="color: #38bdf8; font-weight: 600;">What You'll Build</p>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Research agent with web search tool</li>
+      <li>Implement ReAct pattern</li>
+      <li>Add memory for context retention</li>
+      <li>Test with multi-step queries</li>
+    </ul>
+  </section>
+
+  <!-- Slide 30: Key Takeaways -->
+  <section class="slide p-16 col" style="background-color: #0f172a; color: #f1f5f9;">
+    <h2 class="mb-6" style="color: #38bdf8;">Key Takeaways</h2>
+    <ul class="text-lg" style="color: #cbd5e1;">
+      <li>Agentic AI = autonomous, goal-oriented systems</li>
+      <li>Core loop: Perceive → Reason → Act → Observe</li>
+      <li>Patterns: ReAct, Reflection, Planning</li>
+      <li>Frameworks: LangChain, AutoGen, CrewAI</li>
+    </ul>
+  </section>
+
+  <!-- Slide 31: Thank You -->
+  <section class="slide p-16 col center" style="background-color: #020617; color: #f1f5f9;">
+    <h2 class="mb-8" style="color: #38bdf8;">Ready to Build Agents?</h2>
+    <p class="text-xl mb-6" style="color: #cbd5e1;">Let's implement your first agentic system!</p>
+    <p class="text-sm" style="color: #94a3b8;">Next: Hands-On Agent Lab with LangChain</p>
+  </section>
+
+</body>
+</html>

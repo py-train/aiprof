@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>n8n Hands-On Lab | KPMG Agentic AI Training</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0b1120;color:#e2e8f0;line-height:1.7;font-size:15px}
+a{color:#38bdf8;text-decoration:none}
+a:hover{text-decoration:underline}
+.page{max-width:960px;margin:0 auto;padding:32px 24px 80px}
+.banner{background:linear-gradient(135deg,#020617 0%,#1e3a5f 100%);border:1px solid #334155;border-bottom:3px solid #38bdf8;border-radius:12px;padding:28px 36px;margin-bottom:32px}
+.banner h1{color:#38bdf8;font-size:1.9rem;margin-bottom:6px}
+.banner .sub{color:#94a3b8;font-size:0.85rem}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.badge{background:#1e293b;border:1px solid #334155;border-radius:20px;padding:3px 12px;font-size:0.75rem;color:#7dd3fc}
+h2{color:#38bdf8;font-size:1.3rem;margin:40px 0 14px;padding-bottom:8px;border-bottom:1px solid #1e3a5f}
+h3{color:#f1f5f9;font-size:1.05rem;margin:24px 0 10px}
+h4{color:#7dd3fc;font-size:0.95rem;margin:18px 0 8px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:20px 24px;margin:16px 0}
+.card-blue{border-left:3px solid #38bdf8}
+.card-green{border-left:3px solid #4ade80}
+.card-yellow{border-left:3px solid #fbbf24}
+.card-purple{border-left:3px solid #c084fc}
+.step-header{display:flex;align-items:center;gap:12px;margin:28px 0 12px}
+.step-num{background:#38bdf8;color:#0f172a;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;flex-shrink:0}
+.step-title{color:#f1f5f9;font-size:1.1rem;font-weight:600}
+pre{background:#020617;border:1px solid #334155;border-radius:8px;padding:16px 20px;overflow-x:auto;font-size:0.82rem;font-family:'Courier New',monospace;color:#e2e8f0;margin:12px 0}
+code{font-family:'Courier New',monospace;background:#0f172a;padding:2px 6px;border-radius:4px;font-size:0.82rem;color:#7dd3fc}
+.action{background:#0f172a;border:1px solid #1e3a5f;border-radius:8px;padding:14px 18px;margin:10px 0}
+.action-label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.ui-action .action-label{color:#38bdf8}
+.code-action .action-label{color:#4ade80}
+.verify .action-label{color:#fbbf24}
+ul.fancy{list-style:none;padding-left:0}
+ul.fancy li{padding:5px 0 5px 26px;position:relative;color:#cbd5e1}
+ul.fancy li::before{position:absolute;left:0}
+ul.fancy.check li::before{content:"✅"}
+ul.fancy.arrow li::before{content:"→";color:#38bdf8}
+ul.fancy.dot li::before{content:"•";color:#38bdf8}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0;padding:16px;background:#020617;border:1px solid #334155;border-radius:10px}
+.flow-node{background:#1e3a5f;border:1px solid #38bdf8;border-radius:8px;padding:8px 14px;font-size:0.8rem;color:#f1f5f9;text-align:center;min-width:110px}
+.flow-node .node-type{font-size:0.65rem;color:#38bdf8;display:block;margin-bottom:2px;text-transform:uppercase;letter-spacing:0.06em}
+.flow-arrow{color:#38bdf8;font-size:1.1rem;flex-shrink:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.85rem}
+th{background:#1e3a5f;color:#7dd3fc;padding:9px 14px;text-align:left;font-weight:600;border-bottom:1px solid #334155}
+td{padding:9px 14px;border-bottom:1px solid #1e293b;color:#cbd5e1}
+tr:hover td{background:#1e293b}
+.tip{background:#0f2a1f;border:1px solid #166534;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.85rem;color:#86efac}
+.tip::before{content:"💡  ";font-weight:700}
+.note{background:#1c1a0f;border:1px solid #713f12;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.85rem;color:#fde68a}
+.note::before{content:"📌  ";font-weight:700}
+.warn-box{background:#1f0f0f;border:1px solid #7f1d1d;border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.85rem;color:#fca5a5}
+.warn-box::before{content:"⚠️  ";font-weight:700}
+.toc{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:20px 24px;margin-bottom:32px}
+.toc h3{color:#38bdf8;margin:0 0 12px;font-size:1rem}
+.toc ol{padding-left:20px;color:#94a3b8;font-size:0.88rem}
+.toc ol li{margin-bottom:4px}
+hr{border:none;border-top:1px solid #1e293b;margin:40px 0}
+kbd{background:#1e293b;border:1px solid #475569;border-radius:4px;padding:2px 7px;font-size:0.8rem;color:#f1f5f9;font-family:'Courier New',monospace}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="banner">
+  <h1>🔧 n8n Hands-On Lab</h1>
+  <p style="color:#f1f5f9;font-size:1rem;margin-top:4px">Build Real Automation Workflows — No Coding Required</p>
+  <p class="sub">KPMG Agentic AI Fundamentals Training &nbsp;·&nbsp; Module 4: Low/No-Code Frameworks for Agentic AI</p>
+  <div class="badge-row">
+    <span class="badge">⏱ ~90 min</span>
+    <span class="badge">🐧 Ubuntu Linux</span>
+    <span class="badge">🐳 Docker</span>
+    <span class="badge">3 Guided Workflows</span>
+    <span class="badge">Visual + Code-paste Actions</span>
+    <span class="badge">Beginner Friendly</span>
+  </div>
+</div>
+
+<div class="toc">
+  <h3>📋 Lab Contents</h3>
+  <ol>
+    <li><strong>Part 0</strong> — What is n8n? Core concepts (5 min)</li>
+    <li><strong>Part 1</strong> — Install n8n on Ubuntu with Docker (15 min)</li>
+    <li><strong>Part 2</strong> — UI Tour &amp; Hello World Workflow (10 min)</li>
+    <li><strong>Workflow A</strong> — Fetch &amp; Transform Public API Data (15 min)</li>
+    <li><strong>Workflow B</strong> — Webhook + Decision Branch + Code Node (20 min)</li>
+    <li><strong>Workflow C</strong> — Scheduled AI Summary Report (20 min)</li>
+    <li><strong>Part 3</strong> — Export, Import &amp; Share Workflows (5 min)</li>
+  </ol>
+</div>
+
+<!-- PART 0 -->
+<h2>Part 0 — What is n8n?</h2>
+
+<div class="card card-blue">
+  <h3>n8n in one paragraph</h3>
+  <p>n8n (pronounced <em>nodemation</em>) is an <strong>open-source, self-hostable workflow automation platform</strong>. You build automations by connecting <strong>nodes</strong> on a visual canvas — each node is one action (fetch data, transform it, send an email, call an AI model, etc.). You never need to write a web server or manage infrastructure. Unlike Zapier or Make, n8n can run entirely on your own machine with full data privacy.</p>
+</div>
+
+<h3>Core Concepts</h3>
+<table>
+  <tr><th>Term</th><th>What it means</th><th>Real-world analogy</th></tr>
+  <tr><td><strong>Workflow</strong></td><td>A named automation — a set of connected nodes</td><td>A recipe</td></tr>
+  <tr><td><strong>Node</strong></td><td>One step: a trigger or an action</td><td>One instruction in the recipe</td></tr>
+  <tr><td><strong>Trigger node</strong></td><td>Starts the workflow (schedule, webhook, manual click)</td><td>The alarm clock</td></tr>
+  <tr><td><strong>Action node</strong></td><td>Does something: HTTP call, send email, run code</td><td>Adding an ingredient</td></tr>
+  <tr><td><strong>Connection</strong></td><td>Arrow passing data from one node to the next</td><td>Passing the bowl to the next chef</td></tr>
+  <tr><td><strong>Execution</strong></td><td>One run of the workflow from trigger to end</td><td>Cooking one batch</td></tr>
+  <tr><td><strong>Expression</strong></td><td>Dynamic value referencing previous node output: <code>{{ $json.name }}</code></td><td>A sticky label that reads the last value written</td></tr>
+</table>
+
+<h3>How a typical workflow flows</h3>
+<div class="flow">
+  <div class="flow-node"><span class="node-type">Trigger</span>Schedule / Webhook / Manual</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Action</span>HTTP Request</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Transform</span>Set / Code</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Logic</span>IF / Switch</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Output</span>Email / Slack / DB</div>
+</div>
+
+<!-- PART 1 -->
+<h2>Part 1 — Install n8n on Ubuntu with Docker</h2>
+<div class="note">You need Ubuntu 20.04 LTS or later (physical machine, VM, or WSL2). All commands run in a terminal. Estimated time: 15 minutes.</div>
+
+<div class="step-header"><div class="step-num">1</div><div class="step-title">Update the system and install prerequisites</div></div>
+<div class="action code-action">
+  <div class="action-label">📋 Copy &amp; paste into terminal</div>
+<pre>sudo apt update &amp;&amp; sudo apt upgrade -y
+sudo apt install -y ca-certificates curl gnupg lsb-release</pre>
+</div>
+
+<div class="step-header"><div class="step-num">2</div><div class="step-title">Install Docker Engine</div></div>
+<div class="action code-action">
+  <div class="action-label">📋 Copy &amp; paste the full block into terminal</div>
+<pre># Add Docker's official GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release &amp;&amp; echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+# Install Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io \
+                    docker-buildx-plugin docker-compose-plugin
+
+# Allow current user to run Docker without sudo
+sudo usermod -aG docker $USER
+newgrp docker</pre>
+</div>
+
+<div class="action verify">
+  <div class="action-label">✅ Verify Docker is installed</div>
+<pre>docker --version
+# Expected output: Docker version 25.x.x or later</pre>
+</div>
+
+<div class="step-header"><div class="step-num">3</div><div class="step-title">Create a persistent volume and start n8n</div></div>
+<div class="action code-action">
+  <div class="action-label">📋 Copy &amp; paste into terminal</div>
+<pre># Create a Docker volume so workflows survive container restarts
+docker volume create n8n_data
+
+# Start n8n — downloads the image automatically (~200 MB, one-time only)
+docker run -d \
+  --name n8n \
+  --restart unless-stopped \
+  -p 5678:5678 \
+  -v n8n_data:/home/node/.n8n \
+  -e N8N_SECURE_COOKIE=false \
+  docker.n8n.io/n8nio/n8n</pre>
+</div>
+<div class="tip">The <code>-e N8N_SECURE_COOKIE=false</code> flag is required for local HTTP access. Remove it only for HTTPS production deployments.</div>
+
+<div class="action verify">
+  <div class="action-label">✅ Confirm the container is running</div>
+<pre>docker ps
+# You should see n8n listed with STATUS "Up"
+
+# Optional: view live logs
+docker logs n8n --tail 30</pre>
+</div>
+
+<div class="step-header"><div class="step-num">4</div><div class="step-title">Open n8n in your browser</div></div>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Open Firefox or Chrome on the Ubuntu machine</li>
+    <li>Navigate to <strong>http://localhost:5678</strong></li>
+    <li>Complete the one-time setup form: enter your name, email, and a password</li>
+    <li>Click <strong>Get started</strong> — you are now inside n8n!</li>
+  </ul>
+</div>
+<div class="warn-box">If you are on a remote Ubuntu server, replace <code>localhost</code> with the server IP address. Open the firewall port first: <code>sudo ufw allow 5678</code></div>
+
+<!-- PART 2 -->
+<h2>Part 2 — UI Tour &amp; Hello World Workflow</h2>
+
+<h3>Interface overview</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 Explore each area of the n8n interface</div>
+  <table>
+    <tr><th>Area</th><th>What it is</th><th>Where to find it</th></tr>
+    <tr><td>Canvas</td><td>Main drag-and-drop workspace for building workflows</td><td>Centre of the screen</td></tr>
+    <tr><td>Node panel</td><td>Library of 400+ integrations and built-in nodes</td><td>Click <strong>+</strong> or press <kbd>Tab</kbd></td></tr>
+    <tr><td>Workflow menu</td><td>Save, rename, export, import, activate</td><td>Top-left breadcrumb → three dots ⋯</td></tr>
+    <tr><td>Executions log</td><td>Full history of every run with input/output per node</td><td>Left sidebar → Executions</td></tr>
+    <tr><td>Settings</td><td>Credentials, variables, SMTP, API keys</td><td>Left sidebar → Settings</td></tr>
+    <tr><td>Test workflow button</td><td>Run the workflow manually right now</td><td>Top-right ▶ Test workflow</td></tr>
+    <tr><td>Active toggle</td><td>Turn the workflow on/off for automatic runs</td><td>Top-right toggle switch</td></tr>
+  </table>
+</div>
+
+<h3>Create your first Hello World workflow</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 Step-by-step UI actions</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+ New Workflow</strong> (top left)</li>
+    <li>Click <strong>Add first step</strong> in the centre of the canvas</li>
+    <li>In the search box, type <strong>Manual</strong> → select <strong>Manual Trigger</strong> → click <strong>Back to canvas</strong></li>
+    <li>Click the <strong>+</strong> connector on the right side of the Manual Trigger node</li>
+    <li>Search for <strong>Set</strong> → select <strong>Edit Fields (Set)</strong></li>
+    <li>In the Set node panel, click <strong>Add field</strong></li>
+    <li>Set: Name = <code>message</code> &nbsp; Type = <code>String</code> &nbsp; Value = <code>Hello from n8n! 🎉</code></li>
+    <li>Click <strong>Back to canvas</strong></li>
+    <li>Click <strong>▶ Test workflow</strong> (top right)</li>
+    <li>Click on the Set node — you should see your message in the output panel on the right</li>
+    <li>Press <kbd>Ctrl+S</kbd> and name this workflow <strong>Hello World</strong></li>
+  </ul>
+</div>
+<div class="tip">Congratulations — you just built and ran your first n8n workflow! Every real workflow follows this same pattern: Trigger → Process → Output.</div>
+
+<!-- WORKFLOW A -->
+<hr/>
+<h2>Workflow A — Fetch &amp; Transform Public API Data</h2>
+<p style="color:#94a3b8;margin-bottom:12px"><em>Goal: Call a free public weather API, extract the fields we care about, and display them cleanly. Introduces: HTTP Request node, Set node, Expressions.</em></p>
+
+<div class="flow">
+  <div class="flow-node"><span class="node-type">Trigger</span>Manual Trigger</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">HTTP</span>Fetch Weather API</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Transform</span>Extract Fields (Set)</div>
+</div>
+
+<h3>Step A1 — Create workflow and add Manual Trigger</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+ New Workflow</strong> → rename it <strong>Weather Fetcher</strong></li>
+    <li>Add a <strong>Manual Trigger</strong> node as the first step</li>
+  </ul>
+</div>
+
+<h3>Step A2 — Add HTTP Request node</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> on the Manual Trigger → search <strong>HTTP Request</strong> → select it</li>
+    <li>Set <strong>Method</strong> = <code>GET</code></li>
+    <li>Click the <strong>URL</strong> field and paste the URL below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste this URL into the URL field</div>
+<pre>https://wttr.in/London?format=j1</pre>
+</div>
+<div class="tip">This free API requires no key. It returns JSON weather data for London. Change <code>London</code> to any city name.</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — test and explore</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Test step</strong> inside the node panel</li>
+    <li>Explore the JSON tree — find <code>current_condition[0].temp_C</code> and <code>weatherDesc[0].value</code></li>
+    <li>Click <strong>Back to canvas</strong></li>
+  </ul>
+</div>
+
+<h3>Step A3 — Add Set node to extract clean fields</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> on the HTTP node → search <strong>Set</strong> → select <strong>Edit Fields (Set)</strong></li>
+    <li>Click <strong>Add field</strong> three times to create these fields:</li>
+  </ul>
+  <table>
+    <tr><th>Field Name</th><th>Type</th><th>Value</th></tr>
+    <tr><td>city</td><td>String</td><td>London (typed directly)</td></tr>
+    <tr><td>temperature_C</td><td>String</td><td>Expression — see below</td></tr>
+    <tr><td>description</td><td>String</td><td>Expression — see below</td></tr>
+  </table>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 For each expression field: click the value box → click the <strong>fx</strong> (Expression) toggle → paste</div>
+<pre># temperature_C value — paste this:
+{{ $json.current_condition[0].temp_C }}
+
+# description value — paste this:
+{{ $json.current_condition[0].weatherDesc[0].value }}</pre>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 Final steps</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Back to canvas</strong></li>
+    <li>Click <strong>▶ Test workflow</strong></li>
+    <li>Click the Set node to see your clean 3-field output</li>
+    <li>Press <kbd>Ctrl+S</kbd> to save</li>
+  </ul>
+</div>
+
+<div class="card card-green">
+  <h4>✅ What you learned in Workflow A</h4>
+  <ul class="fancy check">
+    <li>How to call any public API with the HTTP Request node — zero code needed</li>
+    <li>How to use Expressions <code>{{ }}</code> to extract nested JSON values</li>
+    <li>How the Set node reshapes data into clean fields for downstream steps</li>
+  </ul>
+</div>
+
+<!-- WORKFLOW B -->
+<hr/>
+<h2>Workflow B — Webhook + Decision Branch + Code Node</h2>
+<p style="color:#94a3b8;margin-bottom:12px"><em>Goal: Receive an incoming HTTP request, inspect the score value, branch on a condition, and generate a customised result message. Introduces: Webhook trigger, IF node, Code node.</em></p>
+
+<div class="flow">
+  <div class="flow-node"><span class="node-type">Trigger</span>Webhook (POST)</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Logic</span>IF: score ≥ 70?</div>
+  <span class="flow-arrow">→ true →</span>
+  <div class="flow-node"><span class="node-type">Code</span>Pass Message</div>
+  <span class="flow-arrow">→ false →</span>
+  <div class="flow-node"><span class="node-type">Code</span>Fail Message</div>
+</div>
+
+<h3>Step B1 — Create workflow and add Webhook trigger</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+ New Workflow</strong> → rename it <strong>Score Evaluator</strong></li>
+    <li>Click <strong>Add first step</strong> → search <strong>Webhook</strong> → select it</li>
+    <li>In the Webhook node panel, set <strong>HTTP Method</strong> = <code>POST</code></li>
+    <li>Set <strong>Response Mode</strong> = <code>Using Respond to Webhook Node</code></li>
+    <li>Note the <strong>Test URL</strong> shown — copy it (you will use it in Step B4)</li>
+    <li>Click <strong>Back to canvas</strong></li>
+  </ul>
+</div>
+
+<h3>Step B2 — Add IF node for branching logic</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> on the Webhook node → search <strong>IF</strong> → select it</li>
+    <li>In the IF node, configure <strong>Condition 1</strong>:</li>
+  </ul>
+  <table>
+    <tr><th>Setting</th><th>Value</th></tr>
+    <tr><td>Value 1</td><td>Click field → toggle <strong>Expression</strong> → paste: <code>{{ $json.body.score }}</code></td></tr>
+    <tr><td>Operation</td><td>Greater than or equal to</td></tr>
+    <tr><td>Value 2</td><td><code>70</code> (type directly — no expression needed)</td></tr>
+  </table>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 Continue</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Back to canvas</strong></li>
+  </ul>
+</div>
+
+<h3>Step B3 — Add Code nodes for each branch</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — True branch (score ≥ 70)</div>
+  <ul class="fancy arrow">
+    <li>Click the <strong>true</strong> output connector on the IF node → click <strong>+</strong></li>
+    <li>Search <strong>Code</strong> → select it</li>
+    <li>Double-click the node title and rename it <strong>Pass Message</strong></li>
+    <li>Make sure <strong>Language</strong> = JavaScript</li>
+    <li>Clear all existing code in the editor, then paste the code below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste into the Pass Message Code node</div>
+<pre>// Access the data that came in from the webhook body
+const score = $input.first().json.body.score;
+const name  = $input.first().json.body.name || "Candidate";
+
+// Build a structured result object
+const result = {
+  status   : "PASS",
+  name     : name,
+  score    : score,
+  grade    : score >= 90 ? "A" : score >= 80 ? "B" : "C",
+  message  : `Congratulations ${name}! You scored ${score}/100. Result: PASS.`,
+  timestamp: new Date().toISOString()
+};
+
+// n8n Code nodes must return an array of items
+return [{ json: result }];</pre>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — False branch (score &lt; 70)</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Back to canvas</strong></li>
+    <li>Click the <strong>false</strong> output connector on the IF node → click <strong>+</strong></li>
+    <li>Search <strong>Code</strong> → select it → rename it <strong>Fail Message</strong></li>
+    <li>Clear the editor and paste the code below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste into the Fail Message Code node</div>
+<pre>// Access the data from the webhook body
+const score = $input.first().json.body.score;
+const name  = $input.first().json.body.name || "Candidate";
+
+// Calculate how many marks short of passing
+const gap = 70 - score;
+
+const result = {
+  status   : "FAIL",
+  name     : name,
+  score    : score,
+  grade    : "F",
+  message  : `Sorry ${name}, you scored ${score}/100. You need ${gap} more marks to pass.`,
+  timestamp: new Date().toISOString()
+};
+
+return [{ json: result }];</pre>
+</div>
+
+<h3>Step B3b — Add Respond to Webhook nodes</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — do this for BOTH Code nodes</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> after <em>Pass Message</em> → search <strong>Respond to Webhook</strong> → select it</li>
+    <li>Set <strong>Respond With</strong> = <code>First Incoming Item's JSON</code></li>
+    <li>Click <strong>Back to canvas</strong></li>
+    <li>Repeat the same steps after <em>Fail Message</em></li>
+    <li>Press <kbd>Ctrl+S</kbd> to save</li>
+  </ul>
+</div>
+
+<h3>Step B4 — Test with curl from the terminal</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action first — activate the listener</div>
+  <ul class="fancy arrow">
+    <li>Click the <strong>Webhook</strong> node → click <strong>Listen for test event</strong></li>
+    <li>The status changes to "Waiting for webhook call…"</li>
+    <li>Now open a <strong>new terminal window</strong></li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste these curl commands into the new terminal — replace &lt;WEBHOOK-ID&gt; with yours</div>
+<pre># Test 1: Passing score (score >= 70)
+curl -X POST http://localhost:5678/webhook-test/&lt;WEBHOOK-ID&gt; \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Priya Sharma", "score": 85}'
+
+# Test 2: Failing score (score < 70)
+curl -X POST http://localhost:5678/webhook-test/&lt;WEBHOOK-ID&gt; \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Rahul Gupta", "score": 55}'
+
+# Test 3: Perfect score
+curl -X POST http://localhost:5678/webhook-test/&lt;WEBHOOK-ID&gt; \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Ayesha Khan", "score": 95}'</pre>
+</div>
+<div class="note">The full Test URL is shown in the Webhook node panel. It looks like: <code>http://localhost:5678/webhook-test/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code> — copy the UUID at the end.</div>
+<div class="tip">Watch the n8n canvas as you run curl — nodes light up green as each one executes. Click any lit node to inspect the exact data that passed through it.</div>
+
+<div class="card card-green">
+  <h4>✅ What you learned in Workflow B</h4>
+  <ul class="fancy check">
+    <li>How to trigger a workflow from any external system using a Webhook (POST request)</li>
+    <li>How to add conditional branching with the IF node</li>
+    <li>How to write and modify small JavaScript snippets in the Code node</li>
+    <li>How to return a JSON response to the original caller</li>
+  </ul>
+</div>
+
+<!-- WORKFLOW C -->
+<hr/>
+<h2>Workflow C — Scheduled AI-Powered Summary Report</h2>
+<p style="color:#94a3b8;margin-bottom:12px"><em>Goal: Every day at 8 AM, fetch trending tech data, send it to OpenAI for a plain-English summary, and display the report. Introduces: Schedule Trigger, secure Credentials, OpenAI API call, chained HTTP nodes.</em></p>
+
+<div class="flow">
+  <div class="flow-node"><span class="node-type">Trigger</span>Schedule (8 AM)</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">HTTP</span>Fetch Headlines</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Code</span>Build AI Prompt</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">HTTP</span>Call OpenAI API</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-node"><span class="node-type">Set</span>Format Report</div>
+</div>
+
+<div class="note">Workflow C requires an OpenAI API key. If you do not have one, you can still follow all steps and substitute the OpenAI call with any other free API.</div>
+
+<h3>Step C0 — Store your OpenAI API key securely</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — n8n Credentials (encrypted storage)</div>
+  <ul class="fancy arrow">
+    <li>Left sidebar → <strong>Settings</strong> → <strong>Credentials</strong> → click <strong>+ Add credential</strong></li>
+    <li>Search <strong>Header Auth</strong> → select it</li>
+    <li>Name the credential: <code>OpenAI-Bearer-Key</code></li>
+    <li>Name field: <code>Authorization</code></li>
+    <li>Value field: <code>Bearer sk-your-openai-api-key-here</code></li>
+    <li>Click <strong>Save</strong></li>
+  </ul>
+</div>
+<div class="warn-box">Never paste your API key directly into a URL or Code node field. Always use n8n Credentials — they are AES-256 encrypted at rest and masked in logs.</div>
+
+<h3>Step C1 — Create workflow and add Schedule Trigger</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+ New Workflow</strong> → rename it <strong>Daily AI News Brief</strong></li>
+    <li>Add first step → search <strong>Schedule Trigger</strong> → select it</li>
+    <li>Set <strong>Trigger Interval</strong> = <code>Days</code></li>
+    <li>Set <strong>Trigger at Hour</strong> = <code>8</code> and <strong>Minute</strong> = <code>0</code></li>
+    <li>Click <strong>Back to canvas</strong></li>
+  </ul>
+</div>
+
+<h3>Step C2 — Fetch trending tech headlines (no API key needed)</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> → search <strong>HTTP Request</strong> → select it</li>
+    <li>Rename node to <strong>Fetch HackerNews IDs</strong></li>
+    <li>Method = <code>GET</code> → paste the URL below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste this URL</div>
+<pre>https://hacker-news.firebaseio.com/v0/topstories.json?limitToFirst=5&orderBy=%22$key%22</pre>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 Continue</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Test step</strong> — you should see an array of 5 story IDs</li>
+    <li>Click <strong>Back to canvas</strong></li>
+  </ul>
+</div>
+
+<h3>Step C3 — Build the AI prompt in a Code node</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> → search <strong>Code</strong> → select it → rename to <strong>Build Prompt</strong></li>
+    <li>Clear the code editor and paste the code below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste into Build Prompt Code node</div>
+<pre>// Collect story IDs from the previous HTTP node
+const storyIds = $input.all().map(item => item.json);
+const idList   = storyIds.slice(0, 5).join(", ");
+
+// Compose the prompt we will send to OpenAI
+const prompt = `You are a helpful technology analyst writing for business professionals.
+
+The top 5 trending story IDs on Hacker News right now are: ${idList}.
+
+Hacker News is a technology and startup news aggregator widely read by developers,
+founders, and business leaders. Based on the context that these are currently
+the most upvoted stories, please:
+
+1. Write a 3-sentence summary of what types of topics are likely trending
+   in the global technology community today.
+2. Suggest 2 strategic questions a senior business professional at a consulting
+   firm might want to explore based on today's technology trends.
+3. Rate the overall market sentiment (Bullish / Neutral / Cautious) and explain why in one sentence.
+
+Keep your response professional, concise, and insightful.`;
+
+// Return structured output for the next node
+return [{
+  json: {
+    prompt      : prompt,
+    story_ids   : storyIds.slice(0, 5),
+    generated_at: new Date().toISOString()
+  }
+}];</pre>
+</div>
+
+<h3>Step C4 — Call the OpenAI API</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> → search <strong>HTTP Request</strong> → select it → rename to <strong>Call OpenAI</strong></li>
+    <li>Method = <code>POST</code> → paste URL below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste this URL</div>
+<pre>https://api.openai.com/v1/chat/completions</pre>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — authentication</div>
+  <ul class="fancy arrow">
+    <li>Scroll to <strong>Authentication</strong> → select <strong>Predefined Credential Type</strong></li>
+    <li>Credential type = <strong>Header Auth</strong></li>
+    <li>Credential = select <code>OpenAI-Bearer-Key</code> (the one you saved earlier)</li>
+  </ul>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action — request body</div>
+  <ul class="fancy arrow">
+    <li>Toggle <strong>Send Body</strong> = ON</li>
+    <li>Body Content Type = <strong>JSON</strong></li>
+    <li>Click <strong>Using JSON</strong> tab and paste the body below</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Paste this JSON body — the expression pulls the prompt from the previous node</div>
+<pre>{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {
+      "role": "user",
+      "content": "={{ $json.prompt }}"
+    }
+  ],
+  "temperature": 0.5,
+  "max_tokens": 500
+}</pre>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 Continue</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Back to canvas</strong></li>
+  </ul>
+</div>
+
+<h3>Step C5 — Extract the AI response with a Set node</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>+</strong> → search <strong>Set</strong> → select it → rename to <strong>Format Report</strong></li>
+    <li>Add two fields using <strong>Expression mode (fx)</strong> for values:</li>
+  </ul>
+</div>
+<div class="action code-action">
+  <div class="action-label">📋 Set node field values — toggle Expression (fx) for each</div>
+<pre># Field 1
+Name  : ai_summary
+Type  : String
+Value : {{ $json.choices[0].message.content }}
+
+# Field 2
+Name  : report_date
+Type  : String
+Value : {{ new Date().toLocaleDateString('en-IN', { dateStyle: 'full' }) }}</pre>
+</div>
+<div class="action ui-action">
+  <div class="action-label">🖱 Final steps</div>
+  <ul class="fancy arrow">
+    <li>Click <strong>Back to canvas</strong></li>
+    <li>Press <kbd>Ctrl+S</kbd> to save</li>
+    <li>Click <strong>▶ Test workflow</strong> to run it manually right now</li>
+    <li>Click the <strong>Format Report</strong> node to read the AI-generated summary</li>
+    <li>Toggle the <strong>Active</strong> switch (top right) to enable automatic daily runs at 8 AM</li>
+  </ul>
+</div>
+
+<div class="card card-green">
+  <h4>✅ What you learned in Workflow C</h4>
+  <ul class="fancy check">
+    <li>How to trigger workflows automatically on a schedule</li>
+    <li>How to store API keys securely using n8n Credentials</li>
+    <li>How to call any LLM (OpenAI, etc.) using the HTTP Request node</li>
+    <li>How to chain multiple HTTP calls and code transformations in sequence</li>
+    <li>How to activate a workflow for fully unattended, automatic execution</li>
+  </ul>
+</div>
+
+<!-- PART 3 -->
+<hr/>
+<h2>Part 3 — Export, Import &amp; Share Workflows</h2>
+
+<h3>Export a workflow as JSON</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Open any workflow you built</li>
+    <li>Click the workflow name at the top-left → <strong>⋯ More options</strong> → <strong>Export</strong></li>
+    <li>A <code>.json</code> file downloads to your machine</li>
+    <li>Open it in any text editor — you will see the full workflow definition (nodes, connections, settings)</li>
+  </ul>
+</div>
+
+<h3>Import a workflow from JSON</h3>
+<div class="action ui-action">
+  <div class="action-label">🖱 UI Action</div>
+  <ul class="fancy arrow">
+    <li>Left sidebar → <strong>Workflows</strong> → click the <strong>+</strong> button</li>
+    <li>Select <strong>Import from file</strong></li>
+    <li>Choose the <code>workflow_a_weather.json</code> or <code>workflow_b_score.json</code> file provided with this lab</li>
+    <li>n8n recreates the full workflow — re-link credentials if prompted</li>
+  </ul>
+</div>
+
+<h3>Manage the n8n container</h3>
+<div class="action code-action">
+  <div class="action-label">📋 Terminal — container management commands</div>
+<pre># Stop n8n (all data is preserved in the Docker volume)
+docker stop n8n
+
+# Restart n8n any time
+docker start n8n
+
+# Update to the latest n8n version
+docker stop n8n
+docker rm n8n
+docker pull docker.n8n.io/n8nio/n8n
+docker run -d --name n8n --restart unless-stopped \
+  -p 5678:5678 -v n8n_data:/home/node/.n8n \
+  -e N8N_SECURE_COOKIE=false docker.n8n.io/n8nio/n8n</pre>
+</div>
+
+<!-- RECAP -->
+<hr/>
+<h2>🏁 Lab Recap</h2>
+<table>
+  <tr><th>Workflow</th><th>Nodes Used</th><th>Key Skill Gained</th></tr>
+  <tr><td>Hello World</td><td>Manual Trigger, Set</td><td>Canvas basics, data output</td></tr>
+  <tr><td>A — Weather Fetcher</td><td>Manual Trigger, HTTP Request, Set</td><td>Calling APIs, using Expressions</td></tr>
+  <tr><td>B — Score Evaluator</td><td>Webhook, IF, Code × 2, Respond to Webhook × 2</td><td>Event triggers, branching, JavaScript</td></tr>
+  <tr><td>C — AI News Brief</td><td>Schedule, HTTP × 2, Code, Set</td><td>Scheduled automation, LLM API, Credentials</td></tr>
+</table>
+
+<div class="card card-purple" style="margin-top:24px">
+  <h4>🚀 What to explore next</h4>
+  <ul class="fancy dot">
+    <li>Connect <strong>Google Sheets</strong> — log every webhook call to a spreadsheet automatically</li>
+    <li>Add a <strong>Send Email (Gmail)</strong> node to Workflow C for a real daily email brief</li>
+    <li>Use the <strong>Slack</strong> node to post the AI summary to a team channel</li>
+    <li>Replace the Code node with n8n's built-in <strong>AI Agent</strong> node for true agentic behaviour</li>
+    <li>Browse the <strong>n8n template library</strong> at <a href="https://n8n.io/workflows" target="_blank">n8n.io/workflows</a> — 1,000+ ready-to-import workflows</li>
+    <li>Try <strong>LangChain Tool Calling</strong> integration available natively in recent n8n versions</li>
+  </ul>
+</div>
+
+<div style="margin-top:48px;text-align:center;color:#475569;font-size:0.8rem;padding:16px;border-top:1px solid #1e293b">
+  KPMG Agentic AI Fundamentals Training &nbsp;·&nbsp; Module 4: Low/No-Code Frameworks &nbsp;·&nbsp; n8n Hands-On Lab
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+{
+  "name": "Daily AI News Brief",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 15
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "815b38dc-ef87-4c20-b65c-6c74b28bba56",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://hacker-news.firebaseio.com/v0/topstories.json?limitToFirst=5&orderBy=\"$key\"",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "910ea2ba-a280-4c74-afdd-77c45ff1ab3a",
+      "name": "Fetch HackerNews IDs"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect story IDs from the previous HTTP node\nconst storyIds = $input.all().map(item => item.json);\nconst idList   = storyIds.slice(0, 5).join(\", \");\n\n// Compose the prompt we will send to OpenAI\nconst prompt = `You are a helpful technology analyst writing for business professionals.\n\nThe top 5 trending story IDs on Hacker News right now are: ${idList}.\n\nHacker News is a technology and startup news aggregator widely read by developers,\nfounders, and business leaders. Based on the context that these are currently\nthe most upvoted stories, please:\n\n1. Write a 3-sentence summary of what types of topics are likely trending\n   in the global technology community today.\n2. Suggest 2 strategic questions a senior business professional at a consulting\n   firm might want to explore based on today's technology trends.\n3. Rate the overall market sentiment (Bullish / Neutral / Cautious) and explain why in one sentence.\n\nKeep your response professional, concise, and insightful.`;\n\n// Return structured output for the next node\nreturn [{\n  json: {\n    prompt      : prompt,\n    story_ids   : storyIds.slice(0, 5),\n    generated_at: new Date().toISOString()\n  }\n}];\n\n// return [{\n//   json: prompt\n// }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "93aefd3f-ef46-437b-a6d2-03413bb4fd7a",
+      "name": "Build Prompt"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "7d776f14-316d-4d9f-b3d5-9799b3a0c3dc",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "jkWgxAcScOkIeGJ3",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00848288-5a5f-46e0-9a82-acf2c9f5001a",
+              "name": "Response",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "41d7bb1d-78ab-4bed-b54e-7324e8ce7dc3",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch HackerNews IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch HackerNews IDs": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "717f3265-d46c-4dd8-bb97-da5283455087",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "38bfe1a48e479ed4ccb176738999302f84594369894ad9e5f72217a8cf50acb2"
+  },
+  "id": "vNuPrJEP1zxSLZom",
+  "tags": []
+}

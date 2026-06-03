@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>n8n Companion Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --color-bg: #f7f6f2;
+      --color-surface: #f9f8f5;
+      --color-surface-2: #fbfbf9;
+      --color-surface-offset: #f3f0ec;
+      --color-border: #d4d1ca;
+      --color-divider: #dcd9d5;
+      --color-text: #28251d;
+      --color-text-muted: #6f6d68;
+      --color-text-faint: #9d9b96;
+      --color-primary: #01696f;
+      --color-primary-hover: #0c4e54;
+      --color-primary-highlight: #d7e9e7;
+      --color-code-bg: #f0ede8;
+      --color-success: #437a22;
+      --color-warning: #964219;
+      --shadow-sm: 0 1px 2px rgba(30,25,20,0.06);
+      --shadow-md: 0 12px 32px rgba(30,25,20,0.08);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --content: 1160px;
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1d1c1a;
+      --color-surface-2: #22211f;
+      --color-surface-offset: #272522;
+      --color-border: #393836;
+      --color-divider: #2b2926;
+      --color-text: #e6e3dc;
+      --color-text-muted: #afaba2;
+      --color-text-faint: #807c75;
+      --color-primary: #62a9b2;
+      --color-primary-hover: #7bb9c1;
+      --color-primary-highlight: rgba(98,169,178,0.16);
+      --color-code-bg: #11100f;
+      --color-success: #8fc96d;
+      --color-warning: #d58a5f;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.25);
+      --shadow-md: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.65;
+    }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { color: var(--color-primary-hover); }
+    .container { max-width: var(--content); margin: 0 auto; padding: 0 var(--space-4); }
+    .skip-link {
+      position: absolute; left: 12px; top: -100px; background: var(--color-primary); color: white;
+      padding: 10px 14px; border-radius: var(--radius-sm); z-index: 1000;
+    }
+    .skip-link:focus { top: 12px; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      border-bottom: 1px solid var(--color-divider);
+      backdrop-filter: blur(14px);
+      background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: var(--space-4); padding: 14px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 42px; height: 42px; border-radius: 14px; background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 55%, white));
+      display: grid; place-items: center; color: white; box-shadow: var(--shadow-sm);
+      flex: none;
+    }
+    .brand-mark svg { width: 24px; height: 24px; }
+    .brand-text strong { display: block; font-size: 0.98rem; }
+    .brand-text span { display: block; color: var(--color-text-muted); font-size: 0.85rem; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .theme-toggle, .download-btn {
+      border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text);
+      border-radius: 999px; padding: 10px 14px; font: inherit; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    .download-btn { background: var(--color-primary); color: white; border-color: transparent; }
+    .hero { padding: 56px 0 28px; }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px; align-items: stretch;
+    }
+    .hero-card, .panel, .exercise-card, .tip-card, .workflow-card, .toc-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-card { padding: 32px; min-height: 100%; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+      background: var(--color-primary-highlight); color: var(--color-primary); font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    h1, h2, h3, h4 { margin: 0; line-height: 1.12; }
+    h1 {
+      font-family: var(--font-display); font-size: clamp(2.3rem, 4.5vw, 4.8rem);
+      margin-top: 18px; letter-spacing: -0.03em;
+    }
+    .hero-card p { font-size: 1.05rem; color: var(--color-text-muted); max-width: 60ch; }
+    .hero-metrics {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 28px;
+    }
+    .metric {
+      padding: 16px; background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-md);
+    }
+    .metric strong { display: block; font-size: 1.3rem; }
+    .metric span { color: var(--color-text-muted); font-size: 0.92rem; }
+    .hero-side { display: grid; gap: 16px; }
+    .panel { padding: 22px; }
+    .panel h3 { font-size: 1.05rem; margin-bottom: 8px; }
+    .checklist { padding-left: 18px; margin: 0; color: var(--color-text-muted); }
+    .checklist li + li { margin-top: 6px; }
+    .toc { padding: 18px 0 6px; }
+    .toc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .toc-card { padding: 18px; }
+    .toc-card strong { display: block; font-size: 1rem; margin-bottom: 6px; }
+    .toc-card span { color: var(--color-text-muted); font-size: 0.93rem; }
+    main { padding: 10px 0 80px; }
+    .section-block { padding: 34px 0; border-top: 1px solid var(--color-divider); }
+    .section-head { display: grid; grid-template-columns: 240px 1fr; gap: 28px; margin-bottom: 24px; }
+    .section-kicker {
+      color: var(--color-primary); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: clamp(2rem, 3vw, 3rem); margin-top: 6px;
+    }
+    .section-summary { color: var(--color-text-muted); font-size: 1.02rem; max-width: 66ch; }
+    .exercise-card { padding: 26px; display: grid; gap: 18px; }
+    .exercise-meta {
+      display: flex; flex-wrap: wrap; gap: 10px;
+    }
+    .pill {
+      display: inline-flex; align-items: center; border-radius: 999px; padding: 6px 12px;
+      background: var(--color-surface-offset); color: var(--color-text); border: 1px solid var(--color-border);
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .exercise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .subpanel {
+      padding: 18px; background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-md);
+    }
+    .subpanel h4 { margin-bottom: 10px; font-size: 1rem; }
+    .subpanel p, .subpanel li { color: var(--color-text-muted); }
+    .subpanel ul, .subpanel ol { margin: 0; padding-left: 20px; }
+    .subpanel li + li { margin-top: 7px; }
+    .callout {
+      padding: 14px 16px; border-radius: var(--radius-md); background: var(--color-primary-highlight);
+      border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
+    }
+    .callout strong { display: block; margin-bottom: 4px; }
+    .callout p { margin: 0; color: var(--color-text); }
+    pre {
+      margin: 0; padding: 18px; overflow: auto; border-radius: var(--radius-md);
+      background: var(--color-code-bg); border: 1px solid var(--color-border); color: var(--color-text);
+      font-size: 0.9rem; line-height: 1.55;
+    }
+    code, pre, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .step-list { counter-reset: step; display: grid; gap: 12px; }
+    .step {
+      display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: start;
+      padding: 14px 16px; border: 1px solid var(--color-border); background: var(--color-surface-2); border-radius: var(--radius-md);
+    }
+    .step-number {
+      width: 38px; height: 38px; border-radius: 999px; background: var(--color-primary);
+      color: white; display: grid; place-items: center; font-weight: 700;
+    }
+    .step p { margin: 4px 0 0; color: var(--color-text-muted); }
+    .tip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .tip-card { padding: 18px; }
+    .tip-card h4 { margin-bottom: 8px; font-size: 1rem; }
+    .tip-card p { margin: 0; color: var(--color-text-muted); }
+    .workflow-card { padding: 24px; }
+    table {
+      width: 100%; border-collapse: collapse; border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      overflow: hidden; background: var(--color-surface);
+    }
+    th, td {
+      text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--color-divider); vertical-align: top;
+    }
+    th { font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); }
+    td { color: var(--color-text); }
+    .footer {
+      padding: 36px 0 60px; color: var(--color-text-muted); font-size: 0.95rem;
+    }
+    .inline-code {
+      display: inline-block; padding: 2px 7px; border-radius: 8px; background: var(--color-code-bg);
+      border: 1px solid var(--color-border); font-family: ui-monospace, monospace; font-size: 0.92em;
+    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .small-note { color: var(--color-text-muted); font-size: 0.92rem; }
+    @media (max-width: 980px) {
+      .hero-grid, .section-head, .exercise-grid, .two-col, .toc-grid, .tip-grid { grid-template-columns: 1fr; }
+      .hero-metrics { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .header-inner { align-items: flex-start; flex-direction: column; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .hero { padding-top: 32px; }
+      .hero-card, .panel, .exercise-card, .workflow-card, .toc-card { padding: 18px; }
+      h1 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand" aria-label="n8n companion guide brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 7h5l3 5h4" />
+            <circle cx="5" cy="7" r="2.1" fill="currentColor" stroke="none" />
+            <circle cx="15" cy="12" r="2.1" fill="currentColor" stroke="none" />
+            <circle cx="20" cy="12" r="2.1" fill="currentColor" stroke="none" />
+            <path d="M7 16h6l4-4" />
+            <circle cx="7" cy="16" r="2.1" fill="currentColor" stroke="none" />
+          </svg>
+        </div>
+        <div class="brand-text">
+          <strong>n8n Companion Guide</strong>
+          <span>4 graded beginner-to-intermediate exercises</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a class="download-btn" href="./n8n-ai-ticket-triage-workflow.json" download>Download workflow JSON</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">Toggle theme</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <article class="hero-card">
+        <div class="hero-eyebrow">Hands-on n8n ramp-up</div>
+        <h1>Learn n8n by building small workflows that steadily grow in power.</h1>
+        <p>
+          This companion guide starts with the simplest possible workflow, then introduces expressions,
+          branching, AI usage, a Code node, and finally a complete importable workflow. It is written so
+          participants can follow directly inside the n8n editor without guessing where expressions or code belong.
+        </p>
+        <div class="hero-metrics">
+          <div class="metric"><strong>4</strong><span>graded exercises</span></div>
+          <div class="metric"><strong>2</strong><span>expression-heavy labs</span></div>
+          <div class="metric"><strong>1</strong><span>importable final workflow</span></div>
+        </div>
+      </article>
+      <aside class="hero-side">
+        <div class="panel">
+          <h3>What participants should learn</h3>
+          <ul class="checklist">
+            <li>How data moves as JSON between n8n nodes.</li>
+            <li>How to use the expression picker instead of memorizing syntax first.</li>
+            <li>Where small JavaScript snippets belong in a Code node.</li>
+            <li>How an AI workflow usually follows input → enrich → decide → act.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Recommended setup</h3>
+          <ul class="checklist">
+            <li>A running n8n instance with access to core nodes.</li>
+            <li>OpenAI credentials configured in n8n for the AI exercise.</li>
+            <li>Participants should run each workflow manually before modifying it.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="toc">
+    <div class="container toc-grid">
+      <a class="toc-card" href="#exercise-1"><strong>Exercise 1</strong><span>Hello workflow builder</span></a>
+      <a class="toc-card" href="#exercise-2"><strong>Exercise 2</strong><span>Registration processor with IF logic</span></a>
+      <a class="toc-card" href="#exercise-3"><strong>Exercise 3</strong><span>AI summary helper with a Code node</span></a>
+      <a class="toc-card" href="#exercise-4"><strong>Exercise 4</strong><span>Importable AI ticket triage workflow</span></a>
+    </div>
+  </section>
+
+  <main id="main-content" class="container">
+    <section class="section-block" id="before-you-start">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Before you start</div>
+          <h2 class="section-title">How to teach expressions clearly</h2>
+        </div>
+        <div class="section-summary">
+          Many beginners struggle not because the logic is hard, but because they are unsure where expressions belong.
+          In these exercises, every place that needs dynamic values is called out explicitly with both the click path and the final expression.
+        </div>
+      </div>
+      <div class="tip-grid">
+        <article class="tip-card">
+          <h4>Use the expression toggle</h4>
+          <p>In any text field, click the field, then choose <span class="inline-code">Add Expression</span> or switch the field into expression mode when n8n offers it.</p>
+        </article>
+        <article class="tip-card">
+          <h4>Prefer the variable picker first</h4>
+          <p>Use the dropdown or variable selector to insert fields from the current item, then inspect the generated expression instead of typing everything from memory.</p>
+        </article>
+        <article class="tip-card">
+          <h4>Use Code nodes sparingly</h4>
+          <p>If a Set, Edit Fields, IF, or Switch node can do the job, prefer that first. Use JavaScript only when transformation logic becomes awkward in expressions.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block" id="exercise-1">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Exercise 1</div>
+          <h2 class="section-title">Hello workflow builder</h2>
+        </div>
+        <div class="section-summary">
+          This first workflow teaches the canvas, execution flow, node outputs, and the idea that n8n passes JSON from one node to the next.
+          It is intentionally simple and should take only a few minutes.
+        </div>
+      </div>
+
+      <article class="exercise-card">
+        <div class="exercise-meta">
+          <span class="pill">Difficulty: Beginner</span>
+          <span class="pill">Nodes: Manual Trigger, Edit Fields</span>
+          <span class="pill">Concepts: JSON, expressions</span>
+        </div>
+
+        <div class="callout">
+          <strong>Outcome</strong>
+          <p>Create a workflow that stores a participant name, topic, and audience level, then builds one dynamic summary sentence.</p>
+        </div>
+
+        <div class="exercise-grid">
+          <div class="subpanel">
+            <h4>Node sequence</h4>
+            <div class="step-list">
+              <div class="step"><div class="step-number">1</div><div><strong>Manual Trigger</strong><p>Add a Manual Trigger node so participants can run the workflow from the editor.</p></div></div>
+              <div class="step"><div class="step-number">2</div><div><strong>Edit Fields (or Set)</strong><p>Add fields named <span class="inline-code">name</span>, <span class="inline-code">topic</span>, and <span class="inline-code">audience_level</span>.</p></div></div>
+              <div class="step"><div class="step-number">3</div><div><strong>Add one more field</strong><p>Create a dynamic field called <span class="inline-code">message</span> that combines the earlier values into one sentence using an expression.</p></div></div>
+            </div>
+          </div>
+          <div class="subpanel">
+            <h4>Suggested sample values</h4>
+            <ul>
+              <li><span class="inline-code">name</span> = Ashish</li>
+              <li><span class="inline-code">topic</span> = n8n fundamentals</li>
+              <li><span class="inline-code">audience_level</span> = beginner</li>
+            </ul>
+            <p class="small-note">Run the workflow once and inspect the output JSON in the Edit Fields node result pane.</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="subpanel">
+            <h4>Expression instructions</h4>
+            <ol>
+              <li>In the <span class="inline-code">message</span> field, click into the value box.</li>
+              <li>Choose <span class="inline-code">Add Expression</span>.</li>
+              <li>In the expression editor, use the variable picker to insert <span class="inline-code">name</span>, <span class="inline-code">topic</span>, and <span class="inline-code">audience_level</span> from the current item.</li>
+              <li>Wrap them in normal text to build one final sentence.</li>
+            </ol>
+          </div>
+          <div class="subpanel">
+            <h4>Final expression</h4>
+<pre>{{ 'Participant ' + $json.name + ' is exploring ' + $json.topic + ' at ' + $json.audience_level + ' level.' }}</pre>
+          </div>
+        </div>
+
+        <div class="subpanel">
+          <h4>What to explain while teaching</h4>
+          <ul>
+            <li>The workflow data is a JSON object flowing between nodes.</li>
+            <li><span class="inline-code">$json.field_name</span> means “read the current item’s field value”.</li>
+            <li>Expressions are useful when a value is partly fixed text and partly dynamic data.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="section-block" id="exercise-2">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Exercise 2</div>
+          <h2 class="section-title">Workshop registration processor</h2>
+        </div>
+        <div class="section-summary">
+          This lab introduces more realistic incoming data and a branch. Participants practice reading fields from JSON and routing the flow based on one condition.
+        </div>
+      </div>
+
+      <article class="exercise-card">
+        <div class="exercise-meta">
+          <span class="pill">Difficulty: Beginner+</span>
+          <span class="pill">Nodes: Manual Trigger, Edit Fields, IF</span>
+          <span class="pill">Concepts: field mapping, conditions</span>
+        </div>
+
+        <div class="callout">
+          <strong>Outcome</strong>
+          <p>Simulate a learner registration record and route beginners and advanced users differently.</p>
+        </div>
+
+        <div class="exercise-grid">
+          <div class="subpanel">
+            <h4>Suggested node sequence</h4>
+            <ol>
+              <li>Manual Trigger</li>
+              <li>Edit Fields to create: <span class="inline-code">name</span>, <span class="inline-code">email</span>, <span class="inline-code">experience_level</span>, <span class="inline-code">interest_area</span></li>
+              <li>IF node to check whether the learner is a beginner</li>
+              <li>Edit Fields on the true branch to create a beginner guidance message</li>
+              <li>Edit Fields on the false branch to create an advanced guidance message</li>
+            </ol>
+          </div>
+          <div class="subpanel">
+            <h4>Sample values</h4>
+            <ul>
+              <li><span class="inline-code">name</span> = Riya</li>
+              <li><span class="inline-code">email</span> = riya@example.com</li>
+              <li><span class="inline-code">experience_level</span> = beginner</li>
+              <li><span class="inline-code">interest_area</span> = AI automation</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="subpanel">
+            <h4>How to configure the IF node</h4>
+            <ol>
+              <li>Open the IF node.</li>
+              <li>For the left value, click the field and choose the current item variable for <span class="inline-code">experience_level</span>.</li>
+              <li>Keep the operator as <span class="inline-code">is equal to</span>.</li>
+              <li>For the right value, type <span class="inline-code">beginner</span>.</li>
+            </ol>
+            <p class="small-note">This is often easier for participants than writing a raw condition expression from scratch.</p>
+          </div>
+          <div class="subpanel">
+            <h4>Equivalent expression they should recognize</h4>
+<pre>{{ $json.experience_level }}</pre>
+            <p class="small-note">If you want, you can show that the IF node is visually building logic around this field value.</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="subpanel">
+            <h4>Beginner branch message expression</h4>
+<pre>{{ 'Welcome ' + $json.name + '. Start with the fundamentals track for ' + $json.interest_area + '.' }}</pre>
+          </div>
+          <div class="subpanel">
+            <h4>Advanced branch message expression</h4>
+<pre>{{ 'Welcome ' + $json.name + '. You can directly try the advanced labs in ' + $json.interest_area + '.' }}</pre>
+          </div>
+        </div>
+
+        <div class="subpanel">
+          <h4>What to explain while teaching</h4>
+          <ul>
+            <li>Most business workflows have a decision point, and IF is often the first routing node to learn.</li>
+            <li>n8n conditions can usually be built visually, which reduces syntax anxiety for beginners.</li>
+            <li>Expressions are still useful on each branch to personalize outputs.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="section-block" id="exercise-3">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Exercise 3</div>
+          <h2 class="section-title">AI summary helper with cleanup logic</h2>
+        </div>
+        <div class="section-summary">
+          This lab introduces an AI step and a small amount of JavaScript. Participants first send messy notes to an AI model, then use a Code node to clean and structure the result.
+        </div>
+      </div>
+
+      <article class="exercise-card">
+        <div class="exercise-meta">
+          <span class="pill">Difficulty: Intermediate</span>
+          <span class="pill">Nodes: Manual Trigger, Edit Fields, OpenAI/AI node, Code</span>
+          <span class="pill">Concepts: prompts, expressions, JavaScript</span>
+        </div>
+
+        <div class="callout">
+          <strong>Outcome</strong>
+          <p>Turn rough workshop notes into a polished summary and then reshape the AI output in a Code node.</p>
+        </div>
+
+        <div class="exercise-grid">
+          <div class="subpanel">
+            <h4>Suggested node sequence</h4>
+            <ol>
+              <li>Manual Trigger</li>
+              <li>Edit Fields with one text field named <span class="inline-code">raw_notes</span></li>
+              <li>OpenAI or AI text-generation node</li>
+              <li>Code node to format the result into cleaner JSON</li>
+            </ol>
+          </div>
+          <div class="subpanel">
+            <h4>Sample raw notes</h4>
+            <p class="small-note">Use a short, messy paragraph such as:</p>
+<pre>team discussed using n8n for support triage, email drafting and lead qualification. people want simple examples first. also need guardrails before production.</pre>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="subpanel">
+            <h4>Prompt field instructions</h4>
+            <ol>
+              <li>In the AI node prompt or user message field, switch to expression mode if needed.</li>
+              <li>Type fixed instruction text first.</li>
+              <li>Use the variable picker to insert the current item field <span class="inline-code">raw_notes</span>.</li>
+              <li>Ask for short structured output.</li>
+            </ol>
+          </div>
+          <div class="subpanel">
+            <h4>Prompt expression</h4>
+<pre>{{ 'Rewrite the following workshop notes into 3 bullet points and one final action item:\n\n' + $json.raw_notes }}</pre>
+          </div>
+        </div>
+
+        <div class="subpanel">
+          <h4>Code node instructions</h4>
+          <p>Set the Code node to run once for each item if your setup asks for an execution mode. Then paste the following JavaScript into the main code field.</p>
+<pre>const aiText = $json.text || $json.output || $json.response || '';
+
+return [
+  {
+    json: {
+      original_notes: $json.raw_notes || '',
+      cleaned_summary: aiText.trim(),
+      status: 'ready_for_review',
+      word_count: aiText.trim() ? aiText.trim().split(/\s+/).length : 0,
+    },
+  },
+];</pre>
+        </div>
+
+        <div class="subpanel">
+          <h4>What to explain while teaching</h4>
+          <ul>
+            <li>The AI node is just another step in a larger workflow, not the workflow by itself.</li>
+            <li>The Code node is useful when you want complete control over the final JSON shape.</li>
+            <li>The line that reads <span class="inline-code">$json.text || $json.output || $json.response</span> is defensive programming because different AI nodes or configurations may expose output fields differently.</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="section-block" id="exercise-4">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Exercise 4</div>
+          <h2 class="section-title">Importable AI ticket triage workflow</h2>
+        </div>
+        <div class="section-summary">
+          This final exercise gives participants a complete workflow they can import. It demonstrates a realistic pattern: intake data, generate a category, normalize it, branch, and prepare a response.
+        </div>
+      </div>
+
+      <article class="workflow-card">
+        <div class="exercise-meta" style="margin-bottom: 18px;">
+          <span class="pill">Difficulty: Intermediate+</span>
+          <span class="pill">Includes workflow JSON file</span>
+          <span class="pill">Pattern: input → enrich → decide → act</span>
+        </div>
+
+        <div class="callout" style="margin-bottom: 18px;">
+          <strong>Workflow goal</strong>
+          <p>A new support request comes in with customer text. AI suggests a ticket category, a Code node normalizes it, and routing prepares the correct downstream message.</p>
+        </div>
+
+        <div class="subpanel" style="margin-bottom: 18px;">
+          <h4>Suggested flow structure</h4>
+          <table>
+            <thead>
+              <tr><th>Step</th><th>Node</th><th>Purpose</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Manual Trigger</td><td>Run the demo inside the editor.</td></tr>
+              <tr><td>2</td><td>Edit Fields</td><td>Create a sample ticket with customer name, email, priority, and issue text.</td></tr>
+              <tr><td>3</td><td>OpenAI / AI node</td><td>Classify the issue into one of a few allowed categories.</td></tr>
+              <tr><td>4</td><td>Code node</td><td>Normalize the AI output to a predictable lowercase category.</td></tr>
+              <tr><td>5</td><td>Switch or IF nodes</td><td>Route billing, technical, and general questions differently.</td></tr>
+              <tr><td>6</td><td>Edit Fields</td><td>Prepare the final response message.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="two-col">
+          <div class="subpanel">
+            <h4>How to import the workflow</h4>
+            <ol>
+              <li>Download the JSON file linked at the top of this page.</li>
+              <li>Open your n8n editor.</li>
+              <li>Use the workflow import option in the editor to import from file or paste JSON.</li>
+              <li>Open the imported workflow and inspect each node before running it.</li>
+            </ol>
+          </div>
+          <div class="subpanel">
+            <h4>What participants should modify</h4>
+            <ul>
+              <li>Change the sample ticket text and see if routing changes.</li>
+              <li>Add one more category such as <span class="inline-code">access</span> or <span class="inline-code">refund</span>.</li>
+              <li>Replace the final message with an email draft or Slack-ready output.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="subpanel" style="margin-top: 18px;">
+          <h4>Normalization Code node snippet used in the workflow</h4>
+<pre>const raw = ($json.text || $json.output || $json.category || '').toLowerCase();
+
+let normalized = 'general';
+
+if (raw.includes('billing')) {
+  normalized = 'billing';
+} else if (raw.includes('technical') || raw.includes('bug') || raw.includes('error')) {
+  normalized = 'technical';
+} else if (raw.includes('account') || raw.includes('login') || raw.includes('access')) {
+  normalized = 'account';
+}
+
+return [
+  {
+    json: {
+      ...$json,
+      normalized_category: normalized,
+    },
+  },
+];</pre>
+        </div>
+      </article>
+    </section>
+
+    <section class="section-block" id="teaching-notes">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Teaching notes</div>
+          <h2 class="section-title">Suggested facilitation pattern</h2>
+        </div>
+        <div class="section-summary">
+          To keep the session interactive, first demonstrate each workflow once, then ask participants to reproduce it, and finally ask them to modify one field or node before moving on.
+        </div>
+      </div>
+      <div class="tip-grid">
+        <article class="tip-card">
+          <h4>Keep the first run guided</h4>
+          <p>For each exercise, ask participants to execute the workflow once before editing anything. This helps them understand the baseline output.</p>
+        </article>
+        <article class="tip-card">
+          <h4>Make one controlled change</h4>
+          <p>Ask them to change only one field first, such as the audience level, ticket text, or prompt wording, and then rerun the workflow.</p>
+        </article>
+        <article class="tip-card">
+          <h4>Reflect on patterns</h4>
+          <p>At the end, point out that most automation patterns repeat the same ideas: capture input, transform data, branch on logic, and produce an action or response.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      This guide is designed as a practical companion for a live n8n session. Pair it with the included workflow JSON so participants can inspect a complete example after learning the building blocks step by step.
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const btn = document.querySelector('[data-theme-toggle]');
+      let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', theme);
+      btn.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+      btn.addEventListener('click', function () {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', theme);
+        btn.textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+      });
+    })();
+  </script>
+</body>
+</html>
