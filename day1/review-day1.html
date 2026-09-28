@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Day 1 Review — Flip Cards</title>
+  <meta name="slides-format" content="viewport" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1324;
+      --bg-deep: #050b16;
+      --surface: rgba(255,255,255,0.08);
+      --surface-strong: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.14);
+      --text: #eef5ff;
+      --text-secondary: #cdd8e8;
+      --text-muted: #97a7c0;
+      --accent-1: #79e0ff;
+      --accent-2: #9c8cff;
+      --accent-3: #8df0c8;
+      --accent-4: #ffd77a;
+      --danger: #ff8fa3;
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --maxw: 1280px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; min-height: 100%;
+      background: radial-gradient(circle at 15% 20%, rgba(121,224,255,0.18), transparent 28%), radial-gradient(circle at 82% 18%, rgba(156,140,255,0.18), transparent 30%), radial-gradient(circle at 52% 78%, rgba(141,240,200,0.12), transparent 30%), linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      color: var(--text); font-family: Inter, system-ui, sans-serif;
+    }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.08; background-image: radial-gradient(rgba(255,255,255,0.35) 0.7px, transparent 0.7px); background-size: 18px 18px; mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.08)); }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 56px; position: relative; z-index: 1; }
+    .hero { position: relative; overflow: hidden; border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)); backdrop-filter: blur(18px); border-radius: 30px; box-shadow: var(--shadow); padding: clamp(28px, 5vw, 54px); margin-bottom: 28px; }
+    .hero::after { content: ""; position: absolute; width: 340px; height: 340px; right: -60px; top: -120px; border-radius: 50%; background: radial-gradient(circle, rgba(121,224,255,0.22), transparent 62%); filter: blur(4px); pointer-events: none; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--accent-1); letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); box-shadow: 0 0 16px rgba(121,224,255,0.8); }
+    h1 { margin: 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; line-height: 0.95; font-size: clamp(2.8rem, 7vw, 5.8rem); letter-spacing: -0.04em; max-width: 11ch; background: linear-gradient(135deg, #ffffff 10%, var(--accent-1) 42%, var(--accent-2) 78%, #ffffff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .sub { margin-top: 18px; max-width: 72ch; color: var(--text-secondary); font-size: clamp(1rem, 2vw, 1.18rem); line-height: 1.65; }
+    .meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .pill { padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-secondary); font-size: 14px; }
+    .toolbar { display: grid; grid-template-columns: 1.3fr 0.9fr 0.9fr auto; gap: 12px; margin-bottom: 24px; }
+    .control { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; color: var(--text); backdrop-filter: blur(12px); }
+    .control input, .control select { width: 100%; border: 0; outline: none; background: transparent; color: var(--text); font-size: 14px; }
+    .control select option { color: #111; }
+    .btn { border: 1px solid rgba(121,224,255,0.25); background: linear-gradient(135deg, rgba(121,224,255,0.18), rgba(156,140,255,0.16)); color: var(--text); border-radius: 16px; padding: 0 18px; font-weight: 700; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; min-height: 52px; }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(121,224,255,0.45); }
+    .section-title { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 12px 2px 18px; }
+    .section-title h2 { margin: 0; font-size: 1.2rem; letter-spacing: -0.02em; }
+    .section-title p { margin: 0; color: var(--text-muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .card { min-height: 310px; perspective: 1400px; position: relative; }
+    .card-inner { position: relative; width: 100%; height: 100%; min-height: 310px; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(.2,.8,.2,1); }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .face { position: absolute; inset: 0; border-radius: var(--radius-xl); border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.055)); backdrop-filter: blur(16px); box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; backface-visibility: hidden; overflow: hidden; }
+    .face::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 45%, rgba(121,224,255,0.06)); }
+    .back { transform: rotateY(180deg); }
+    .type-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; position: relative; z-index: 1; }
+    .tag, .level { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.12); background: rgba(6, 12, 26, 0.36); }
+    .level { color: var(--accent-4); }
+    .tag.mcq { color: var(--accent-1); }
+    .tag.tf { color: var(--accent-3); }
+    .tag.word { color: var(--accent-2); }
+    .tag.mf { color: var(--danger); }
+    .tag.match { color: var(--accent-4); }
+    .qnum { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .question { position: relative; z-index: 1; font-size: 1.05rem; font-weight: 600; line-height: 1.5; letter-spacing: -0.01em; margin-bottom: 14px; }
+    .options { position: relative; z-index: 1; display: grid; gap: 8px; margin-top: auto; }
+    .opt { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-size: 14px; line-height: 1.45; }
+    .hint { position: relative; z-index: 1; margin-top: auto; color: var(--text-muted); font-size: 13px; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .answer-label { position: relative; z-index: 1; font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent-1); margin-bottom: 10px; font-weight: 700; }
+    .answer { position: relative; z-index: 1; font-size: 1rem; font-weight: 700; line-height: 1.5; color: #fff; margin-bottom: 12px; }
+    .explain { position: relative; z-index: 1; color: var(--text-secondary); line-height: 1.6; font-size: 14px; }
+    .flip-btn { position: relative; z-index: 1; margin-top: auto; align-self: start; padding: 10px 13px; border-radius: 999px; border: 1px solid rgba(121,224,255,0.18); background: rgba(121,224,255,0.1); color: var(--text); font-weight: 700; font-size: 13px; cursor: pointer; }
+    .footer-note { margin-top: 26px; padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+    @media (max-width: 1080px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .toolbar { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .wrap { padding: 18px 14px 40px; } .grid { grid-template-columns: 1fr; } .toolbar { grid-template-columns: 1fr; } .section-title { flex-direction: column; align-items: start; } .card, .card-inner { min-height: 330px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> Day 1 review deck</div>
+      <h1>Day 1 review</h1>
+      <p class="sub">AI Foundations, LLMs, Model Landscape, and Prompting. Use as an end-of-day wrap-up or a Day 2 warm-up. Flip each card to reveal the answer and a short explanation.</p>
+      <div class="meta">
+        <span class="pill">30 cards</span>
+        <span class="pill">Easy · Intermediate · Advanced</span>
+        <span class="pill">MCQ · True/False · Myth/Fact · One-word-for · Matching</span>
+        <span class="pill">AI Foundations · LLMs · Model Landscape · Prompting</span>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Filters">
+      <label class="control"><input id="searchBox" type="text" placeholder="Search topic, keyword, or question type" /></label>
+      <label class="control">
+        <select id="typeFilter">
+          <option value="all">All question types</option>
+          <option value="MCQ">MCQ</option>
+          <option value="True/False">True/False</option>
+          <option value="Myth/Fact">Myth/Fact</option>
+          <option value="One-word-for">One-word-for</option>
+          <option value="Matching">Matching</option>
+        </select>
+      </label>
+      <label class="control">
+        <select id="topicFilter">
+          <option value="all">All topics</option>
+          <option>AI Foundations</option>
+          <option>LLMs</option>
+          <option>Model Landscape</option>
+          <option>Prompting</option>
+        </select>
+      </label>
+      <button class="btn" id="flipAllBtn" type="button">Flip visible cards</button>
+    </section>
+
+    <div class="section-title">
+      <h2>Flip-card deck</h2>
+      <p>30 cards · AI Foundations, LLMs, Model Landscape, Prompting</p>
+    </div>
+
+    <section class="grid" id="cardGrid"></section>
+
+    <div class="footer-note">
+      These questions are designed for discussion and reflection. For MCQ cards, consider discussing why the wrong options are wrong — not just why the right one is right.
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {type:'MCQ',difficulty:'Intermediate',topic:'AI Foundations',question:'Which statement best distinguishes AI, ML, and deep learning?',options:['AI is a subset of ML, and ML is a subset of deep learning.','ML is a subset of AI, and deep learning is a subset of ML.','Deep learning and AI are the same; ML is separate.','AI refers only to robotics, while ML refers to language models.'],answer:'B — ML is a subset of AI, and deep learning is a subset of ML.',explanation:'AI is the broad umbrella. Machine learning is one way to build AI systems, and deep learning is one family of ML methods built around layered neural networks.'},
+      {type:'MCQ',difficulty:'Easy',topic:'LLMs',question:'What is the most accurate description of a Large Language Model?',options:['A database containing every document used during training.','A rules engine that applies predefined legal and business logic.','A model trained to identify and generate patterns in language.','A search engine that always retrieves verified information.'],answer:'C — A model trained to identify and generate patterns in language.',explanation:'LLMs learn statistical patterns in language and generate likely sequences based on those patterns. They are not document databases or fact-checking systems.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'LLMs',question:'One word for: the process in which an LLM learns general language patterns from very large datasets before any task-specific adaptation.',answer:'Pre-training',explanation:'Pre-training is the initial phase where the model is exposed to massive text data and learns broad language representations through next-token prediction.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'AI Foundations',question:'A neural network is best understood as a rule book written explicitly by engineers for every possible case.',answer:'False',explanation:'A neural network learns parameter values from data rather than relying on manually written rules — it approximates patterns, not a hand-crafted decision tree.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'LLMs',question:'One word for: generating a response from a deployed, trained model — as opposed to training it.',answer:'Inference',explanation:'Inference is when a trained model processes a given input and produces output. It is computationally cheaper than training and is what happens every time you send a prompt.'},
+      {type:'MCQ',difficulty:'Easy',topic:'LLMs',question:'What is a token?',options:['A complete paragraph used by an LLM to understand a document.','A security credential used to access an AI application.','A fixed-size word that is identical across all languages and models.','A unit of text processed by a language model — which may be a word, part of a word, punctuation, or a symbol.'],answer:'D — A unit of text processed by a language model.',explanation:'Tokens may represent complete words, word fragments, punctuation, spaces, or symbols. Tokenization varies by model and language — "unbelievable" might be 3–4 tokens, not one.'},
+      {type:'Myth/Fact',difficulty:'Intermediate',topic:'AI Foundations',question:'"Generative AI is just another name for all machine learning."',answer:'Myth',explanation:'Generative AI is a subset of AI/ML focused specifically on creating new outputs — text, images, code, audio, video. Most ML models are discriminative (classify, predict) rather than generative.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'LLMs',question:'Why does token count matter when working with an LLM?',options:['It determines whether the model can process the input and generate output within its context limit.','It determines whether the model has access to the internet.','It directly measures whether the answer is legally accurate.','It guarantees that longer prompts will produce better answers.'],answer:'A — It determines whether the model can process the input within its context limit.',explanation:"Token count affects whether the request fits within the model's context window and how much output can be generated. Exceeding the limit truncates input or causes errors."},
+      {type:'Matching',difficulty:'Intermediate',topic:'Model Landscape',question:'Match each model type to its best-fit deployment scenario:',options:['Frontier closed model (e.g., GPT-4o, Claude 3.5) → ?','Open-weight model (e.g., Llama 3, Mistral) → ?','Small efficient model (e.g., GPT-4o-mini, Claude Haiku) → ?'],answer:'Frontier closed → High-stakes, complex reasoning tasks<br>Open-weight → Privacy-sensitive or on-prem deployments<br>Small efficient → High-volume, low-cost pipelines',explanation:'Model choice should balance capability, cost, and data handling requirements — not just raw benchmark performance.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'LLMs',question:"What is the best description of a model's context window?",options:["The model's entire training dataset.",'The maximum amount of input and output information the model can consider in one interaction.','The time period during which the model remains logged into an application.','The number of users who can access the model simultaneously.'],answer:'B — The maximum amount of input and output the model can consider in one interaction.',explanation:'The context window is the working memory for a single interaction — your prompt, any attached documents, and prior conversation turns all count against this limit.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'LLMs',question:"An LLM's ability to produce fluent language is evidence that every factual claim in its answer is correct.",answer:'False',explanation:'Fluency measures how naturally a response reads, not whether the underlying claims are true. A model can write a grammatically perfect, confidently-worded, completely fabricated answer.'},
+      {type:'Myth/Fact',difficulty:'Easy',topic:'LLMs',question:'"If an LLM has read a document during training, it can reproduce the document perfectly whenever asked."',answer:'Myth',explanation:'Training encodes statistical patterns into parameters — not a searchable copy of every document. Reproduction may be incomplete, paraphrased, or factually drifted.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'Model Landscape',question:'A higher benchmark score on a public leaderboard guarantees better performance on your specific business task.',answer:'False',explanation:'Benchmarks measure narrow, standardized tasks and can be gamed. Real-world selection requires evaluating the model on representative examples from your own domain.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'LLMs',question:'What is a key limitation of an LLM-generated answer?',options:['It can only answer questions about mathematics.','It may produce a plausible-sounding answer that is inaccurate, incomplete, outdated, or unsupported.','It cannot generate structured outputs.','It always refuses questions involving uncertainty.'],answer:'B — It may produce a plausible-sounding answer that is inaccurate, incomplete, outdated, or unsupported.',explanation:'LLMs generate language that is statistically plausible — they have no built-in guarantee of truth, completeness, recency, or professional authority.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'Prompting',question:'One word for: the text instruction supplied to an AI model to guide its response.',answer:'Prompt',explanation:'The prompt is the input the model receives — it can include context, task description, examples, constraints, and output format requirements.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'LLMs',question:"One word for: a model's tendency to generate fluent but false or unsupported information.",answer:'Hallucination',explanation:'Hallucination occurs when the model produces text that sounds authoritative but is factually wrong, fabricated, or unsupported by its training or supplied context.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Prompting',question:'What is the primary purpose of assigning a role in a prompt?',options:['To guarantee that the model will produce an expert-level answer.','To give the model useful perspective, priorities, and style for the task.','To increase the model\'s context window.','To prevent the model from generating any incorrect information.'],answer:'B — To give the model useful perspective, priorities, and style for the task.',explanation:'A role can guide perspective, tone, and priorities — but it does not grant real expertise, guarantee accuracy, or substitute for verification.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Prompting',question:'Which prompt component is most responsible for telling the model what success should look like?',options:['Context','Task','Constraints and output format','Temperature'],answer:'C — Constraints and output format.',explanation:'Task tells the model what to do; constraints and output format define what a usable answer looks like — the structure, scope, length, and shape of a good response.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'Prompting',question:'A prompt can improve the relevance and consistency of an answer, but it cannot guarantee factual accuracy.',answer:'True',explanation:'Prompting shapes task clarity and output structure, but inaccurate source material, model limitations, and unsupported generation can still produce errors regardless of prompt quality.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Prompting',question:'Which prompt element most directly helps control the required output format?',options:['Asking the model to "think harder."','Mentioning that the task is urgent.','Providing a requested structure, such as a table with named columns.','Increasing the number of adjectives in the prompt.'],answer:'C — Providing a requested structure.',explanation:'Explicit structures — tables, numbered lists, JSON schemas, named sections — make outputs more consistent and easier to review or pass downstream.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Prompting',question:'When moving from a vague prompt to a better one, which upgrade usually gives the biggest improvement first?',options:['Adding more adjectives.','Adding role, task, audience, constraints, and expected format.','Changing punctuation marks repeatedly.','Making the prompt as long as possible regardless of relevance.'],answer:'B — Adding role, task, audience, constraints, and expected format.',explanation:'Structure beats verbosity. A well-scaffolded prompt with clear role, task, and format expectations usually improves output quality more than simply adding words.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Prompting',question:'What is the main benefit of providing examples in a prompt?',options:['Examples can demonstrate the desired task, style, classification, or output format.','Examples permanently retrain the underlying model.','Examples guarantee that the model will follow all future instructions.','Examples eliminate the need to verify the output.'],answer:'A — Examples can demonstrate the desired task, style, classification, or output format.',explanation:'Examples demonstrate what a good input–output relationship looks like — they guide the model without retraining it. The effect lasts only for the current conversation.'},
+      {type:'True/False',difficulty:'Advanced',topic:'Prompting',question:'Few-shot prompting can improve consistency because it demonstrates the pattern or style expected from the model.',answer:'True',explanation:'Examples anchor tone, structure, level of detail, and classification patterns more reliably than abstract instruction alone — especially for tasks with a specific format.'},
+      {type:'One-word-for',difficulty:'Advanced',topic:'Prompting',question:'One word for: prompting with no examples — only the instruction and any supplied context.',answer:'Zero-shot',explanation:'Zero-shot prompting asks the model to perform a task purely from the instruction. It works well for common tasks but often benefits from examples for specialized or format-heavy outputs.'},
+      {type:'One-word-for',difficulty:'Advanced',topic:'Prompting',question:'One word for: prompting with a small number of demonstrations to shape the response pattern.',answer:'Few-shot',explanation:'Few-shot prompting provides a handful of input–output examples so the model can imitate the intended structure or reasoning pattern for subsequent turns.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Prompting',question:'What is the most useful way to think about chain-of-thought prompting in practical business settings?',options:['A guarantee that the answer is correct.','A way to expose or encourage intermediate reasoning steps, though the output still requires evaluation.','A replacement for external tools and documents.','A method used only in academic labs, not in production.'],answer:'B — A way to expose or encourage intermediate reasoning steps.',explanation:'Chain-of-thought can improve task performance and inspectability, but it is not a substitute for grounding or validation — the reasoning chain itself can contain errors.'},
+      {type:'True/False',difficulty:'Easy',topic:'LLMs',question:'A model may answer differently when given the same prompt at different times or under different settings.',answer:'True',explanation:'Variations arise from sampling temperature, model updates, conversation context, or system configuration — deterministic-looking outputs are often stochastic at a low temperature setting.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Prompting',question:'Which of the following best describes a system prompt?',options:["A one-time message that permanently changes the model's weights.",'Instructions given at the start of a conversation that set the model\'s role, tone, and constraints for all subsequent turns.','A prompt that generates images instead of text.','The user\'s first message in a chat session.'],answer:"B — Instructions that set the model's role, tone, and constraints for all subsequent turns.",explanation:"System prompts set the context, persona, and behavioural rules that persist across the conversation — they shape how the model responds to everything that follows, unlike individual user turns."},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Prompting',question:'"There is one perfect prompt that will work equally well across models, domains, and stakes."',answer:'Myth',explanation:'Prompting is contextual — model behaviour, domain knowledge, required stakes, and output expectations all change what "good" looks like. Prompt evaluation is an iterative, task-specific process.'},
+      {type:'Myth/Fact',difficulty:'Easy',topic:'Prompting',question:'"A well-designed prompt can reduce ambiguity and improve output quality, but it does not replace source verification or human judgement."',answer:'Fact',explanation:'Prompting is an important control for task clarity and output structure. It does not eliminate hallucinations, biased training data, or the need for a human to verify high-stakes content before acting on it.'}
+    ];
+
+    const grid = document.getElementById('cardGrid');
+    const searchBox = document.getElementById('searchBox');
+    const typeFilter = document.getElementById('typeFilter');
+    const topicFilter = document.getElementById('topicFilter');
+    const flipAllBtn = document.getElementById('flipAllBtn');
+
+    function tagClass(type) {
+      if (type === 'MCQ') return 'mcq';
+      if (type === 'True/False') return 'tf';
+      if (type === 'One-word-for') return 'word';
+      if (type === 'Matching') return 'match';
+      return 'mf';
+    }
+
+    function renderCards() {
+      const q = searchBox.value.trim().toLowerCase();
+      const tf = typeFilter.value;
+      const top = topicFilter.value;
+      const filtered = questions.filter(item => {
+        const hay = [item.type, item.topic, item.question, item.answer, ...(item.options || [])].join(' ').toLowerCase();
+        return (!q || hay.includes(q)) && (tf === 'all' || item.type === tf) && (top === 'all' || item.topic === top);
+      });
+      grid.innerHTML = filtered.map(item => {
+        const number = questions.indexOf(item) + 1;
+        const optionsHtml = item.options ? `<div class="options">${item.options.map((opt, i) => `<div class="opt">${String.fromCharCode(65+i)}. ${opt}</div>`).join('')}</div>` : '';
+        const hintHtml = item.hint ? `<div class="hint">${item.hint}</div>` : '';
+        return `<article class="card"><div class="card-inner"><div class="face front"><div class="type-row"><span class="tag ${tagClass(item.type)}">${item.type}</span><span class="level">${item.difficulty}</span></div><div class="qnum">Q${number} &bull; ${item.topic}</div><div class="question">${item.question}</div>${optionsHtml}${hintHtml}<button class="flip-btn" type="button">Flip for answer</button></div><div class="face back"><div class="type-row"><span class="tag ${tagClass(item.type)}">${item.type}</span><span class="level">${item.topic}</span></div><div class="answer-label">Suggested answer</div><div class="answer">${item.answer}</div><div class="explain">${item.explanation}</div><button class="flip-btn" type="button">Back to question</button></div></div></article>`;
+      }).join('');
+      bindFlipEvents();
+      flipAllBtn.textContent = 'Flip visible cards';
+    }
+
+    function bindFlipEvents() {
+      grid.querySelectorAll('.card').forEach(card => {
+        card.querySelectorAll('.flip-btn').forEach(btn => { btn.addEventListener('click', () => card.classList.toggle('flipped')); });
+        card.addEventListener('dblclick', () => card.classList.toggle('flipped'));
+      });
+    }
+
+    let flippedAll = false;
+    flipAllBtn.addEventListener('click', () => {
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      flippedAll = !flippedAll;
+      cards.forEach(card => card.classList.toggle('flipped', flippedAll));
+      flipAllBtn.textContent = flippedAll ? 'Unflip visible cards' : 'Flip visible cards';
+    });
+
+    [searchBox, typeFilter, topicFilter].forEach(el => el.addEventListener('input', renderCards));
+    [typeFilter, topicFilter].forEach(el => el.addEventListener('change', renderCards));
+    renderCards();
+  </script>
+</body>
+</html>

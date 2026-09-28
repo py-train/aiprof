@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>AI Safety, Ethics &amp; Governance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f7f4ee;
+      --color-bg-deep: #efe8db;
+      --color-surface: #fffdf8;
+      --color-text: #1f2937;
+      --color-text-secondary: #475569;
+      --color-text-muted: #6b7280;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #b45309;
+      --color-accent-3: #2563eb;
+      --color-glass-bg: rgba(255,255,255,0.78);
+      --color-glass-border: rgba(15,23,42,0.08);
+      --color-vignette: rgba(15,23,42,0.06);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f7f4ee; --color-text: #1f2937; --glow-color-rgb: 15,118,110; }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--color-bg)}
+    body{font-family:Inter,sans-serif;color:var(--color-text);overflow:hidden;height:100vh;width:100vw}
+    .deck{width:100vw;height:100vh;position:relative}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.97);transition:opacity .6s ease,transform .6s ease;pointer-events:none;overflow:hidden;background:var(--color-bg)}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1180px;padding:clamp(1.4rem,3vw,3rem)}
+    .nav-controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);padding:10px 18px;border-radius:999px;border:1px solid rgba(15,23,42,.08)}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:#fff;color:#0f766e;font-size:1.15rem;cursor:pointer}
+    .slide-dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:50%;background:rgba(15,23,42,.14);cursor:pointer}.dot.active{background:#0f766e;transform:scale(1.2)}
+    .slide-counter{font-size:.8rem;color:#6b7280;min-width:46px;text-align:center}.reveal{opacity:0;transform:translateY(20px)}
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}.blob{position:absolute;border-radius:50%;filter:blur(70px);animation:float 16s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.08)}}
+    .slide::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.02}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%)}
+    .card{background:var(--color-glass-bg);border:1px solid var(--color-glass-border);backdrop-filter:blur(10px);border-radius:24px;box-shadow:0 14px 40px rgba(15,23,42,.06)}
+    .pill{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(15,23,42,.08);color:#0f766e}
+    .pill-optional{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(180,83,9,.18);color:#b45309}
+    .big-number{font-size:clamp(2.3rem,5vw,4.5rem);line-height:.95;font-weight:800;color:#0f766e}
+    .timeline{position:relative;padding-left:1.5rem}.timeline:before{content:'';position:absolute;left:.35rem;top:.2rem;bottom:.2rem;width:2px;background:linear-gradient(#0f766e,#b45309)}
+    .timeline-item{position:relative;padding-left:1.2rem}.timeline-item:before{content:'';position:absolute;left:-.05rem;top:.45rem;width:.7rem;height:.7rem;border-radius:999px;background:#0f766e;box-shadow:0 0 0 6px rgba(15,118,110,.12)}
+    .mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:1.25rem;align-items:start}
+    .codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3efe7;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:1rem}
+    @media (max-width: 900px){.mini-grid,.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 1: Title -->
+  <section class="slide active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:380px;height:380px;top:-80px;right:-60px;background:#fca5a5;opacity:.25"></div>
+      <div class="blob" style="width:260px;height:260px;left:-60px;bottom:-50px;background:#fed7aa;opacity:.35"></div>
+      <div class="blob" style="width:240px;height:240px;left:24%;top:18%;background:#bfdbfe;opacity:.3"></div>
+    </div>
+    <div class="content text-center">
+      <div class="reveal mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-[2rem] border border-black/5 bg-white text-5xl shadow-lg">⚖️</div>
+      <p class="reveal pill mx-auto mb-5">AI Safety · Ethics · Governance · Responsible Use</p>
+      <h1 class="reveal mx-auto max-w-4xl font-display text-[clamp(2.8rem,6vw,5.3rem)] leading-[0.95] text-slate-900">Using AI Responsibly</h1>
+      <p class="reveal mx-auto mt-5 max-w-3xl text-[clamp(1rem,2vw,1.35rem)] text-slate-600">Hallucinations, bias, privacy, and governance — what every professional needs to know.</p>
+    </div>
+  </section>
+
+  <!-- Slide 2: What is a hallucination? -->
+  <section class="slide" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#fca5a5;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Hallucinations</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">The problem isn't that AI lies. It's that it doesn't know it's wrong.</h2>
+        <p class="reveal mt-5 text-slate-600">A hallucination is when a model generates output that sounds confident and plausible — but is factually wrong. Not a glitch. Not a bug. A feature of how LLMs work.</p>
+        <p class="reveal mt-4 text-slate-600 text-sm">LLMs don't retrieve facts from a database. They predict the most statistically likely next word given everything before it. The model has no internal fact-checker — no way to distinguish "I know this" from "this sounds right."</p>
+      </div>
+      <div>
+        <div class="reveal card p-7 mt-8">
+          <p class="text-sm text-slate-500 uppercase tracking-widest mb-3">A real example</p>
+          <p class="text-slate-700 text-sm">Ask an LLM to cite sources for a legal argument. It will produce citations — with author names, journal titles, volume numbers, page ranges — that look completely real. Many will not exist. The model isn't lying; it's pattern-matching what a citation looks like.</p>
+        </div>
+        <div class="reveal mt-4 card p-6 bg-amber-50/60">
+          <p class="text-slate-800 font-display text-xl italic">The danger isn't that AI is wrong. It's that it's wrong with complete confidence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Types of hallucinations -->
+  <section class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#fde68a;opacity:.22"></div>
+      <div class="blob" style="width:220px;height:220px;left:-20px;bottom:-20px;background:#bae6fd;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Hallucination types</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">What hallucinations look like in practice</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Type</th><th class="px-5 py-3">Description</th><th class="px-5 py-3">Example</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Factual error</td><td class="px-5 py-2.5">Gets a verifiable fact wrong</td><td class="px-5 py-2.5">Wrong date, wrong statistic, wrong name</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Fabricated reference</td><td class="px-5 py-2.5">Invents a source, URL, or citation that doesn't exist</td><td class="px-5 py-2.5 text-slate-500 italic">"As reported in the 2023 McKinsey report on X..." (report doesn't exist)</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Confident wrong reasoning</td><td class="px-5 py-2.5">Logical steps sound valid but reach a wrong conclusion</td><td class="px-5 py-2.5">Misapplies a legal rule; wrong financial calculation</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Context confusion</td><td class="px-5 py-2.5">Loses track of facts the user provided earlier</td><td class="px-5 py-2.5">Contradicts something stated 10 messages ago</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Outdated information</td><td class="px-5 py-2.5">States something that was once true as if it still is</td><td class="px-5 py-2.5">Knowledge cutoff problem</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm text-slate-700">The more specific and obscure the topic, the higher the hallucination risk. General knowledge: usually fine. Niche regulations, specific case law, detailed financials: verify.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: How to manage hallucinations -->
+  <section class="slide" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-20px;right:5%;background:#99f6e4;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Managing hallucinations</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Practical habits that reduce the risk</h2>
+      <div class="reveal mt-6 mini-grid">
+        <div class="card p-7">
+          <div class="text-2xl mb-3">📎</div>
+          <h3 class="font-semibold">Ground the model</h3>
+          <p class="mt-2 text-slate-600 text-sm">Provide the facts yourself — paste in the document, policy, or data you want the model to work from. Ask it to answer <em>only</em> from that material. This is the principle behind RAG.</p>
+        </div>
+        <div class="card p-7">
+          <div class="text-2xl mb-3">❓</div>
+          <h3 class="font-semibold">Ask for uncertainty</h3>
+          <p class="mt-2 text-slate-600 text-sm">Include in your prompt: <em>"If you're not certain about something, say so."</em> Models respond to this instruction — they'll flag low-confidence claims if you ask.</p>
+        </div>
+        <div class="card p-7">
+          <div class="text-2xl mb-3">✅</div>
+          <h3 class="font-semibold">Verify before you use</h3>
+          <p class="mt-2 text-slate-600 text-sm">Treat AI output like a first draft from a knowledgeable but fallible colleague. Always check specific facts, dates, numbers, legal references, and named sources.</p>
+        </div>
+      </div>
+      <div class="reveal mt-5 two-col">
+        <div class="card p-5 bg-red-50/50">
+          <p class="text-sm font-semibold text-red-800 mb-1">What not to do</p>
+          <p class="text-sm text-slate-600">Ask the model to check its own work on factual claims. It will often confirm the hallucination.</p>
+        </div>
+        <div class="card p-5 bg-teal-50/50">
+          <p class="text-sm text-slate-700">The right mental model: AI as a fast, fluent drafter — not an authoritative source.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Bias -->
+  <section class="slide" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:0;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#ddd6fe;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Bias</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">The model reflects the world that trained it</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">LLMs are trained on enormous amounts of human-generated text. Human text contains human biases — around gender, race, culture, profession, and more. The model learns those patterns.</p>
+        <div class="reveal mt-4 card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">Where bias comes from</p>
+          <ul class="space-y-2 text-slate-600 text-sm">
+            <li>• <strong>Training data</strong> — over-represents certain languages, cultures, and viewpoints</li>
+            <li>• <strong>RLHF</strong> — human raters have their own preferences and blind spots</li>
+            <li>• <strong>Fine-tuning</strong> — can amplify existing biases in a narrow domain</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-16">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">How it surfaces</p>
+          <ul class="space-y-2 text-slate-600 text-sm">
+            <li>• <strong>Stereotyping</strong> — associates certain roles or traits with particular groups</li>
+            <li>• <strong>Uneven quality</strong> — significantly stronger in English and Western contexts</li>
+            <li>• <strong>Over-refusal</strong> — refuses legitimate requests that pattern-match to something sensitive</li>
+            <li>• <strong>Subtle framing</strong> — describes the same scenario differently depending on demographic cues</li>
+          </ul>
+        </div>
+        <div class="reveal mt-4 card p-5 bg-amber-50/50">
+          <p class="text-sm font-semibold text-amber-800 mb-1">Bias in AI is the bias in us, amplified and automated.</p>
+          <p class="text-xs text-slate-500 mt-1">Treat bias as a known limitation to manage — not an argument to avoid AI entirely.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Bias — what to do -->
+  <section class="slide" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#bbf7d0;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Bias (contd.)</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">What to do about bias</h2>
+      <div class="reveal mt-7 mini-grid">
+        <div class="card p-7">
+          <div class="text-2xl mb-3">🔬</div>
+          <h3 class="font-semibold">Test with diverse examples</h3>
+          <p class="mt-2 text-slate-600 text-sm">Before deploying AI for any use case that affects people, test it with varied inputs — different names, contexts, demographic framings. Does quality stay consistent?</p>
+        </div>
+        <div class="card p-7">
+          <div class="text-2xl mb-3">🧑‍⚖️</div>
+          <h3 class="font-semibold">Never use AI alone for high-stakes decisions</h3>
+          <p class="mt-2 text-slate-600 text-sm">Never use AI output as the sole basis for decisions about individuals — hiring, performance management, credit, or medical triage. Always involve human judgment.</p>
+        </div>
+        <div class="card p-7">
+          <div class="text-2xl mb-3">📋</div>
+          <h3 class="font-semibold">Frame it as a known limitation</h3>
+          <p class="mt-2 text-slate-600 text-sm">Redirect "is AI biased?" to "how do we test for and mitigate known biases in this deployment?" It's an engineering and process problem, not a reason to avoid AI entirely.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: IP and copyright -->
+  <section class="slide" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#fcd34d;opacity:.18"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#a7f3d0;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">IP &amp; copyright</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Who owns AI-generated output?</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">This is genuinely unsettled territory. The law is still catching up, and the answer varies by jurisdiction.</p>
+        <div class="reveal mt-4 card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">Training data</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• Most frontier models were trained on internet text, including copyrighted material</li>
+            <li>• Multiple lawsuits are active (NYT vs. OpenAI; Getty vs. Stability AI)</li>
+            <li>• Outcome: unresolved — especially for verbatim reproduction</li>
+          </ul>
+        </div>
+        <div class="reveal mt-3 card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">AI-generated output</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• In most jurisdictions, AI-generated content has no automatic copyright protection</li>
+            <li>• A human who substantially shapes or edits AI output may hold copyright on the result</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-7 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Safe practices</p>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li>• Don't pass AI-generated content off as unaided original work — especially for client deliverables, publications, or academic submissions</li>
+            <li>• Use AI as a drafting tool; apply human judgment, editing, and review</li>
+            <li>• Follow your organization's disclosure requirements</li>
+          </ul>
+          <div class="mt-4 bg-amber-50/60 rounded-2xl p-4">
+            <p class="text-sm text-slate-700 italic">Think of it like using stock photography: AI content is a tool, not a credential.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Data privacy -->
+  <section class="slide" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#bae6fd;opacity:.25"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fca5a5;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Data privacy</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">What you put in may not stay private</h2>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-4 py-3">Safe to input</th><th class="px-4 py-3">Proceed with caution</th><th class="px-4 py-3">Do not input</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-4 py-2.5">Public information, general questions</td><td class="px-4 py-2.5">Internal process descriptions (no names)</td><td class="px-4 py-2.5 font-medium text-red-700">Client confidential data</td></tr>
+            <tr><td class="px-4 py-2.5">Anonymized scenarios</td><td class="px-4 py-2.5">Draft internal documents</td><td class="px-4 py-2.5 font-medium text-red-700">Employee personal information</td></tr>
+            <tr><td class="px-4 py-2.5">Your own non-sensitive writing</td><td class="px-4 py-2.5">Commercially sensitive strategies</td><td class="px-4 py-2.5 font-medium text-red-700">Legal privileged communications</td></tr>
+            <tr><td class="px-4 py-2.5">Training materials, templates</td><td class="px-4 py-2.5"></td><td class="px-4 py-2.5 font-medium text-red-700">Regulated data (HIPAA, PCI, GDPR-sensitive)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 two-col">
+        <div class="card p-5 text-sm text-slate-600">
+          <strong>Consumer products</strong> (ChatGPT free/plus, Claude.ai): inputs may be used to improve the model. No data processing agreement by default.
+          <br/><br/><strong>Enterprise / API</strong>: major providers offer tiers where inputs are <em>not</em> used for training; DPAs can be signed.
+        </div>
+        <div class="card p-5 bg-amber-50/50">
+          <p class="text-sm font-semibold text-amber-800 mb-2">The safest default</p>
+          <p class="text-sm text-slate-700">If you wouldn't email it to a stranger, don't paste it into a public AI tool.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Enterprise AI governance -->
+  <section class="slide" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#ccfbf1;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#ddd6fe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Governance</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Governance isn't bureaucracy — it's risk management</h2>
+      <div class="reveal mt-6 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">Why it exists</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• <strong>Liability</strong> — AI-generated advice or decisions that cause harm can expose the organization legally</li>
+            <li>• <strong>Quality</strong> — without standards, outputs vary wildly in tone, facts, and format</li>
+            <li>• <strong>Trust</strong> — clients, regulators, and employees need assurance AI is used responsibly</li>
+            <li>• <strong>Compliance</strong> — sector rules (financial advice, medical, legal) impose constraints AI doesn't know about</li>
+          </ul>
+        </div>
+        <div class="card p-7">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-4">The governance spectrum</p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full bg-red-400 flex-shrink-0"></div>
+              <div><span class="text-sm font-semibold">No policy</span> <span class="text-xs text-slate-400 ml-2">Risky — common in early adoption</span></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full bg-amber-400 flex-shrink-0"></div>
+              <div><span class="text-sm font-semibold">Informal norms</span> <span class="text-xs text-slate-400 ml-2">Most organizations today</span></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full bg-yellow-400 flex-shrink-0"></div>
+              <div><span class="text-sm font-semibold">Approved tools list</span> <span class="text-xs text-slate-400 ml-2">Emerging best practice</span></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full bg-teal-500 flex-shrink-0"></div>
+              <div><span class="text-sm font-semibold">Formal AI policy</span> <span class="text-xs text-slate-400 ml-2">Mature — standard in regulated industries</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Policy elements -->
+  <section class="slide" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bbf7d0;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Policy elements</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Common elements of an organizational AI policy</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Policy element</th><th class="px-5 py-3">What it means in practice</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Approved tools / models</td><td class="px-5 py-2.5">A defined list of AI products employees may use (e.g., Copilot M365, approved API access)</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Data classification rules</td><td class="px-5 py-2.5">Which data classes may be processed by which tools (public ✅, confidential ⚠️, restricted ❌)</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Human-in-the-loop requirements</td><td class="px-5 py-2.5">Certain outputs must be reviewed by a qualified human before use (legal, medical, HR decisions)</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Disclosure requirements</td><td class="px-5 py-2.5">When to disclose that AI was used (client deliverables, publications, regulatory submissions)</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Incident reporting</td><td class="px-5 py-2.5">How to report unexpected or harmful AI outputs</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Training requirements</td><td class="px-5 py-2.5">Who needs to complete AI literacy training before using approved tools</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm text-slate-700">Know your organization's policy before you need it — not after something goes wrong.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: Decision framework — 5 questions -->
+  <section class="slide" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#99f6e4;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Decision framework</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Before you use AI for a work task — five questions</h2>
+      <div class="reveal mt-5 grid gap-3 md:grid-cols-5">
+        <div class="card p-5">
+          <p class="text-2xl font-bold text-teal-700 mb-2">1</p>
+          <p class="text-sm font-semibold mb-1">Is this tool approved?</p>
+          <p class="text-xs text-slate-500">Use only tools on your organization's approved list. When in doubt, ask IT or compliance.</p>
+        </div>
+        <div class="card p-5">
+          <p class="text-2xl font-bold text-teal-700 mb-2">2</p>
+          <p class="text-sm font-semibold mb-1">What data am I inputting?</p>
+          <p class="text-xs text-slate-500">If it's confidential, restricted, or personally identifiable — use an enterprise tool with a DPA, or don't use AI at all.</p>
+        </div>
+        <div class="card p-5">
+          <p class="text-2xl font-bold text-teal-700 mb-2">3</p>
+          <p class="text-sm font-semibold mb-1">Will a human review this?</p>
+          <p class="text-xs text-slate-500">High-stakes outputs — client advice, employment decisions, regulatory filings — need human review. Always.</p>
+        </div>
+        <div class="card p-5">
+          <p class="text-2xl font-bold text-teal-700 mb-2">4</p>
+          <p class="text-sm font-semibold mb-1">Does accuracy matter here?</p>
+          <p class="text-xs text-slate-500">If yes: verify specific facts, numbers, and references before using the output.</p>
+        </div>
+        <div class="card p-5">
+          <p class="text-2xl font-bold text-teal-700 mb-2">5</p>
+          <p class="text-sm font-semibold mb-1">Am I representing this as my own?</p>
+          <p class="text-xs text-slate-500">Be transparent about AI involvement as required by your organization's policy and professional standards.</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 overflow-hidden rounded-[24px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-4 py-2.5">Using AI to draft an internal meeting summary, then reviewing and editing it</td><td class="px-4 py-2.5 text-teal-700 font-medium">✅ Good use</td></tr>
+            <tr><td class="px-4 py-2.5">Pasting a client's full contract into ChatGPT to get a quick summary</td><td class="px-4 py-2.5 text-amber-700 font-medium">⚠️ Risky — confidentiality breach</td></tr>
+            <tr><td class="px-4 py-2.5">Using AI to generate a performance review and submitting it without reading</td><td class="px-4 py-2.5 text-red-700 font-medium">❌ Clearly bad — no human judgment</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 12: The bottom line -->
+  <section class="slide" data-slide="12">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;top:-70px;right:-70px;background:#a7f3d0;opacity:.28"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-60px;background:#fed7aa;opacity:.32"></div>
+      <div class="blob" style="width:220px;height:220px;left:35%;top:20%;background:#dbeafe;opacity:.25"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Takeaway</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Responsible AI use is a professional skill</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">AI isn't going away. The question isn't whether to use it — it's how to use it well.</p>
+        <div class="reveal mt-4 card p-6">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">What responsible use looks like</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• You understand the tool's limitations (hallucinations, bias, knowledge cutoff)</li>
+            <li>• You protect confidential information as a habit</li>
+            <li>• You apply human judgment to any output that matters</li>
+            <li>• You follow your organization's guidelines and update your knowledge as they evolve</li>
+            <li>• You speak up when you see AI used badly — by yourself or others</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-amber-800 uppercase tracking-widest mb-3">What it doesn't look like</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• Treating AI output as ground truth</li>
+            <li>• Pasting anything and everything into public tools</li>
+            <li>• Hiding AI use when disclosure is expected</li>
+            <li>• Assuming the organization has figured out policy so you don't have to</li>
+          </ul>
+        </div>
+        <div class="reveal mt-4 card p-6 bg-teal-50/50">
+          <p class="font-display text-lg italic text-slate-800">The professionals who use AI well aren't the ones who trust it most. They're the ones who know exactly where it fails.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 12</span>
+</div>
+<script>
+let current=1; const total=document.querySelectorAll('.slide').length; const dotsContainer=document.getElementById('dots'); const counter=document.getElementById('counter');
+for(let i=1;i<=total;i++){const dot=document.createElement('div'); dot.className='dot'+(i===1?' active':''); dot.onclick=()=>goToSlide(i); dotsContainer.appendChild(dot);}
+function goToSlide(n){const prev=document.querySelector('.slide.active'); const next=document.querySelector(`.slide[data-slide="${n}"]`); if(prev) prev.classList.remove('active'); if(next){next.classList.add('active'); animateSlide(next);} current=n; updateNav();}
+function changeSlide(dir){let next=current+dir; if(next<1) next=total; if(next>total) next=1; goToSlide(next);}
+function updateNav(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current)); counter.textContent=current+' / '+total;}
+document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault(); changeSlide(1);} if(e.key==='ArrowLeft'){e.preventDefault(); changeSlide(-1);}});
+let touchStartX=0; document.addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;}); document.addEventListener('touchend',(e)=>{const diff=touchStartX-e.changedTouches[0].clientX; if(Math.abs(diff)>50) changeSlide(diff>0?1:-1);});
+function animateSlide(slide){slide.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transition='none'; el.style.opacity='0'; el.style.transform='translateY(20px)'; el.offsetHeight; const delay=i*0.08; el.style.transition=`opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`; el.style.opacity='1'; el.style.transform='translateY(0)';});}
+animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>

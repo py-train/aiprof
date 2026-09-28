@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Knowledge Check – Review Flip Cards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b1726;
+      color: #f5f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #f5f7fb;
+    }
+    .subtitle {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #aeb8d0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      perspective: 1000px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 210px;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .front {
+      background: linear-gradient(135deg, #1f3b73, #243b53);
+      border: 1px solid #2f4f8f;
+    }
+    .back {
+      background: linear-gradient(135deg, #172b4d, #102542);
+      border: 1px solid #2d3f6f;
+      transform: rotateY(180deg);
+    }
+    .q-type {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ffb347;
+      margin-bottom: 4px;
+    }
+    .difficulty {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .easy { background-color: #2d5f3f; color: #90ee90; }
+    .medium { background-color: #5f4d2d; color: #ffd700; }
+    .hard { background-color: #5f2d2d; color: #ff6b6b; }
+    .question {
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .options {
+      font-size: 13px;
+      text-align: left;
+      color: #d4ddf5;
+    }
+    .answer-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9fd5ff;
+      margin-bottom: 6px;
+    }
+    .answer {
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .note {
+      font-size: 12px;
+      color: #b3bedb;
+      text-align: left;
+    }
+    .hint {
+      font-size: 11px;
+      color: #8bb9ff;
+      margin-top: 4px;
+      text-align: left;
+      font-style: italic;
+    }
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #8e9ac0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Knowledge Check – Review Flip Cards</h1>
+  <div class="subtitle">
+    Click/tap each card to reveal the answer
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            1. What is the most accurate description of a Large Language Model?
+          </div>
+          <div class="options">
+            A. A database containing every document used during training<br/>
+            B. A rules engine that applies predefined legal and business logic<br/>
+            C. A model trained to identify and generate patterns in language<br/>
+            D. A search engine that always retrieves verified information<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C.
+          </div>
+          <div class="note">
+             LLMs learn patterns in language and generate likely sequences based on those patterns. They are not simply document databases or guaranteed fact-checking systems.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            2. During the pre-training of an LLM, the model primarily learns to:
+          </div>
+          <div class="options">
+            A. Predict likely tokens or pieces of text based on surrounding context<br/>
+            B. Memorize every training document exactly as it appears<br/>
+            C. Follow organizational policies without needing additional instructions<br/>
+            D. Verify the truth of every statement in its training data<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            A.
+          </div>
+          <div class="note">
+             A central pre-training objective is next-token prediction. The model learns statistical relationships among tokens and sequences.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            3. Which statement best describes the relationship between training data and an LLM’s knowledge?
+          </div>
+          <div class="options">
+            A. Everything in the training data is stored as directly searchable documents<br/>
+            B. The model learns statistical patterns from the training data rather than retaining a perfect document library<br/>
+            C. The model automatically updates its knowledge whenever a new event occurs<br/>
+            D. Training data guarantees that the model’s responses will be factually correct<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             Model parameters encode learned patterns. The model does not function like a perfect, directly searchable copy of every training document.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            4. What is a token?
+          </div>
+          <div class="options">
+            A. A complete paragraph used by an LLM to understand a document<br/>
+            B. A security credential used to access an AI application<br/>
+            C. A fixed-size word that is identical across all languages and models<br/>
+            D. A unit of text processed by a language model, which may be a word, part of a word, punctuation, or a symbol<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            D.
+          </div>
+          <div class="note">
+             Tokens may represent complete words, word fragments, punctuation, spaces, or symbols. Tokenization varies by model and language.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            5. Why does token count matter when working with an LLM?
+          </div>
+          <div class="options">
+            A. It determines whether the model can process the input and generate an output within its context limit<br/>
+            B. It determines whether the model has access to the internet<br/>
+            C. It directly measures whether the answer is legally accurate<br/>
+            D. It guarantees that longer prompts will produce better answers<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            A.
+          </div>
+          <div class="note">
+             Token count affects whether the request fits within the model’s context window and how much output can be generated.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            6. What is the best description of a model’s context window?
+          </div>
+          <div class="options">
+            A. The model’s entire training dataset<br/>
+            B. The maximum amount of input and output information the model can consider in one interaction<br/>
+            C. The time period during which the model remains logged into an application<br/>
+            D. The number of users who can access the model simultaneously<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             The context window is the information available to the model for a particular interaction. It is not the same as the model’s total training data.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            7. A user pastes a very long contract into a chat and asks the model to compare the indemnity clause with a clause mentioned near the beginning. The model gives a vague answer. Which explanation is most plausible?
+          </div>
+          <div class="options">
+            A. LLMs cannot process legal language<br/>
+            B. The model may have difficulty locating or consistently attending to relevant information in a long context<br/>
+            C. The model has converted the contract into a spreadsheet<br/>
+            D. The model has automatically replaced the indemnity clause with a standard clause<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             Long contexts can make it harder for a model to consistently identify and use the most relevant information. Context should be structured and managed deliberately.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            8. Which prompt is likely to produce the most useful contract-risk summary?
+          </div>
+          <div class="options">
+            A. “Review this.”<br/>
+            B. “Tell me everything important.”<br/>
+            C. “You are a legal operations analyst. Identify limitation of liability, indemnity, termination, governing law, and data-protection provisions. For each, quote the relevant text, explain the business risk, assign High/Medium/Low risk, and state when the evidence is insufficient.”<br/>
+            D. “Summarize this contract perfectly with no mistakes.”<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C.
+          </div>
+          <div class="note">
+             This prompt defines the role, task, scope, criteria, output format, and uncertainty requirement. It is more useful than a vague request or an unrealistic demand for perfection.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            9. What is the primary purpose of assigning a role in a prompt?
+          </div>
+          <div class="options">
+            A. To guarantee that the model will produce an expert-level answer<br/>
+            B. To give the model useful perspective, priorities, and style for the task<br/>
+            C. To increase the model’s context window<br/>
+            D. To prevent the model from generating any incorrect information<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             A role can guide perspective and priorities, but it does not guarantee expertise, correctness, or professional authorization.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            10. Which prompt element most directly helps control the required output format?
+          </div>
+          <div class="options">
+            A. Asking the model to “think harder”<br/>
+            B. Mentioning that the task is urgent<br/>
+            C. Providing a requested structure, such as a table with named columns<br/>
+            D. Increasing the number of adjectives in the prompt<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C.
+          </div>
+          <div class="note">
+             Explicit structures such as tables, headings, fields, or JSON-style schemas can make outputs more consistent and easier to review.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            11. What is the main benefit of providing examples in a prompt?
+          </div>
+          <div class="options">
+            A. Examples can demonstrate the desired task, style, classification, or output format<br/>
+            B. Examples permanently retrain the underlying model<br/>
+            C. Examples guarantee that the model will follow all future instructions<br/>
+            D. Examples eliminate the need to verify the output<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            A.
+          </div>
+          <div class="note">
+             Examples demonstrate what a good input-output relationship looks like. They guide the model but do not retrain it permanently.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            12. In a multi-turn conversation, the model’s response to a later question may be influenced by:
+          </div>
+          <div class="options">
+            A. Only the last sentence typed by the user<br/>
+            B. The conversation context made available to the model, including earlier messages<br/>
+            C. Every conversation ever held by every user<br/>
+            D. The model’s ability to remember all facts permanently<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             The model may use the conversation history that is included in the current context. This is not equivalent to permanent human-like memory.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            13. Why can a long multi-turn conversation become less reliable over time?
+          </div>
+          <div class="options">
+            A. The model becomes emotionally tired<br/>
+            B. Earlier information may be truncated, diluted, overlooked, or confused with newer instructions<br/>
+            C. The model automatically deletes all system instructions after several turns<br/>
+            D. The model stops using tokens after the first response<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             Long conversations can exceed context limits or make important instructions harder to retrieve and apply consistently.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            14. Which task is most clearly multimodal?
+          </div>
+          <div class="options">
+            A. Summarizing a plain-text email<br/>
+            B. Classifying a list of contract titles<br/>
+            C. Reviewing a scanned contract page, extracting handwritten annotations, and comparing them with typed clauses<br/>
+            D. Rewriting a sentence in simpler language<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C.
+          </div>
+          <div class="note">
+             The task combines image or scanned-document understanding with text extraction and comparison.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            15. Which is the strongest example of a multimodal legal use case?
+          </div>
+          <div class="options">
+            A. Generating five alternative subject lines for an email<br/>
+            B. Reviewing a regulatory PDF, interpreting an accompanying process diagram, and identifying affected control owners<br/>
+            C. Counting the number of words in a text file<br/>
+            D. Converting a sentence from active voice to passive voice<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             The example combines a regulatory document with visual information in a process diagram and connects both to operational controls.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            16. Which statement best distinguishes an AI assistant from an AI agent?
+          </div>
+          <div class="options">
+            A. An assistant always uses a smaller model than an agent<br/>
+            B. An agent is simply a chatbot with a more formal name<br/>
+            C. An assistant usually responds to user instructions, while an agent can pursue a goal through multiple steps and may use tools or take permitted actions<br/>
+            D. An agent does not require human oversight<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            C.
+          </div>
+          <div class="note">
+             Agents typically involve goal-directed, multi-step execution and may interact with tools, systems, or data sources. Human oversight may still be essential.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            17. Which sequence is the best example of an agentic workflow for regulatory monitoring?
+          </div>
+          <div class="options">
+            A. Generate a generic compliance paragraph<br/>
+            B. Read a new regulation, identify changes, map them to internal policies, assess affected contracts, prepare recommended actions, and request human approval<br/>
+            C. Store the regulation in a folder without analyzing it<br/>
+            D. Ask a user to manually compare every sentence in two documents<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             This sequence demonstrates perception, interpretation, planning, tool use, analysis, and an approval checkpoint.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            18. What is a key limitation of an LLM-generated answer?
+          </div>
+          <div class="options">
+            A. It can only answer questions about mathematics<br/>
+            B. It may produce a plausible-sounding answer that is inaccurate, incomplete, outdated, or unsupported<br/>
+            C. It cannot generate structured outputs<br/>
+            D. It always refuses questions involving uncertainty<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            B.
+          </div>
+          <div class="note">
+             LLMs can generate persuasive language without possessing a reliable guarantee of truth, completeness, recency, or authority.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">MCQ</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            19. Why is asking an LLM to “make up a case citation if necessary” especially risky?
+          </div>
+          <div class="options">
+            A. The model may generate a citation that looks authentic but does not exist or does not support the proposition<br/>
+            B. The model will always refuse to answer<br/>
+            C. Legal citations cannot be represented as tokens<br/>
+            D. The prompt will automatically delete the model’s training data<br/>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            A.
+          </div>
+          <div class="note">
+             The model may generate a fabricated or mismatched citation. Legal research outputs require verification against authoritative sources.
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One Word For</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            21. The process in which an LLM learns general language patterns from very large datasets is commonly called ________
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Pre-training.
+          </div>
+          <div class="note">
+             
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One Word For</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            22. The process of adapting a pre-trained model to a narrower task or domain using additional examples is called ________
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Fine-tuning.
+          </div>
+          <div class="note">
+             
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One Word For</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            23. The text instruction supplied to an AI model to guide its response is called a ________
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Prompt.
+          </div>
+          <div class="note">
+             
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One Word For</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            24. A model’s tendency to generate fluent but false or unsupported information is commonly called a ________
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Hallucination.
+          </div>
+          <div class="note">
+             
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">One Word For</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            25. An AI system that can plan and execute multiple steps toward a goal, often using tools, is commonly called an AI ________
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Agent.
+          </div>
+          <div class="note">
+             
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+        <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True/False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            27. True or False: An LLM’s ability to produce fluent language is evidence that every factual claim in its answer is correct.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            False.
+          </div>
+          <div class="note">
+             Fluency measures how naturally the response is expressed, not whether the underlying claims are true.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True/False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            28. True or False: A prompt can improve the relevance and consistency of an answer, but it cannot guarantee factual accuracy.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+             Prompting can make a task clearer and improve consistency, but inaccurate source material, model limitations, ambiguity, and unsupported generation can still lead to errors.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True/False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            29. True or False: Increasing the amount of context always improves an LLM’s answer.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            False.
+          </div>
+          <div class="note">
+             Additional context can help when it is relevant and well organized. Irrelevant, contradictory, or excessive context can reduce clarity and make retrieval of important details more difficult.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True/False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            30. True or False: A model may answer differently when given the same prompt at different times or under different settings.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            True.
+          </div>
+          <div class="note">
+             Variations can result from model settings, sampling, system changes, conversation context, or other implementation factors.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">True/False</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            31. True or False: Every AI system that generates text should be considered an autonomous agent.
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            False.
+          </div>
+          <div class="note">
+             A text-generation assistant may simply respond to prompts. An agent generally involves goal-directed planning, multiple steps, tool use, or action execution.
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">Myth/Fact</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            33. “If an LLM has read a document during training, it can reproduce the document perfectly whenever asked.”
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Myth.
+          </div>
+          <div class="note">
+             Training does not mean the model has a perfect, user-accessible copy of every document. It learns patterns, and its ability to reproduce information may be incomplete or inaccurate.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">Myth/Fact</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            34. “A well-designed prompt can reduce ambiguity and improve output quality, but it does not replace source verification or human judgment.”
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Fact.
+          </div>
+          <div class="note">
+             Prompting is an important control for task clarity and output structure, but it does not eliminate hallucinations or the need for verification.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-inner">
+        <div class="card-face front">
+          <div class="q-type">Myth/Fact</div>
+          <div class="difficulty easy">Easy</div>
+          <div class="question">
+            35. “An agentic workflow should be allowed to make irreversible legal or business decisions without approval because the workflow is automated.”
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="answer-label">Answer</div>
+          <div class="answer">
+            Myth.
+          </div>
+          <div class="note">
+             Agentic systems should operate within defined permissions, escalation rules, auditability requirements, and human approval checkpoints—especially for irreversible or high-impact actions.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="footer">
+    These Qs are meant to review learning of critical concepts and terms as we progress through the training program.
+  </div>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+    });
+  </script>
+</body>
+</html>

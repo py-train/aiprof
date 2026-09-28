@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>The AI Model Landscape</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f7f4ee;
+      --color-bg-deep: #efe8db;
+      --color-surface: #fffdf8;
+      --color-text: #1f2937;
+      --color-text-secondary: #475569;
+      --color-text-muted: #6b7280;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #b45309;
+      --color-accent-3: #2563eb;
+      --color-glass-bg: rgba(255,255,255,0.78);
+      --color-glass-border: rgba(15,23,42,0.08);
+      --color-vignette: rgba(15,23,42,0.06);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f7f4ee; --color-text: #1f2937; --glow-color-rgb: 15,118,110; }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--color-bg)}
+    body{font-family:Inter,sans-serif;color:var(--color-text);overflow:hidden;height:100vh;width:100vw}
+    .deck{width:100vw;height:100vh;position:relative}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.97);transition:opacity .6s ease,transform .6s ease;pointer-events:none;overflow:hidden;background:var(--color-bg)}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1180px;padding:clamp(1.4rem,3vw,3rem)}
+    .nav-controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);padding:10px 18px;border-radius:999px;border:1px solid rgba(15,23,42,.08)}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:#fff;color:#0f766e;font-size:1.15rem;cursor:pointer}
+    .slide-dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:50%;background:rgba(15,23,42,.14);cursor:pointer}.dot.active{background:#0f766e;transform:scale(1.2)}
+    .slide-counter{font-size:.8rem;color:#6b7280;min-width:46px;text-align:center}.reveal{opacity:0;transform:translateY(20px)}
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}.blob{position:absolute;border-radius:50%;filter:blur(70px);animation:float 16s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.08)}}
+    .slide::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.02}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%)}
+    .card{background:var(--color-glass-bg);border:1px solid var(--color-glass-border);backdrop-filter:blur(10px);border-radius:24px;box-shadow:0 14px 40px rgba(15,23,42,.06)}
+    .pill{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(15,23,42,.08);color:#0f766e}
+    .pill-optional{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(180,83,9,.18);color:#b45309}
+    .big-number{font-size:clamp(2.3rem,5vw,4.5rem);line-height:.95;font-weight:800;color:#0f766e}
+    .timeline{position:relative;padding-left:1.5rem}.timeline:before{content:'';position:absolute;left:.35rem;top:.2rem;bottom:.2rem;width:2px;background:linear-gradient(#0f766e,#b45309)}
+    .timeline-item{position:relative;padding-left:1.2rem}.timeline-item:before{content:'';position:absolute;left:-.05rem;top:.45rem;width:.7rem;height:.7rem;border-radius:999px;background:#0f766e;box-shadow:0 0 0 6px rgba(15,118,110,.12)}
+    .mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:1.25rem;align-items:start}
+    .codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3efe7;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:1rem}
+    @media (max-width: 900px){.mini-grid,.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 1: Title -->
+  <section class="slide active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:380px;height:380px;top:-80px;right:-60px;background:#99f6e4;opacity:.35"></div>
+      <div class="blob" style="width:260px;height:260px;left:-60px;bottom:-50px;background:#bfdbfe;opacity:.4"></div>
+      <div class="blob" style="width:240px;height:240px;left:24%;top:18%;background:#fed7aa;opacity:.35"></div>
+    </div>
+    <div class="content text-center">
+      <div class="reveal mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-[2rem] border border-black/5 bg-white text-5xl shadow-lg">🗺️</div>
+      <p class="reveal pill mx-auto mb-5">providers · open vs closed · context · choosing</p>
+      <h1 class="reveal mx-auto max-w-4xl font-display text-[clamp(2.8rem,6vw,5.3rem)] leading-[0.95] text-slate-900">The AI Model Landscape</h1>
+      <p class="reveal mx-auto mt-5 max-w-3xl text-[clamp(1rem,2vw,1.35rem)] text-slate-600">Knowing your tools — who makes what, how to compare, and how to choose.</p>
+    </div>
+  </section>
+
+  <!-- Slide 2: You're not just using "AI" -->
+  <section class="slide" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-60px;right:-30px;background:#ccfbf1;opacity:.28"></div>
+      <div class="blob" style="width:220px;height:220px;bottom:-60px;left:-30px;background:#e0e7ff;opacity:.25"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Orientation</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">When you say "AI," you're picking from a crowded shelf</h2>
+      <div class="reveal mt-6 grid gap-4 md:grid-cols-3">
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-2">Layer 1</p>
+          <h3 class="text-lg font-semibold">The model</h3>
+          <p class="mt-2 text-slate-600 text-sm">The trained neural network that generates output.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-2">Layer 2</p>
+          <h3 class="text-lg font-semibold">The interface</h3>
+          <p class="mt-2 text-slate-600 text-sm">The chat app, API, or plugin you interact through.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-2">Layer 3</p>
+          <h3 class="text-lg font-semibold">The platform / deployment</h3>
+          <p class="mt-2 text-slate-600 text-sm">Where it runs — cloud, on-prem, or enterprise tenant.</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-5">
+        <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-3">Examples</p>
+        <div class="grid gap-3 md:grid-cols-3 text-sm text-slate-700">
+          <p><strong>ChatGPT</strong> = OpenAI's interface → running GPT-4o</p>
+          <p><strong>Copilot in Word</strong> = Microsoft's interface → OpenAI models on Azure</p>
+          <p><strong>Claude.ai</strong> = Anthropic's interface → running Claude</p>
+        </div>
+        <p class="mt-3 text-slate-500 text-xs italic">The same underlying model can appear through many different interfaces.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: What kinds of models exist? -->
+  <section class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;top:5%;right:5%;background:#fde68a;opacity:.22"></div>
+      <div class="blob" style="width:200px;height:200px;bottom:0;left:0;background:#bae6fd;opacity:.28"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Modalities</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Models aren't just for text</h2>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white">
+            <tr>
+              <th class="px-5 py-3">Modality</th>
+              <th class="px-5 py-3">What it does</th>
+              <th class="px-5 py-3">Examples</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Text (LLM)</td><td class="px-5 py-2.5 text-slate-600">Reads and writes language</td><td class="px-5 py-2.5 text-slate-500">GPT-4o, Claude, Gemini, Llama</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Image generation</td><td class="px-5 py-2.5 text-slate-600">Creates images from text descriptions</td><td class="px-5 py-2.5 text-slate-500">DALL·E, Midjourney, Stable Diffusion</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Image understanding</td><td class="px-5 py-2.5 text-slate-600">Describes or analyzes images</td><td class="px-5 py-2.5 text-slate-500">GPT-4o Vision, Gemini, Claude</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Audio / speech</td><td class="px-5 py-2.5 text-slate-600">Transcribes, translates, or generates voice</td><td class="px-5 py-2.5 text-slate-500">Whisper, ElevenLabs, Gemini</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Code</td><td class="px-5 py-2.5 text-slate-600">Writes, explains, and debugs code</td><td class="px-5 py-2.5 text-slate-500">GitHub Copilot, Claude, Codestral</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Video</td><td class="px-5 py-2.5 text-slate-600">Generates or analyzes video</td><td class="px-5 py-2.5 text-slate-500">Sora, Runway, Gemini</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Multimodal</td><td class="px-5 py-2.5 text-slate-600">Handles two or more modalities together</td><td class="px-5 py-2.5 text-slate-500">GPT-4o, Gemini 1.5, Claude 3.5</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="reveal mt-4 text-slate-500 text-sm">Most frontier models today are multimodal. The lines between categories are blurring fast.</p>
+    </div>
+  </section>
+
+  <!-- Slide 4: The major players -->
+  <section class="slide" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-40px;right:0;background:#99f6e4;opacity:.24"></div>
+      <div class="blob" style="width:230px;height:230px;bottom:-30px;left:0;background:#fdba74;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Provider map</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">A map of the frontier</h2>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white">
+            <tr>
+              <th class="px-4 py-3">Provider</th>
+              <th class="px-4 py-3">Flagship model(s)</th>
+              <th class="px-4 py-3">Notes</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-4 py-2.5 font-semibold">OpenAI</td><td class="px-4 py-2.5 text-slate-600">GPT-4o, o1, o3</td><td class="px-4 py-2.5 text-slate-500">Dominant market share; strong tooling ecosystem</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Anthropic</td><td class="px-4 py-2.5 text-slate-600">Claude 3.5 / 4 family</td><td class="px-4 py-2.5 text-slate-500">Safety-focused; long context; strong at reasoning + writing</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Google</td><td class="px-4 py-2.5 text-slate-600">Gemini 1.5 / 2.0</td><td class="px-4 py-2.5 text-slate-500">Deepest multimodal; tightly integrated with Google Workspace</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Meta</td><td class="px-4 py-2.5 text-slate-600">Llama 3 / 4</td><td class="px-4 py-2.5 text-slate-500">Open-weights; free to download and run</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Mistral</td><td class="px-4 py-2.5 text-slate-600">Mistral, Mixtral</td><td class="px-4 py-2.5 text-slate-500">European; open + commercial; efficient smaller models</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Amazon</td><td class="px-4 py-2.5 text-slate-600">Titan, Bedrock</td><td class="px-4 py-2.5 text-slate-500">AWS-native; aggregates models from multiple providers</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Microsoft</td><td class="px-4 py-2.5 text-slate-600">Azure OpenAI, Phi</td><td class="px-4 py-2.5 text-slate-500">Enterprise channel for OpenAI; own small models too</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Cohere</td><td class="px-4 py-2.5 text-slate-600">Command R+</td><td class="px-4 py-2.5 text-slate-500">Enterprise RAG and search focus</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="reveal mt-3 text-slate-400 text-xs italic">This list will look different in 12 months. The pattern matters more than the names.</p>
+    </div>
+  </section>
+
+  <!-- Slide 5: Closed vs. Open — definitions -->
+  <section class="slide" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:0;right:10%;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:220px;height:220px;left:5%;bottom:0;background:#d9f99d;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">The key split</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">The most important split in the landscape</h2>
+      <div class="reveal mt-8 grid gap-6 md:grid-cols-2">
+        <div class="card p-7">
+          <h3 class="text-2xl font-semibold text-slate-800">Closed (proprietary)</h3>
+          <ul class="mt-5 space-y-3 text-slate-600">
+            <li>• Model weights are private; you access via API or product</li>
+            <li>• Provider controls updates, pricing, and uptime</li>
+            <li class="pt-1"><span class="font-semibold text-slate-700">Examples:</span> GPT-4o, Claude, Gemini</li>
+          </ul>
+        </div>
+        <div class="card p-7">
+          <h3 class="text-2xl font-semibold text-slate-800">Open (open-weights)</h3>
+          <ul class="mt-5 space-y-3 text-slate-600">
+            <li>• Weights are downloadable; you can run them yourself</li>
+            <li>• No per-token cost; you control the deployment</li>
+            <li class="pt-1"><span class="font-semibold text-slate-700">Examples:</span> Llama 3, Mistral, Phi-3, Falcon</li>
+          </ul>
+        </div>
+      </div>
+      <p class="reveal mt-6 text-slate-500 text-sm">→ See the trade-off matrix on the next slide</p>
+    </div>
+  </section>
+
+  <!-- Slide 6: Closed vs. Open — trade-off matrix (contd.) -->
+  <section class="slide" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-40px;right:5%;background:#ddd6fe;opacity:.22"></div>
+      <div class="blob" style="width:220px;height:220px;left:0;bottom:-20px;background:#bae6fd;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Closed vs. Open (contd.)</p>
+      <h2 class="reveal font-display text-4xl text-slate-900">Trade-off matrix</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white">
+            <tr>
+              <th class="px-5 py-3">Factor</th>
+              <th class="px-5 py-3">Closed</th>
+              <th class="px-5 py-3">Open</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-3 font-semibold">Raw capability (frontier)</td><td class="px-5 py-3">✅ Stronger today</td><td class="px-5 py-3">⚠️ Catching up fast</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Data privacy / residency</td><td class="px-5 py-3">⚠️ Data leaves your org</td><td class="px-5 py-3">✅ Fully on-prem possible</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Cost at scale</td><td class="px-5 py-3">⚠️ Per-token pricing</td><td class="px-5 py-3">✅ Infrastructure cost only</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Setup complexity</td><td class="px-5 py-3">✅ Zero — just an API key</td><td class="px-5 py-3">⚠️ Requires infra and ML ops</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Customization</td><td class="px-5 py-3">⚠️ Fine-tuning limited</td><td class="px-5 py-3">✅ Full control</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5">
+        <p class="text-slate-700 text-sm">For most enterprise use cases today: <strong>start closed</strong>, evaluate open for scale or privacy-sensitive workloads.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Four questions to guide model selection -->
+  <section class="slide" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:8%;right:4%;background:#fcd34d;opacity:.18"></div>
+      <div class="blob" style="width:260px;height:260px;bottom:-30px;left:0;background:#a7f3d0;opacity:.24"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Decision guide</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Four questions to guide model selection</h2>
+      <div class="reveal mt-7 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-1">Question 1</p>
+          <h3 class="text-lg font-semibold">What's the task?</h3>
+          <p class="mt-2 text-slate-600 text-sm">Reasoning-heavy? Use a strong frontier model. Simple extraction? A smaller, cheaper model works fine.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-1">Question 2</p>
+          <h3 class="text-lg font-semibold">Where does the data go?</h3>
+          <p class="mt-2 text-slate-600 text-sm">If the content is confidential, check the provider's data-handling terms — or use an open model on-prem.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-1">Question 3</p>
+          <h3 class="text-lg font-semibold">What's the cost profile?</h3>
+          <p class="mt-2 text-slate-600 text-sm">High-volume, repetitive tasks → optimize for price-per-token. Low-volume, high-stakes → pay for the best.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400 mb-1">Question 4</p>
+          <h3 class="text-lg font-semibold">What's the integration path?</h3>
+          <p class="mt-2 text-slate-600 text-sm">Already in Azure/AWS/GCP? Use their offerings. Building standalone? Direct API is simpler.</p>
+        </div>
+      </div>
+      <p class="reveal mt-4 text-slate-500 text-xs italic">You rarely pick a model forever. Run evals, compare, and revisit as capabilities change.</p>
+    </div>
+  </section>
+
+  <!-- Slide 8: Model versions and reasoning models -->
+  <section class="slide" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-30px;right:10%;background:#ccfbf1;opacity:.24"></div>
+      <div class="blob" style="width:220px;height:220px;bottom:-20px;left:10%;background:#fde68a;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Within a provider</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Not all models from one provider are the same</h2>
+      <div class="reveal mt-7 mini-grid">
+        <div class="card p-6">
+          <h3 class="font-semibold text-lg">Standard models</h3>
+          <p class="mt-1 text-xs text-slate-400">e.g. GPT-4o, Claude 3.5 Sonnet</p>
+          <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+            <li>• Fast, cheap, excellent at most tasks</li>
+            <li>• <strong>Best default choice</strong></li>
+          </ul>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-lg">Reasoning models</h3>
+          <p class="mt-1 text-xs text-slate-400">e.g. o1, o3, Claude extended thinking</p>
+          <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+            <li>• Spend extra compute "thinking before answering"</li>
+            <li>• Better at multi-step logic and math</li>
+            <li>• Slower and more expensive — use when you need it</li>
+          </ul>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-lg">Small / efficient models</h3>
+          <p class="mt-1 text-xs text-slate-400">e.g. GPT-4o-mini, Claude Haiku, Phi-3</p>
+          <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+            <li>• Lower cost, fast latency</li>
+            <li>• Classification, summarization, high-volume pipelines</li>
+          </ul>
+        </div>
+      </div>
+      <div class="reveal mt-5 card p-4">
+        <p class="text-slate-700 text-sm">Rule of thumb: <strong>use the smallest model that solves the problem reliably.</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Context windows (optional depth) -->
+  <section class="slide" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:260px;height:260px;top:-30px;right:10%;background:#99f6e4;opacity:.24"></div>
+      <div class="blob" style="width:220px;height:220px;bottom:-20px;left:10%;background:#fdba74;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill-optional mb-4">Optional depth · Context windows</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">How much a model can "see" at once</h2>
+        <p class="reveal mt-5 text-lg text-slate-600">The <strong>context window</strong> is the total text a model can process in one interaction — your prompt, its previous responses, and any attached documents all count toward the limit.</p>
+        <div class="reveal mt-5 card p-5">
+          <p class="text-sm font-semibold mb-3 text-slate-700">Why it matters</p>
+          <ul class="space-y-2 text-slate-600 text-sm">
+            <li>• Longer context → paste in full documents and large datasets</li>
+            <li>• Larger context ≠ better attention — models can lose focus in the middle of very long inputs</li>
+            <li>• Cost scales with tokens; long contexts cost more</li>
+          </ul>
+        </div>
+      </div>
+      <div class="reveal card p-7">
+        <h3 class="text-xl font-semibold mb-5">Model context sizes</h3>
+        <div class="overflow-hidden rounded-2xl border border-black/5 bg-white/70">
+          <table class="w-full text-sm text-left">
+            <thead class="bg-slate-900 text-white">
+              <tr><th class="px-4 py-3">Model</th><th class="px-4 py-3">Context window</th></tr>
+            </thead>
+            <tbody class="divide-y divide-black/5">
+              <tr><td class="px-4 py-3 font-semibold">GPT-4o</td><td class="px-4 py-3 text-slate-600">128K tokens (~96K words)</td></tr>
+              <tr><td class="px-4 py-3 font-semibold">Claude 3.5</td><td class="px-4 py-3 text-slate-600">200K tokens (~150K words)</td></tr>
+              <tr><td class="px-4 py-3 font-semibold">Gemini 1.5 Pro</td><td class="px-4 py-3 text-slate-600">1M tokens (~750K words)</td></tr>
+              <tr><td class="px-4 py-3 font-semibold">Llama 3 70B</td><td class="px-4 py-3 text-slate-600">8K–128K (varies by deployment)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Benchmarks (optional depth) -->
+  <section class="slide" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:0;right:0;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:220px;height:220px;left:0;bottom:0;background:#bbf7d0;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill-optional mb-4">Optional depth · Benchmarks</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Leaderboards tell you something — not everything</h2>
+        <p class="reveal mt-5 text-base text-slate-600">Common benchmarks you'll see cited:</p>
+        <div class="reveal mt-4 card p-6">
+          <ul class="space-y-3 text-slate-700 text-sm">
+            <li><strong>MMLU</strong> — broad knowledge across 57 subjects</li>
+            <li><strong>HumanEval</strong> — coding ability</li>
+            <li><strong>MATH</strong> — mathematical reasoning</li>
+            <li><strong>MT-Bench</strong> — multi-turn chat quality</li>
+            <li><strong>LMSYS Chatbot Arena</strong> — human preference voting (most real-world signal)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="reveal card p-7">
+        <h3 class="text-xl font-semibold mb-4">The limitations</h3>
+        <ul class="space-y-4 text-slate-600 text-sm">
+          <li>• Benchmarks measure narrow, standardized tasks — not your specific use case</li>
+          <li>• Models can be fine-tuned to score well on benchmarks without being genuinely better ("Goodhart's Law")</li>
+          <li>• The best benchmark is: <em>does it do what I need, reliably?</em></li>
+        </ul>
+        <div class="mt-5 rounded-2xl bg-slate-50 p-4 text-sm text-slate-700 border border-black/5">
+          Test on representative examples from your own domain before committing to a model.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: The practical takeaway -->
+  <section class="slide" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;top:-70px;right:-70px;background:#a7f3d0;opacity:.3"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-60px;background:#fed7aa;opacity:.32"></div>
+      <div class="blob" style="width:220px;height:220px;left:35%;top:20%;background:#dbeafe;opacity:.28"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Takeaway</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">What to remember</h2>
+      <div class="reveal mt-7 timeline space-y-6">
+        <div class="timeline-item">
+          <h3 class="text-xl font-semibold">Default to a frontier model for most tasks</h3>
+          <p class="mt-1 text-slate-600">GPT-4o, Claude, Gemini — capability differences at this tier matter less than how well you prompt them.</p>
+        </div>
+        <div class="timeline-item">
+          <h3 class="text-xl font-semibold">Check data handling before using confidential content</h3>
+          <p class="mt-1 text-slate-600">Know whether your input is used for training, stored, or processed by a third party.</p>
+        </div>
+        <div class="timeline-item">
+          <h3 class="text-xl font-semibold">The landscape shifts fast</h3>
+          <p class="mt-1 text-slate-600">A model that's best today may not be in six months. Build habits around evaluating and comparing, not loyalty to a single tool.</p>
+        </div>
+      </div>
+      <div class="reveal mt-6 card p-5">
+        <p class="text-slate-600 italic text-sm">Discussion: What AI tools is your team already using? Let's map them to this landscape.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 11</span>
+</div>
+
+<script>
+let current=1; const total=document.querySelectorAll('.slide').length; const dotsContainer=document.getElementById('dots'); const counter=document.getElementById('counter');
+for(let i=1;i<=total;i++){const dot=document.createElement('div'); dot.className='dot'+(i===1?' active':''); dot.onclick=()=>goToSlide(i); dotsContainer.appendChild(dot);}
+function goToSlide(n){const prev=document.querySelector('.slide.active'); const next=document.querySelector(`.slide[data-slide="${n}"]`); if(prev) prev.classList.remove('active'); if(next){next.classList.add('active'); animateSlide(next);} current=n; updateNav();}
+function changeSlide(dir){let next=current+dir; if(next<1) next=total; if(next>total) next=1; goToSlide(next);}
+function updateNav(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current)); counter.textContent=current+' / '+total;}
+document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault(); changeSlide(1);} if(e.key==='ArrowLeft'){e.preventDefault(); changeSlide(-1);}});
+let touchStartX=0; document.addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;}); document.addEventListener('touchend',(e)=>{const diff=touchStartX-e.changedTouches[0].clientX; if(Math.abs(diff)>50) changeSlide(diff>0?1:-1);});
+function animateSlide(slide){slide.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transition='none'; el.style.opacity='0'; el.style.transform='translateY(20px)'; el.offsetHeight; const delay=i*0.08; el.style.transition=`opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`; el.style.opacity='1'; el.style.transform='translateY(0)';});}
+animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>

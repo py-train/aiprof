@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GenAI Training Program — Agenda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f7f4ee;
+      --color-surface: #fffdf8;
+      --color-text: #1f2937;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #b45309;
+      --color-glass-bg: rgba(255,255,255,0.82);
+      --color-glass-border: rgba(15,23,42,0.08);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f7f4ee; }
+    *,*::before,*::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, sans-serif; color: #1f2937; background: var(--color-bg); margin: 0; }
+    .card { background: rgba(255,255,255,0.82); border: 1px solid rgba(15,23,42,0.08); border-radius: 24px; box-shadow: 0 8px 32px rgba(15,23,42,0.06); }
+    .pill { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .7rem; border-radius: 999px; font-size: .78rem; font-weight: 600; }
+    .pill-teal { background: #f0fdf4; border: 1px solid rgba(15,118,110,.18); color: #0f766e; }
+    .pill-amber { background: #fffbeb; border: 1px solid rgba(180,83,9,.18); color: #b45309; }
+    .pill-blue { background: #eff6ff; border: 1px solid rgba(37,99,235,.15); color: #2563eb; }
+    .pill-slate { background: #f8fafc; border: 1px solid rgba(15,23,42,.1); color: #475569; }
+    .pill-purple { background: #faf5ff; border: 1px solid rgba(124,58,237,.15); color: #7c3aed; }
+    .pill-green { background: #f0fdf4; border: 1px solid rgba(22,163,74,.15); color: #16a34a; }
+    .session-row { display: flex; align-items: center; gap: .75rem; padding: .65rem 0; border-bottom: 1px solid rgba(15,23,42,.05); }
+    .session-row:last-child { border-bottom: none; }
+    .session-num { width: 1.5rem; text-align: center; font-size: .75rem; font-weight: 700; color: #9ca3af; flex-shrink: 0; }
+    .session-name { flex: 1; font-size: .9rem; font-weight: 500; color: #1f2937; }
+    .session-links { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+    .duration-badge { font-size: .72rem; font-weight: 600; color: #6b7280; background: #f3f4f6; border-radius: 8px; padding: .2rem .5rem; flex-shrink: 0; min-width: 3.5rem; text-align: center; }
+    .link-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .28rem .65rem; border-radius: 8px; font-size: .75rem; font-weight: 600; text-decoration: none; transition: opacity .15s; white-space: nowrap; }
+    .link-btn:hover { opacity: .8; }
+    .link-slide { background: #f0fdf4; color: #0f766e; border: 1px solid rgba(15,118,110,.18); }
+    .link-cards { background: #eff6ff; color: #2563eb; border: 1px solid rgba(37,99,235,.15); }
+    .link-handout { background: #fffbeb; color: #b45309; border: 1px solid rgba(180,83,9,.18); }
+    .link-notebook { background: #faf5ff; color: #7c3aed; border: 1px solid rgba(124,58,237,.15); }
+    .link-code { background: #f8fafc; color: #475569; border: 1px solid rgba(15,23,42,.12); }
+    .day-accent-1 { border-top: 3px solid #0f766e; }
+    .day-accent-2 { border-top: 3px solid #2563eb; }
+    .day-accent-3 { border-top: 3px solid #b45309; }
+    .legend-item { display: flex; align-items: center; gap: .5rem; font-size: .8rem; color: #475569; }
+  </style>
+</head>
+<body class="min-h-screen" style="background:#f7f4ee">
+
+  <!-- Hero -->
+  <div style="background:linear-gradient(135deg,#0f766e 0%,#065f46 100%)" class="relative overflow-hidden">
+    <div style="position:absolute;inset:0;background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E\");opacity:.04"></div>
+    <div class="relative max-w-6xl mx-auto px-6 py-16">
+      <p class="text-teal-200 text-sm font-semibold uppercase tracking-widest mb-3">Facilitator Guide</p>
+      <h1 style="font-family:'Instrument Serif',serif;font-size:clamp(2.4rem,5vw,4rem);line-height:.95;color:#fff" class="mb-4">Generative AI<br>Training Program</h1>
+      <p class="text-teal-100 text-lg max-w-2xl mb-6">3-day intensive virtual training · ~6.5 hrs/day · Single-track, layered for mixed audiences</p>
+      <div class="flex flex-wrap gap-3">
+        <span class="pill" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)">📅 3 Days</span>
+        <span class="pill" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)">⏱ ~19.5 hrs total</span>
+        <span class="pill" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)">👥 Mixed audience</span>
+        <span class="pill" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)">🧱 Layered depth</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-6 py-10">
+
+    <!-- Legend -->
+    <div class="card p-5 mb-10">
+      <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Content Types</p>
+      <div class="flex flex-wrap gap-5">
+        <div class="legend-item"><a class="link-btn link-slide" href="#">🖥 Slides</a><span>Fullscreen slide deck</span></div>
+        <div class="legend-item"><a class="link-btn link-cards" href="#">🃏 Review Cards</a><span>Interactive flip-card deck</span></div>
+        <div class="legend-item"><a class="link-btn link-handout" href="#">📄 Handout</a><span>Participant / facilitator guide</span></div>
+        <div class="legend-item"><a class="link-btn link-notebook" href="#">📓 Notebook</a><span>Jupyter notebook (code)</span></div>
+        <div class="legend-item"><a class="link-btn link-code" href="#">💻 Code Lab</a><span>Python script / lab exercise</span></div>
+      </div>
+    </div>
+
+    <!-- Day 1 -->
+    <section class="mb-10">
+      <div class="flex items-center gap-4 mb-4">
+        <div>
+          <p class="text-xs font-semibold text-teal-700 uppercase tracking-widest">Day 1</p>
+          <h2 style="font-family:'Instrument Serif',serif;font-size:1.9rem;line-height:1;color:#1f2937">Understanding AI &amp; Mastering Prompts</h2>
+        </div>
+        <span class="pill pill-teal ml-auto">~6.5 hrs</span>
+      </div>
+      <div class="card day-accent-1 p-6">
+        <!-- S1 -->
+        <div class="session-row">
+          <span class="session-num">1</span>
+          <span class="session-name">Welcome &amp; Icebreaker</span>
+          <span class="duration-badge">15 min</span>
+          <div class="session-links">
+            <a href="day1/warm-up-flip-card.html" target="_blank" class="link-btn link-cards">🃏 Warm-up Cards</a>
+          </div>
+        </div>
+        <!-- S2 -->
+        <div class="session-row">
+          <span class="session-num">2</span>
+          <span class="session-name">Cold-Start Exercise</span>
+          <span class="duration-badge">30 min</span>
+          <div class="session-links">
+            <span class="link-btn link-handout">📄 Exercise Guide</span>
+            <span class="link-btn link-handout" style="background:#f9fafb;color:#6b7280;border-color:rgba(15,23,42,.1)">📄 Sample Notes</span>
+          </div>
+        </div>
+        <!-- S3 -->
+        <div class="session-row">
+          <span class="session-num">3</span>
+          <span class="session-name">AI Foundations</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <a href="day1/genai-basics.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S4 -->
+        <div class="session-row">
+          <span class="session-num">4</span>
+          <span class="session-name">The AI Model Landscape</span>
+          <span class="duration-badge">30 min</span>
+          <div class="session-links">
+            <a href="day1/model-landscape.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S5 -->
+        <div class="session-row">
+          <span class="session-num">5</span>
+          <span class="session-name">Prompting Basics</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <a href="day1/prompting_basics.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S6 -->
+        <div class="session-row">
+          <span class="session-num">6</span>
+          <span class="session-name">Advanced Prompting</span>
+          <span class="duration-badge">75 min</span>
+          <div class="session-links">
+            <a href="day1/advanced-prompting.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S7 -->
+        <div class="session-row">
+          <span class="session-num">7</span>
+          <span class="session-name">Prompting Lab</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <span class="link-btn link-handout">📄 Lab Guide</span>
+          </div>
+        </div>
+        <!-- S8 -->
+        <div class="session-row">
+          <span class="session-num">8</span>
+          <span class="session-name">Python &amp; API Refresher</span>
+          <span class="duration-badge">75 min</span>
+          <div class="session-links">
+            <a href="day1/day1-python-refresher.ipynb" target="_blank" class="link-btn link-notebook">📓 Notebook</a>
+          </div>
+        </div>
+        <!-- Review -->
+        <div class="session-row" style="background:rgba(15,118,110,.03);border-radius:12px;padding:.65rem .75rem;margin-top:.5rem;border-bottom:none">
+          <span class="session-num" style="color:#0f766e">↩</span>
+          <span class="session-name" style="color:#0f766e;font-weight:600">Day 1 Review Cards</span>
+          <span class="duration-badge" style="background:transparent">—</span>
+          <div class="session-links">
+            <a href="day1/review-day1.html" target="_blank" class="link-btn link-cards">🃏 Review Cards</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Day 2 -->
+    <section class="mb-10">
+      <div class="flex items-center gap-4 mb-4">
+        <div>
+          <p class="text-xs font-semibold text-blue-700 uppercase tracking-widest">Day 2</p>
+          <h2 style="font-family:'Instrument Serif',serif;font-size:1.9rem;line-height:1;color:#1f2937">Building with AI — Automation, RAG &amp; Agents</h2>
+        </div>
+        <span class="pill pill-blue ml-auto">~6.5 hrs</span>
+      </div>
+      <div class="card day-accent-2 p-6">
+        <!-- S1 -->
+        <div class="session-row">
+          <span class="session-num">1</span>
+          <span class="session-name">Day 1 Recap &amp; Warm-up</span>
+          <span class="duration-badge">20 min</span>
+          <div class="session-links">
+            <a href="day2/review-flip-cards-1.html" target="_blank" class="link-btn link-cards">🃏 Recap Cards</a>
+          </div>
+        </div>
+        <!-- S2 -->
+        <div class="session-row">
+          <span class="session-num">2</span>
+          <span class="session-name">AI APIs Hands-on</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <a href="src/hello_openai_1.0.py" target="_blank" class="link-btn link-code">💻 hello_openai.py</a>
+          </div>
+        </div>
+        <!-- S3 -->
+        <div class="session-row">
+          <span class="session-num">3</span>
+          <span class="session-name">n8n Automation Lab</span>
+          <span class="duration-badge">90 min</span>
+          <div class="session-links">
+            <a href="n8n/n8n_lab_guide.html" target="_blank" class="link-btn link-slide">🖥 Lab Guide</a>
+            <a href="n8n/n8n-companion-guide.html" target="_blank" class="link-btn link-handout">📄 Companion</a>
+          </div>
+        </div>
+        <!-- S4 -->
+        <div class="session-row">
+          <span class="session-num">4</span>
+          <span class="session-name">RAG: Concept &amp; Build</span>
+          <span class="duration-badge">75 min</span>
+          <div class="session-links">
+            <a href="src/RAG/" target="_blank" class="link-btn link-code">💻 RAG Lab Files</a>
+          </div>
+        </div>
+        <!-- S5 -->
+        <div class="session-row">
+          <span class="session-num">5</span>
+          <span class="session-name">Agentic AI</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <a href="src/crew-agents.py" target="_blank" class="link-btn link-code">💻 crew-agents.py</a>
+          </div>
+        </div>
+        <!-- S6 -->
+        <div class="session-row">
+          <span class="session-num">6</span>
+          <span class="session-name">Multi-Agent Systems</span>
+          <span class="duration-badge">45 min</span>
+          <div class="session-links">
+            <a href="src/crew-agents.py" target="_blank" class="link-btn link-code">💻 crew-agents.py</a>
+          </div>
+        </div>
+        <!-- Review -->
+        <div class="session-row" style="background:rgba(37,99,235,.03);border-radius:12px;padding:.65rem .75rem;margin-top:.5rem;border-bottom:none">
+          <span class="session-num" style="color:#2563eb">↩</span>
+          <span class="session-name" style="color:#2563eb;font-weight:600">Day 2 Review Cards</span>
+          <span class="duration-badge" style="background:transparent">—</span>
+          <div class="session-links">
+            <a href="day2/review-day2.html" target="_blank" class="link-btn link-cards">🃏 Review Cards</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Day 3 -->
+    <section class="mb-10">
+      <div class="flex items-center gap-4 mb-4">
+        <div>
+          <p class="text-xs font-semibold text-amber-700 uppercase tracking-widest">Day 3</p>
+          <h2 style="font-family:'Instrument Serif',serif;font-size:1.9rem;line-height:1;color:#1f2937">Real-World AI — Ethics, Strategy &amp; Capstone</h2>
+        </div>
+        <span class="pill pill-amber ml-auto">~6.5 hrs</span>
+      </div>
+      <div class="card day-accent-3 p-6">
+        <!-- S1 -->
+        <div class="session-row">
+          <span class="session-num">1</span>
+          <span class="session-name">Day 2 Recap &amp; Warm-up</span>
+          <span class="duration-badge">20 min</span>
+          <div class="session-links">
+            <a href="day3/review-day3.html" target="_blank" class="link-btn link-cards">🃏 Review Cards</a>
+          </div>
+        </div>
+        <!-- S2 -->
+        <div class="session-row">
+          <span class="session-num">2</span>
+          <span class="session-name">AI Safety, Ethics &amp; Governance</span>
+          <span class="duration-badge">90 min</span>
+          <div class="session-links">
+            <a href="day3/safety-ethics-governance.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S3 -->
+        <div class="session-row">
+          <span class="session-num">3</span>
+          <span class="session-name">AI Use Cases by Role</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <a href="day3/role-specific-use-cases.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S4 -->
+        <div class="session-row">
+          <span class="session-num">4</span>
+          <span class="session-name">AI Strategy &amp; What's Next</span>
+          <span class="duration-badge">90 min</span>
+          <div class="session-links">
+            <a href="day3/strategy-and-whats-next.html" target="_blank" class="link-btn link-slide">🖥 Slides</a>
+          </div>
+        </div>
+        <!-- S5 -->
+        <div class="session-row">
+          <span class="session-num">5</span>
+          <span class="session-name">Final Review &amp; Capstone</span>
+          <span class="duration-badge">60 min</span>
+          <div class="session-links">
+            <a href="day3/final_day_review_flipcards.html" target="_blank" class="link-btn link-cards">🃏 Final Review</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reference -->
+    <section class="mb-12">
+      <h2 style="font-family:'Instrument Serif',serif;font-size:1.4rem;color:#1f2937" class="mb-3">Reference Materials</h2>
+      <div class="card p-5 flex flex-wrap gap-3">
+        <a href="reference/glossary-flash-cards.html" target="_blank" class="link-btn link-cards" style="font-size:.85rem;padding:.4rem 1rem">🃏 Glossary Flash Cards</a>
+        <a href="n8n/Daily AI News Brief.json" target="_blank" class="link-btn link-code" style="font-size:.85rem;padding:.4rem 1rem">💻 n8n Flow: Daily AI Brief</a>
+        <a href="src/RAG/" target="_blank" class="link-btn link-code" style="font-size:.85rem;padding:.4rem 1rem">💻 RAG Lab Scripts</a>
+        <a href="src/py-warm-up/" target="_blank" class="link-btn link-code" style="font-size:.85rem;padding:.4rem 1rem">💻 Python Warm-up</a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-sm text-slate-400 pb-12 border-t border-black/5 pt-6">
+      Content generated for internal training use &nbsp;·&nbsp; GenAI Training Program &nbsp;·&nbsp; 3-day intensive
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Day 3 Review — Flip Cards</title>
+  <meta name="slides-format" content="viewport" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1324;
+      --bg-deep: #050b16;
+      --surface: rgba(255,255,255,0.08);
+      --surface-strong: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.14);
+      --text: #eef5ff;
+      --text-secondary: #cdd8e8;
+      --text-muted: #97a7c0;
+      --accent-1: #79e0ff;
+      --accent-2: #9c8cff;
+      --accent-3: #8df0c8;
+      --accent-4: #ffd77a;
+      --danger: #ff8fa3;
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --maxw: 1280px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; min-height: 100%;
+      background: radial-gradient(circle at 15% 20%, rgba(141,240,200,0.15), transparent 28%), radial-gradient(circle at 82% 18%, rgba(255,215,122,0.14), transparent 30%), radial-gradient(circle at 52% 78%, rgba(121,224,255,0.10), transparent 30%), linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      color: var(--text); font-family: Inter, system-ui, sans-serif;
+    }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.08; background-image: radial-gradient(rgba(255,255,255,0.35) 0.7px, transparent 0.7px); background-size: 18px 18px; mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.08)); }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 56px; position: relative; z-index: 1; }
+    .hero { position: relative; overflow: hidden; border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)); backdrop-filter: blur(18px); border-radius: 30px; box-shadow: var(--shadow); padding: clamp(28px, 5vw, 54px); margin-bottom: 28px; }
+    .hero::after { content: ""; position: absolute; width: 340px; height: 340px; right: -60px; top: -120px; border-radius: 50%; background: radial-gradient(circle, rgba(141,240,200,0.22), transparent 62%); filter: blur(4px); pointer-events: none; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--accent-3); letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-3), var(--accent-4)); box-shadow: 0 0 16px rgba(141,240,200,0.8); }
+    h1 { margin: 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; line-height: 0.95; font-size: clamp(2.8rem, 7vw, 5.8rem); letter-spacing: -0.04em; max-width: 11ch; background: linear-gradient(135deg, #ffffff 10%, var(--accent-3) 42%, var(--accent-4) 78%, #ffffff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .sub { margin-top: 18px; max-width: 72ch; color: var(--text-secondary); font-size: clamp(1rem, 2vw, 1.18rem); line-height: 1.65; }
+    .meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .pill { padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-secondary); font-size: 14px; }
+    .toolbar { display: grid; grid-template-columns: 1.3fr 0.9fr 0.9fr auto; gap: 12px; margin-bottom: 24px; }
+    .control { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; color: var(--text); backdrop-filter: blur(12px); }
+    .control input, .control select { width: 100%; border: 0; outline: none; background: transparent; color: var(--text); font-size: 14px; }
+    .control select option { color: #111; }
+    .btn { border: 1px solid rgba(141,240,200,0.25); background: linear-gradient(135deg, rgba(141,240,200,0.18), rgba(255,215,122,0.16)); color: var(--text); border-radius: 16px; padding: 0 18px; font-weight: 700; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; min-height: 52px; }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(141,240,200,0.45); }
+    .section-title { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 12px 2px 18px; }
+    .section-title h2 { margin: 0; font-size: 1.2rem; letter-spacing: -0.02em; }
+    .section-title p { margin: 0; color: var(--text-muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .card { min-height: 310px; perspective: 1400px; position: relative; }
+    .card-inner { position: relative; width: 100%; height: 100%; min-height: 310px; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(.2,.8,.2,1); }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .face { position: absolute; inset: 0; border-radius: var(--radius-xl); border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.055)); backdrop-filter: blur(16px); box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; backface-visibility: hidden; overflow: hidden; }
+    .face::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 45%, rgba(141,240,200,0.06)); }
+    .back { transform: rotateY(180deg); }
+    .type-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; position: relative; z-index: 1; }
+    .tag, .level { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.12); background: rgba(6, 12, 26, 0.36); }
+    .level { color: var(--accent-4); }
+    .tag.mcq { color: var(--accent-1); }
+    .tag.tf { color: var(--accent-3); }
+    .tag.word { color: var(--accent-2); }
+    .tag.mf { color: var(--danger); }
+    .tag.match { color: var(--accent-4); }
+    .qnum { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .question { position: relative; z-index: 1; font-size: 1.05rem; font-weight: 600; line-height: 1.5; letter-spacing: -0.01em; margin-bottom: 14px; }
+    .options { position: relative; z-index: 1; display: grid; gap: 8px; margin-top: auto; }
+    .opt { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-size: 14px; line-height: 1.45; }
+    .hint { position: relative; z-index: 1; margin-top: auto; color: var(--text-muted); font-size: 13px; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .answer-label { position: relative; z-index: 1; font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent-3); margin-bottom: 10px; font-weight: 700; }
+    .answer { position: relative; z-index: 1; font-size: 1rem; font-weight: 700; line-height: 1.5; color: #fff; margin-bottom: 12px; }
+    .explain { position: relative; z-index: 1; color: var(--text-secondary); line-height: 1.6; font-size: 14px; }
+    .flip-btn { position: relative; z-index: 1; margin-top: auto; align-self: start; padding: 10px 13px; border-radius: 999px; border: 1px solid rgba(141,240,200,0.18); background: rgba(141,240,200,0.1); color: var(--text); font-weight: 700; font-size: 13px; cursor: pointer; }
+    .footer-note { margin-top: 26px; padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+    @media (max-width: 1080px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .toolbar { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .wrap { padding: 18px 14px 40px; } .grid { grid-template-columns: 1fr; } .toolbar { grid-template-columns: 1fr; } .section-title { flex-direction: column; align-items: start; } .card, .card-inner { min-height: 330px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> Day 3 capstone review</div>
+      <h1>Day 3 review</h1>
+      <p class="sub">Safety &amp; Ethics, Governance, Fine-tuning &amp; RAG, Multimodal, AI Strategy, and Role Use Cases. Use as a capstone wrap-up to bring together everything from the three days. Flip each card to reveal the answer and a short explanation.</p>
+      <div class="meta">
+        <span class="pill">30 cards</span>
+        <span class="pill">Easy · Intermediate · Advanced</span>
+        <span class="pill">MCQ · True/False · Myth/Fact · One-word-for · Matching</span>
+        <span class="pill">Safety &amp; Ethics · Governance · Fine-tuning &amp; RAG · Multimodal · AI Strategy · Role Use Cases</span>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Filters">
+      <label class="control"><input id="searchBox" type="text" placeholder="Search topic, keyword, or question type" /></label>
+      <label class="control">
+        <select id="typeFilter">
+          <option value="all">All question types</option>
+          <option value="MCQ">MCQ</option>
+          <option value="True/False">True/False</option>
+          <option value="Myth/Fact">Myth/Fact</option>
+          <option value="One-word-for">One-word-for</option>
+          <option value="Matching">Matching</option>
+        </select>
+      </label>
+      <label class="control">
+        <select id="topicFilter">
+          <option value="all">All topics</option>
+          <option>Safety &amp; Ethics</option>
+          <option>Governance</option>
+          <option>Fine-tuning &amp; RAG</option>
+          <option>Multimodal</option>
+          <option>AI Strategy</option>
+          <option>Role Use Cases</option>
+        </select>
+      </label>
+      <button class="btn" id="flipAllBtn" type="button">Flip visible cards</button>
+    </section>
+
+    <div class="section-title">
+      <h2>Flip-card deck</h2>
+      <p>30 cards · Safety &amp; Ethics, Governance, Fine-tuning &amp; RAG, Multimodal, AI Strategy, Role Use Cases</p>
+    </div>
+
+    <section class="grid" id="cardGrid"></section>
+
+    <div class="footer-note">
+      These questions are designed for discussion and reflection. For high-stakes topics like safety and governance, focus on the reasoning behind each answer — not just the answer itself.
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {type:'MCQ',difficulty:'Intermediate',topic:'Safety & Ethics',question:'Which of the following best describes why an LLM "hallucinates"?',options:['The model deliberately invents facts to seem more helpful.','The model generates statistically plausible text even when it lacks supporting knowledge, with no reliable self-awareness of the gap.','Hallucinations only occur when the prompt is poorly written.','Hallucinations are eliminated by using a larger model.'],answer:'B — The model generates statistically plausible text even when it lacks supporting knowledge.',explanation:'LLMs predict likely next tokens based on learned patterns — they have no internal fact-check mechanism, so plausible-sounding but wrong content can emerge naturally and confidently.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Governance',question:'Which principle is most defensible when AI is used in a high-stakes workflow?',options:['Use AI output directly if the wording sounds confident.','Use AI as support, with review, accountability, and appropriate controls.','Avoid documenting the workflow so users are not confused.','Let the model define the policy each time.'],answer:'B — Use AI as support, with review, accountability, and appropriate controls.',explanation:'High-stakes use demands oversight, accountability, verification, and clear role boundaries for both humans and AI systems. Confident-sounding output is not a substitute for review.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Fine-tuning & RAG',question:'A company wants AI to answer questions from its internal policy documents. Which approach should it start with?',options:['Fine-tune a model on all internal documents.','Use RAG — retrieve relevant policy sections at query time and pass them to the model.','Use a very long prompt that includes all policies.','Train a new model from scratch on company data.'],answer:'B — Use RAG — retrieve relevant policy sections at query time.',explanation:"RAG is the right default for document Q&A — it's faster, cheaper, and more maintainable than fine-tuning, and doesn't require retraining every time documents are updated."},
+      {type:'True/False',difficulty:'Advanced',topic:'Safety & Ethics',question:'Bias in AI can come from data, model objectives, system design, or deployment context — not only from malicious intent.',answer:'True',explanation:'Bias can emerge from many points in the pipeline including sampling choices, labeling decisions, incentive structures, and how the system is deployed and used in practice.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'AI Strategy',question:'What is usually the best starting point for a team adopting AI?',options:['Build a custom model trained on all internal data.','Identify one narrow, high-value use case, prove it works, then expand.','Replace all current workflows with AI immediately.','Wait until AI technology is fully mature before starting.'],answer:'B — Identify one narrow, high-value use case, prove it works, then expand.',explanation:'Narrow, proven use cases build confidence, establish governance patterns, and create a foundation for broader adoption. Trying to scale before proving value usually fails.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'Safety & Ethics',question:'An LLM always expresses uncertainty when it generates a factually incorrect answer.',answer:'False',explanation:"Models frequently state wrong information with full confidence. Expressed uncertainty is not a reliable signal — consistent verification habits are essential regardless of the model's tone."},
+      {type:'Matching',difficulty:'Advanced',topic:'Fine-tuning & RAG',question:'Match each approach to its defining characteristic:',options:['Prompting only → ?','RAG → ?','Fine-tuning → ?'],answer:'Prompting only → No data changes; behavior shaped entirely through instructions and examples in context<br>RAG → External documents retrieved at query time and injected into the prompt context<br>Fine-tuning → Model weights adjusted on additional training data to shift intrinsic behavior',explanation:'These three approaches sit at different points on the effort-vs-control spectrum. Most enterprise use cases start with prompting, add RAG for knowledge, and rarely need fine-tuning.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Safety & Ethics',question:'"If AI helped generate it, ownership and copyright questions are always simple and obvious."',answer:'Myth',explanation:'Ownership, authorship, training data provenance, licensing terms, and contractual rights can all complicate AI-generated outputs — the legal landscape is still evolving across most jurisdictions.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'Multimodal',question:'One word for: an AI model that can process and generate more than one type of input or output — such as text, images, and audio.',answer:'Multimodal',explanation:'Multimodal models break down the boundary between media types, enabling tasks like analyzing an image and explaining it in text, or transcribing audio into a structured document.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Safety & Ethics',question:"A colleague pastes a client's confidential financial projections into a free public AI tool to get a summary. What is the primary risk?",options:['The summary will be formatted incorrectly.','Confidential data may be processed, logged, or used in ways that violate client agreements or data-protection policies.','The model will refuse to summarize financial data.','The output will automatically be shared with the client.'],answer:'B — Confidential data may be processed, logged, or used in ways that violate client agreements or data-protection policies.',explanation:"Confidential data sent to public AI tools may be stored, logged, or used for model training depending on the provider's terms — a significant compliance and client trust risk."},
+      {type:'MCQ',difficulty:'Advanced',topic:'Governance',question:'Which governance practice is most useful when teams start using AI across many workflows?',options:['Let every team invent its own rules in isolation forever.','Define usage policies, risk tiers, review paths, and approved tools.','Ban all experimentation immediately.','Only focus on model size and ignore data handling.'],answer:'B — Define usage policies, risk tiers, review paths, and approved tools.',explanation:'Practical governance gives people a safe and clear way to experiment while establishing boundaries for data handling, risk escalation, and tool approval — reducing both inhibition and exposure.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'Fine-tuning & RAG',question:'RAG is generally faster and cheaper to implement than fine-tuning for most enterprise document Q&A use cases.',answer:'True',explanation:'RAG requires building an index and retrieval pipeline — no model training involved. Fine-tuning requires training compute, careful data preparation, and ongoing version maintenance.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'AI Strategy',question:'Which of the following is a common mistake in enterprise AI adoption?',options:['Starting with small, contained pilots.','Treating AI adoption as a pure technology project with no change management.','Setting clear success metrics before deployment.','Establishing an approved tools policy.'],answer:'B — Treating AI adoption as a pure technology project with no change management.',explanation:'AI adoption changes workflows, roles, and decision-making patterns. Without change management — training, communication, and incentive alignment — even technically successful implementations fail to deliver sustained value.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Governance',question:'What is the strongest reason to log prompts, outputs, and workflow actions in enterprise AI systems?',options:['To make the UI look more impressive.','To support debugging, accountability, evaluation, and incident review.','To guarantee zero hallucinations.','To increase GPU processing speed.'],answer:'B — To support debugging, accountability, evaluation, and incident review.',explanation:'Observability helps teams investigate failures, monitor output drift, audit decisions, and continuously improve systems — it is foundational to responsible production AI.'},
+      {type:'Matching',difficulty:'Advanced',topic:'Safety & Ethics',question:'Match each AI risk type to its example:',options:['Hallucination → ?','Bias → ?','Data privacy breach → ?'],answer:'Hallucination → Model cites a court case that does not exist<br>Bias → CV screening tool systematically ranks candidates from certain universities lower<br>Data privacy breach → Employee pastes client PII into a public AI tool outside the enterprise agreement',explanation:'These three risk types require different mitigation strategies: grounding and verification for hallucination, diverse testing and human review for bias, and data classification policies for privacy.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Fine-tuning & RAG',question:'Fine-tuning is most appropriate when you need to:',options:['Give the model access to documents that change frequently.','Change the model\'s style, tone, or behavior across all responses — not just supply it with new facts.','Reduce the cost of API calls during development.','Add a system prompt to every interaction.'],answer:"B — Change the model's style, tone, or behavior across all responses.",explanation:"Fine-tuning shapes intrinsic behavior — voice, format preferences, domain-specific reasoning patterns. It's not the right tool for adding factual knowledge that changes over time; RAG handles that better."},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Multimodal',question:'Which of the following tasks requires a multimodal model?',options:['Summarizing a plain-text email.','Translating a paragraph from English to French.','Describing the key trends shown in a chart image.','Generating a bullet-point list from a meeting transcript.'],answer:'C — Describing the key trends shown in a chart image.',explanation:'Interpreting the visual content of a chart requires image understanding — a capability unavailable to text-only models, regardless of how well the prompt is written.'},
+      {type:'One-word-for',difficulty:'Intermediate',topic:'Governance',question:'One phrase for: keeping humans involved in reviewing or approving AI-supported decisions before final action is taken.',answer:'Human-in-the-loop',explanation:'Human-in-the-loop design maintains accountability and oversight at the points where model mistakes could be costly or irreversible.'},
+      {type:'Matching',difficulty:'Advanced',topic:'AI Strategy',question:'Match each level to where AI typically creates value:',options:['Individual → ?','Team → ?','Organization → ?'],answer:'Individual → Personal productivity gains — faster drafting, research, summarization, and analysis<br>Team → Workflow automation — reducing handoffs, improving speed and consistency across processes<br>Organization → Product and service innovation — new capabilities enabled by AI at scale',explanation:'Value compounds as adoption moves from individual habits to team workflows to organizational strategy. Most organizations start at the individual level and work outward.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Governance',question:'"Agentic AI means the human no longer needs to define goals, boundaries, or evaluation criteria."',answer:'Myth',explanation:'Goals, constraints, permissions, success metrics, and safety boundaries become more important as autonomy increases — a poorly specified agent will pursue its objective without awareness of the problem.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Fine-tuning & RAG',question:'"Fine-tuning is always better than RAG because it permanently teaches the model new knowledge."',answer:'Myth',explanation:'Fine-tuning is harder to maintain, can cause the model to "forget" prior capabilities (catastrophic forgetting), and is overkill for use cases where supplying context at query time works well. The right choice depends on the task.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'Role Use Cases',question:'A finance analyst wants AI to help draft variance commentary for monthly reports. What is the most important consideration before using the output?',options:['Whether the commentary is written in a formal font.','Whether the figures and drivers cited match the actual source data — AI synthesizes language, not verified numbers.','Whether the model is the latest version available.','Whether the commentary is longer than the previous month\'s.'],answer:'B — Whether the figures and drivers cited match the actual source data.',explanation:'AI can produce fluent commentary but may misstate or hallucinate specific figures. The analyst must verify all cited numbers against the actual data before the output is used or submitted.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'Multimodal',question:'A text-only LLM can analyze the visual content of an image if you first describe the image in text.',answer:'False',explanation:'A text description loses visual detail, spatial relationships, and subtle cues that a multimodal model processes directly from the image. The description introduces an additional layer of interpretation and potential error.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Governance',question:'"Responsible AI is only the legal team\'s job."',answer:'Myth',explanation:'Responsible AI is cross-functional — product, engineering, operations, legal, security, and business owners all shape outcomes. Legal sets the floor; how systems are designed and used determines what actually happens.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Safety & Ethics',question:'"Consumer AI tools (e.g., free ChatGPT) and enterprise API agreements handle your input data the same way."',answer:'Myth',explanation:'Consumer products often use conversations for model improvement by default; enterprise API agreements typically offer stronger data privacy controls and no training-data use. Always verify the specific terms before processing sensitive data.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'AI Strategy',question:"The most important factor limiting a team's AI effectiveness is usually the model they choose, not how they use it.",answer:'False',explanation:'Most teams are bottlenecked by prompt quality, use case design, and change adoption — not model capability. Frontier models are often more capable than the use cases teams design for them.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'Role Use Cases',question:'AI-generated legal analysis should be reviewed by a qualified professional before being relied upon in any formal context.',answer:'True',explanation:'LLMs can produce plausible but incorrect legal reasoning, miss jurisdiction-specific nuance, or reference outdated statutes. Legal accountability rests with the human professional, not the model.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'Fine-tuning & RAG',question:'One word for: running a trained model on a new input to produce an output — as opposed to training the model.',answer:'Inference',explanation:"Inference is what happens every time you send a prompt — the frozen model processes the input and generates output. It is distinct from training, which updates the model's weights."},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'AI Strategy',question:'"The most important AI skill in the next five years is knowing how to write code."',answer:'Myth',explanation:'The durable skill is judgment — framing the right problem, evaluating outputs critically, and designing human-AI collaboration that amplifies expertise. Code matters for builders; clear thinking and good evaluation habits matter for everyone.'},
+      {type:'Myth/Fact',difficulty:'Intermediate',topic:'Role Use Cases',question:'"AI use cases are so different by job function that there is no common pattern across roles."',answer:'Myth',explanation:'Most high-value AI use cases share a pattern: give the model relevant context, a clear task, and a defined output format — then verify the result. The domain changes; the underlying approach doesn\'t.'}
+    ];
+
+    const grid = document.getElementById('cardGrid');
+    const searchBox = document.getElementById('searchBox');
+    const typeFilter = document.getElementById('typeFilter');
+    const topicFilter = document.getElementById('topicFilter');
+    const flipAllBtn = document.getElementById('flipAllBtn');
+
+    function tagClass(type) {
+      if (type === 'MCQ') return 'mcq';
+      if (type === 'True/False') return 'tf';
+      if (type === 'One-word-for') return 'word';
+      if (type === 'Matching') return 'match';
+      return 'mf';
+    }
+
+    function renderCards() {
+      const q = searchBox.value.trim().toLowerCase();
+      const tf = typeFilter.value;
+      const top = topicFilter.value;
+      const filtered = questions.filter(item => {
+        const hay = [item.type, item.topic, item.question, item.answer, ...(item.options || [])].join(' ').toLowerCase();
+        return (!q || hay.includes(q)) && (tf === 'all' || item.type === tf) && (top === 'all' || item.topic === top);
+      });
+      grid.innerHTML = filtered.map(item => {
+        const number = questions.indexOf(item) + 1;
+        const optionsHtml = item.options ? `<div class="options">${item.options.map((opt, i) => `<div class="opt">${String.fromCharCode(65+i)}. ${opt}</div>`).join('')}</div>` : '';
+        const hintHtml = item.hint ? `<div class="hint">${item.hint}</div>` : '';
+        return `<article class="card"><div class="card-inner"><div class="face front"><div class="type-row"><span class="tag ${tagClass(item.type)}">${item.type}</span><span class="level">${item.difficulty}</span></div><div class="qnum">Q${number} &bull; ${item.topic}</div><div class="question">${item.question}</div>${optionsHtml}${hintHtml}<button class="flip-btn" type="button">Flip for answer</button></div><div class="face back"><div class="type-row"><span class="tag ${tagClass(item.type)}">${item.type}</span><span class="level">${item.topic}</span></div><div class="answer-label">Suggested answer</div><div class="answer">${item.answer}</div><div class="explain">${item.explanation}</div><button class="flip-btn" type="button">Back to question</button></div></div></article>`;
+      }).join('');
+      bindFlipEvents();
+      flipAllBtn.textContent = 'Flip visible cards';
+    }
+
+    function bindFlipEvents() {
+      grid.querySelectorAll('.card').forEach(card => {
+        card.querySelectorAll('.flip-btn').forEach(btn => { btn.addEventListener('click', () => card.classList.toggle('flipped')); });
+        card.addEventListener('dblclick', () => card.classList.toggle('flipped'));
+      });
+    }
+
+    let flippedAll = false;
+    flipAllBtn.addEventListener('click', () => {
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      flippedAll = !flippedAll;
+      cards.forEach(card => card.classList.toggle('flipped', flippedAll));
+      flipAllBtn.textContent = flippedAll ? 'Unflip visible cards' : 'Flip visible cards';
+    });
+
+    [searchBox, typeFilter, topicFilter].forEach(el => el.addEventListener('input', renderCards));
+    [typeFilter, topicFilter].forEach(el => el.addEventListener('change', renderCards));
+    renderCards();
+  </script>
+</body>
+</html>

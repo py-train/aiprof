@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Day Review Flipcards</title>
+  <meta name="slides-format" content="viewport" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1324;
+      --bg-deep: #050b16;
+      --surface: rgba(255,255,255,0.08);
+      --surface-strong: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.14);
+      --text: #eef5ff;
+      --text-secondary: #cdd8e8;
+      --text-muted: #97a7c0;
+      --accent-1: #79e0ff;
+      --accent-2: #9c8cff;
+      --accent-3: #8df0c8;
+      --accent-4: #ffd77a;
+      --danger: #ff8fa3;
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --maxw: 1280px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(121,224,255,0.18), transparent 28%),
+        radial-gradient(circle at 82% 18%, rgba(156,140,255,0.18), transparent 30%),
+        radial-gradient(circle at 52% 78%, rgba(141,240,200,0.12), transparent 30%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      color: var(--text);
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.08;
+      background-image: radial-gradient(rgba(255,255,255,0.35) 0.7px, transparent 0.7px);
+      background-size: 18px 18px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.08));
+    }
+
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      backdrop-filter: blur(18px);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      padding: clamp(28px, 5vw, 54px);
+      margin-bottom: 28px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      right: -60px;
+      top: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(121,224,255,0.22), transparent 62%);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent-1);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      box-shadow: 0 0 16px rgba(121,224,255,0.8);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Instrument Serif", Georgia, serif;
+      font-weight: 400;
+      line-height: 0.95;
+      font-size: clamp(2.8rem, 7vw, 5.8rem);
+      letter-spacing: -0.04em;
+      max-width: 11ch;
+      background: linear-gradient(135deg, #ffffff 10%, var(--accent-1) 42%, var(--accent-2) 78%, #ffffff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sub {
+      margin-top: 18px;
+      max-width: 72ch;
+      color: var(--text-secondary);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+      line-height: 1.65;
+    }
+
+    .meta {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr 0.9fr auto;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .control {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      color: var(--text);
+      backdrop-filter: blur(12px);
+    }
+
+    .control input, .control select {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .control select option {
+      color: #111;
+    }
+
+    .btn {
+      border: 1px solid rgba(121,224,255,0.25);
+      background: linear-gradient(135deg, rgba(121,224,255,0.18), rgba(156,140,255,0.16));
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      min-height: 52px;
+    }
+
+    .btn:hover { transform: translateY(-1px); border-color: rgba(121,224,255,0.45); }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin: 12px 2px 18px;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 310px;
+      perspective: 1400px;
+      position: relative;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 310px;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.055));
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      backface-visibility: hidden;
+      overflow: hidden;
+    }
+
+    .face::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 45%, rgba(121,224,255,0.06));
+    }
+
+    .back { transform: rotateY(180deg); }
+
+    .type-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag, .level {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(6, 12, 26, 0.36);
+    }
+
+    .level { color: var(--accent-4); }
+    .tag.mcq { color: var(--accent-1); }
+    .tag.tf { color: var(--accent-3); }
+    .tag.word { color: var(--accent-2); }
+    .tag.mf { color: var(--danger); }
+
+    .qnum {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .question {
+      position: relative;
+      z-index: 1;
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
+    }
+
+    .options {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .opt {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .hint {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 12px;
+    }
+
+    .answer-label {
+      position: relative;
+      z-index: 1;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-1);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .answer {
+      position: relative;
+      z-index: 1;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .explain {
+      position: relative;
+      z-index: 1;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .flip-btn {
+      position: relative;
+      z-index: 1;
+      margin-top: auto;
+      align-self: start;
+      padding: 10px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(121,224,255,0.18);
+      background: rgba(121,224,255,0.1);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 1080px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 18px 14px 40px; }
+      .grid { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .section-title { flex-direction: column; align-items: start; }
+      .card, .card-inner { min-height: 330px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> Final day review deck</div>
+      <h1>AI course review flipcards</h1>
+      <p class="sub">
+        A discussion-oriented review set covering core AI concepts, GenAI, prompting, agents, workflow automation,
+        n8n, APIs, safety, ethics, and ownership. Flip each card to reveal an answer and a short teaching note.
+      </p>
+      <div class="meta">
+        <span class="pill">44 questions</span>
+        <span class="pill">Intermediate to advanced</span>
+        <span class="pill">MCQ • One-word-for • True/False • Myth/Fact</span>
+        <span class="pill">Built for follow-on discussion</span>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Filters">
+      <label class="control">
+        <input id="searchBox" type="text" placeholder="Search topic, keyword, or question type" />
+      </label>
+      <label class="control">
+        <select id="typeFilter">
+          <option value="all">All question types</option>
+          <option value="MCQ">MCQ</option>
+          <option value="True/False">True/False</option>
+          <option value="One-word-for">One-word-for</option>
+          <option value="Myth/Fact">Myth/Fact</option>
+        </select>
+      </label>
+      <label class="control">
+        <select id="topicFilter">
+          <option value="all">All topics</option>
+          <option>AI foundations</option>
+          <option>GenAI & LLMs</option>
+          <option>Prompting</option>
+          <option>Agents</option>
+          <option>Automation & n8n</option>
+          <option>APIs & tools</option>
+          <option>Safety, ethics & ownership</option>
+        </select>
+      </label>
+      <button class="btn" id="flipAllBtn" type="button">Flip visible cards</button>
+    </section>
+
+    <div class="section-title">
+      <h2>Flip-card deck</h2>
+      <p>Tip: use search or filters to turn this into a focused recap on one module.</p>
+    </div>
+
+    <section class="grid" id="cardGrid"></section>
+
+    <div class="footer-note">
+      These questions are intentionally discussion-friendly rather than purely factual. In several cases, the “best” answer
+      depends on context, risk level, constraints, or the quality of the surrounding workflow design.
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'AI foundations',
+        question: 'Which statement best distinguishes AI, ML, and deep learning?',
+        options: [
+          'AI is a subset of ML, and ML is a subset of deep learning.',
+          'ML is a subset of AI, and deep learning is a subset of ML.',
+          'Deep learning and AI are the same; ML is separate.',
+          'AI refers only to robotics, while ML refers to language models.'
+        ],
+        answer: 'B',
+        explanation: 'AI is the broad umbrella. Machine learning is one way to build AI systems, and deep learning is one family of ML methods built around layered neural networks.',
+        hint: 'Why it matters: this framing helps participants place GenAI without collapsing all AI into LLMs.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'GenAI & LLMs',
+        question: 'Which factor most directly affects whether an LLM gives domain-relevant answers in a specialized setting?',
+        options: [
+          'The color theme of the interface.',
+          'The quality of training data and/or retrieved context.',
+          'Whether the user typed in uppercase.',
+          'Whether the model uses a chatbot UI instead of an API.'
+        ],
+        answer: 'B',
+        explanation: 'Model quality depends heavily on what it was trained on and what information it is given at inference time. Good retrieval and clean data often matter more than surface UI choices.',
+        hint: 'Good follow-up: where does base training end and RAG begin?'
+      },
+      {
+        type: 'True/False', difficulty: 'Intermediate', topic: 'AI foundations',
+        question: 'A neural network is best understood as a rule book written explicitly by engineers for every possible case.',
+        answer: 'False',
+        explanation: 'A neural network learns parameter values from data rather than relying on manually written rules for every situation.',
+        hint: 'Analogy prompt: recipe written by hand vs pattern learned from many examples.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Intermediate', topic: 'AI foundations',
+        question: 'One word for: learning from labeled examples where the desired output is already known.',
+        answer: 'Supervised learning',
+        explanation: 'The model sees inputs paired with target outputs and learns the mapping between them.',
+        hint: 'Example discussion: spam vs not spam, fraud vs not fraud.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Intermediate', topic: 'AI foundations',
+        question: 'One word for: learning patterns or structure from data without explicit labels.',
+        answer: 'Unsupervised learning',
+        explanation: 'The system tries to identify clusters, similarities, or latent structure without being told the correct answer in advance.',
+        hint: 'Ask participants to name a clustering example from business data.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'AI foundations',
+        question: 'Which example best fits reinforcement learning?',
+        options: [
+          'Predicting a house price from labeled historical records.',
+          'Grouping customers by similar behavior without categories.',
+          'Learning a sequence of actions by receiving rewards or penalties over time.',
+          'Summarizing a PDF from user prompts.'
+        ],
+        answer: 'C',
+        explanation: 'Reinforcement learning centers on agents taking actions and improving policy through reward signals across sequences of decisions.',
+        hint: 'Useful bridge into agentic systems.'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Intermediate', topic: 'GenAI & LLMs',
+        question: '“Generative AI is just another name for all machine learning.”',
+        answer: 'Myth',
+        explanation: 'Generative AI is a subset of AI/ML focused on creating new outputs such as text, images, code, audio, or video.',
+        hint: 'A good extension is to contrast generative vs predictive models.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'GenAI & LLMs',
+        question: 'If an LLM gives a fluent but wrong answer, which diagnosis is usually most accurate?',
+        options: [
+          'The model is intentionally lying.',
+          'The model has hallucinated or overgeneralized from patterns.',
+          'The network connection changed the meaning of the answer.',
+          'The prompt was grammatically incorrect, so all output became random.'
+        ],
+        answer: 'B',
+        explanation: 'Hallucination often means the model produced plausible language without grounding in correct facts or sufficient context.',
+        hint: 'Ask: what are three practical mitigation strategies?'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'GenAI & LLMs',
+        question: 'A larger context window reduces some failure modes, but it does not guarantee correctness.',
+        answer: 'True',
+        explanation: 'More context can help, but long context can still include noise, irrelevance, or misunderstood details. Verification still matters.',
+        hint: 'Nice prompt for discussing context overload.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'GenAI & LLMs',
+        question: 'Which statement about LLM training is most accurate?',
+        options: [
+          'Training usually happens on specialized compute infrastructure over long periods using large datasets.',
+          'Training is mostly done in the user’s browser after each chat.',
+          'Training and inference are basically the same thing.',
+          'Training quality is unrelated to the quality of the underlying data.'
+        ],
+        answer: 'A',
+        explanation: 'Training frontier models typically requires very large datasets, massive compute, and significant time. Data quality strongly influences downstream performance.',
+        hint: 'You can ask how pretraining, fine-tuning, and inference differ.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Advanced', topic: 'GenAI & LLMs',
+        question: 'One word for: the process of adjusting a pre-trained model on more specific data or tasks.',
+        answer: 'Fine-tuning',
+        explanation: 'Fine-tuning specializes a general model using additional task- or domain-specific examples.',
+        hint: 'Good comparison question: when would you use RAG instead?' 
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'GenAI & LLMs',
+        question: '“If a model was trained on more data, it is automatically safer and more reliable in every domain.”',
+        answer: 'Myth',
+        explanation: 'More data can help, but quality, representativeness, alignment, safety measures, and evaluation design matter a lot.',
+        hint: 'This opens a discussion on data quality vs data volume.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'Prompting',
+        question: 'Which prompt component is most responsible for telling the model what success should look like?',
+        options: ['Context', 'Task', 'Constraints and output format', 'Temperature'],
+        answer: 'C',
+        explanation: 'Task tells the model what to do, but constraints and output format often define what a usable answer should look like in practice.',
+        hint: 'Competing answer discussion: task vs constraints.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'When moving from a vague prompt to a better prompt, which upgrade usually gives the biggest improvement first?',
+        options: [
+          'Adding more adjectives.',
+          'Adding role, task, audience, constraints, and expected format.',
+          'Changing punctuation marks repeatedly.',
+          'Making the prompt as long as possible regardless of relevance.'
+        ],
+        answer: 'B',
+        explanation: 'Structure beats verbosity. A well-scaffolded prompt usually improves results more than simply making the prompt longer.',
+        hint: 'Invite learners to rewrite a bad prompt live.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'Few-shot prompting can improve consistency because it demonstrates the pattern or style expected from the model.',
+        answer: 'True',
+        explanation: 'Examples can anchor tone, structure, level of detail, and classification patterns more reliably than abstract instruction alone.',
+        hint: 'Ask when examples help less than people expect.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'One word for: prompting with no examples, only the instruction itself.',
+        answer: 'Zero-shot',
+        explanation: 'Zero-shot prompting asks the model to perform the task based only on the instruction and any supplied context.',
+        hint: 'Contrast zero-shot vs few-shot vs tool-augmented setups.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'One word for: prompting with a small number of demonstrations to shape the response pattern.',
+        answer: 'Few-shot',
+        explanation: 'Few-shot prompting gives a handful of examples so the model can imitate the intended structure or reasoning pattern.',
+        hint: 'Great follow-on: when can few-shot accidentally bias the model badly?'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'What is the most useful way to think about chain-of-thought in practical business settings?',
+        options: [
+          'A guarantee that the answer is correct.',
+          'A way to expose or encourage intermediate reasoning, though it still requires evaluation.',
+          'A replacement for external tools and documents.',
+          'A method used only in academic labs and not in production.'
+        ],
+        answer: 'B',
+        explanation: 'Chain-of-thought can improve task performance or inspectability in some settings, but it is not a substitute for validation or grounding.',
+        hint: 'Leads nicely into hidden vs visible reasoning and evaluation.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'Tree-of-thought style prompting is most useful when a task benefits from:',
+        options: [
+          'Only one obvious next step with no alternatives.',
+          'Exploring and comparing multiple candidate reasoning paths.',
+          'Avoiding intermediate steps entirely.',
+          'Replacing all evaluation with confidence scores.'
+        ],
+        answer: 'B',
+        explanation: 'Tree-of-thought approaches are valuable when branching possibilities matter and the system may need to compare alternatives before committing.',
+        hint: 'Ask whether humans do this too in planning.'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'Prompting',
+        question: '“There is one perfect prompt that will work equally well across models, domains, and stakes.”',
+        answer: 'Myth',
+        explanation: 'Prompting is contextual. Model behavior, domain knowledge, stakes, and output expectations all change what “good” looks like.',
+        hint: 'Good time to discuss prompt evaluation as an iterative process.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'Instruction tuning most directly aims to improve a model’s ability to:',
+        options: [
+          'Display colorful output in the UI.',
+          'Follow human-written instructions more usefully and consistently.',
+          'Avoid using GPUs during training.',
+          'Store API keys inside prompts.'
+        ],
+        answer: 'B',
+        explanation: 'Instruction tuning uses examples of instructions and desired responses to improve how well the model follows task-oriented requests.',
+        hint: 'Ask what instruction-tuning data might look like.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'Evaluating prompts should ideally involve real tasks, realistic inputs, and clear criteria rather than only “this felt good to me.”',
+        answer: 'True',
+        explanation: 'Prompt evaluation improves when tied to repeatable test cases, target users, failure patterns, and business expectations.',
+        hint: 'Segue to benchmark sets and rubrics.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Agents',
+        question: 'Which description best matches agentic AI?',
+        options: [
+          'A model that always replies in one message and never uses tools.',
+          'A system that can plan, act, use tools, and iterate toward a goal with some autonomy.',
+          'A spreadsheet macro with no reasoning layer.',
+          'Any chatbot with a branded avatar.'
+        ],
+        answer: 'B',
+        explanation: 'Agentic systems typically combine models with memory, planning, tool use, execution steps, and feedback loops.',
+        hint: 'Ask: how much autonomy is too much?'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Agents',
+        question: 'What is a major risk when giving an agent too much autonomy without controls?',
+        options: [
+          'It becomes impossible to use APIs at all.',
+          'It may take incorrect actions at scale before humans notice.',
+          'It will always become slower than manual work.',
+          'It can no longer call external tools.'
+        ],
+        answer: 'B',
+        explanation: 'Autonomy amplifies both value and error. Without approvals, logs, limits, and rollback paths, mistakes can cascade.',
+        hint: 'Good setup for human-in-the-loop design.'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'Agents',
+        question: '“An agent is just a bigger prompt.”',
+        answer: 'Myth',
+        explanation: 'Prompts matter, but agents usually involve state, tools, loops, decision policies, and execution logic beyond a single prompt.',
+        hint: 'Great place to compare chatbot, workflow, and agent.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'Agents',
+        question: 'A well-designed human approval checkpoint can improve safety without eliminating all productivity gains from agentic workflows.',
+        answer: 'True',
+        explanation: 'The right intervention point can reduce high-risk failures while still letting the system automate the low-risk parts.',
+        hint: 'Ask which steps in a process should require approval.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'Automation & n8n',
+        question: 'In workflow automation, what is usually the best first candidate for automation?',
+        options: [
+          'A chaotic process no one understands yet.',
+          'A repeatable process with known inputs, outputs, and exception cases.',
+          'Any task involving strategy and ambiguity.',
+          'A process that changes every hour.'
+        ],
+        answer: 'B',
+        explanation: 'The clearest early wins come from repeatable, structured workflows where the process is already reasonably understood.',
+        hint: 'Bridge into workflow scoping and process mapping.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'Automation & n8n',
+        question: 'What is n8n best thought of as?',
+        options: [
+          'Only a chatbot front-end.',
+          'A workflow automation platform that can connect apps, logic, and AI steps.',
+          'A graphics design tool for dashboards.',
+          'A database engine replacing all APIs.'
+        ],
+        answer: 'B',
+        explanation: 'n8n is used to connect triggers, nodes, logic, transformations, APIs, and now AI-enabled workflow patterns.',
+        hint: 'Ask where low-code ends and code nodes begin.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'Automation & n8n',
+        question: 'In n8n, using expressions to reference data from previous nodes is often more maintainable than manually duplicating values across the workflow.',
+        answer: 'True',
+        explanation: 'Expressions reduce hardcoding and make workflows more dynamic, reusable, and less error-prone.',
+        hint: 'Invite examples using ticket data, form fields, or API responses.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Advanced', topic: 'Automation & n8n',
+        question: 'One word for: the n8n capability that lets a field dynamically reference values from earlier nodes.',
+        answer: 'Expressions',
+        explanation: 'Expressions allow values to be computed or pulled from the workflow context dynamically.',
+        hint: 'Nice point to discuss when expressions become too complex and should move into a Code node.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Automation & n8n',
+        question: 'When should you prefer a Code node over only chaining basic no-code nodes?',
+        options: [
+          'Whenever you want the workflow to look more technical.',
+          'When transformation logic becomes complex, repetitive, or awkward to express visually.',
+          'Only when the workflow has already failed in production.',
+          'Never, because code always makes automation worse.'
+        ],
+        answer: 'B',
+        explanation: 'Code nodes are valuable when logic is clearer, shorter, or more maintainable in JavaScript than in a long chain of visual transformations.',
+        hint: 'Good discussion: maintainability vs accessibility for non-coders.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Automation & n8n',
+        question: 'Which pattern most improves reliability in an automation that calls an external API?',
+        options: [
+          'Assuming the API always responds correctly.',
+          'Adding retries, error handling, logging, and fallback behavior.',
+          'Removing all conditional branches.',
+          'Calling more APIs at once without validation.'
+        ],
+        answer: 'B',
+        explanation: 'External services fail, rate-limit, timeout, or return bad payloads. Robust workflows handle that reality explicitly.',
+        hint: 'Excellent setup for discussing happy path vs edge cases.'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'Automation & n8n',
+        question: '“If a workflow runs once successfully, it is production-ready.”',
+        answer: 'Myth',
+        explanation: 'Production readiness requires testing with edge cases, retries, error paths, permissions, monitoring, and maintenance plans.',
+        hint: 'Ask participants what can break after a successful demo.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Intermediate', topic: 'APIs & tools',
+        question: 'What is the most accurate description of an API key?',
+        options: [
+          'A prompt template stored in a browser tab.',
+          'A credential used to authenticate and authorize access to a service.',
+          'A way to increase model intelligence.',
+          'A type of encrypted PDF.'
+        ],
+        answer: 'B',
+        explanation: 'API keys help services identify who is making requests and what access should be granted.',
+        hint: 'Then ask why keys should not be pasted casually into client-side tools.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'APIs & tools',
+        question: 'Hardcoding a production API key into a shared client-side HTML file is usually a bad practice.',
+        answer: 'True',
+        explanation: 'Client-side code can expose secrets to anyone who can inspect the page or network calls.',
+        hint: 'This is a good moment to discuss server-side proxy patterns and environment variables.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'APIs & tools',
+        question: 'If you are choosing between multiple AI providers for a workflow, which criterion is usually least sufficient on its own?',
+        options: [
+          'Price per token or request.',
+          'Model quality on your real tasks.',
+          'Latency, reliability, and operational fit.',
+          'A single benchmark score viewed in isolation.'
+        ],
+        answer: 'D',
+        explanation: 'Benchmarks help, but real-world selection should also consider cost, latency, safety controls, tool use, rate limits, and task-specific performance.',
+        hint: 'Discussion prompt: what would your evaluation shortlist include?'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Advanced', topic: 'APIs & tools',
+        question: 'One word for: limiting how many requests a client can make to a service over time.',
+        answer: 'Rate limiting',
+        explanation: 'Rate limiting protects systems from abuse, overload, and unfair usage patterns.',
+        hint: 'Ask what happens to an automation if rate limits are ignored.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: 'Which principle is most defensible when AI is used in a high-stakes workflow?',
+        options: [
+          'Use AI output directly if the wording sounds confident.',
+          'Use AI as support, with review, accountability, and appropriate controls.',
+          'Avoid documenting the workflow so users are not confused.',
+          'Let the model define the policy each time.'
+        ],
+        answer: 'B',
+        explanation: 'High-stakes use demands oversight, accountability, verification, and clear role boundaries for both humans and systems.',
+        hint: 'Ask what counts as “high stakes” in your audience’s context.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: 'Bias in AI can come from data, model objectives, system design, or deployment context—not only from malicious intent.',
+        answer: 'True',
+        explanation: 'Bias can emerge from many points in the pipeline, including sampling choices, labels, incentives, and downstream use conditions.',
+        hint: 'Great prompt for socio-technical thinking.'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: '“If AI helped generate it, ownership and copyright questions are always simple and obvious.”',
+        answer: 'Myth',
+        explanation: 'Ownership, authorship, training data provenance, licensing, and contractual rights can all complicate AI-generated outputs.',
+        hint: 'This opens productive discussion around enterprise policy and legal review.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: 'Which governance practice is most useful when teams start using AI across many workflows?',
+        options: [
+          'Let every team invent its own rules in isolation forever.',
+          'Define usage policies, risk tiers, review paths, and approved tools.',
+          'Ban all experimentation immediately.',
+          'Only focus on model size and ignore data handling.'
+        ],
+        answer: 'B',
+        explanation: 'Practical governance gives people a safe way to experiment while clarifying boundaries for data, risk, approvals, and escalation.',
+        hint: 'Invite participants to propose a simple internal AI policy skeleton.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: 'What is the strongest reason to log prompts, outputs, and workflow actions in enterprise AI systems?',
+        options: [
+          'To make the UI look more impressive.',
+          'To support debugging, accountability, evaluation, and incident review.',
+          'To guarantee zero hallucinations.',
+          'To increase GPU speed.'
+        ],
+        answer: 'B',
+        explanation: 'Observability helps teams investigate failures, monitor drift, audit decisions, and improve systems over time.',
+        hint: 'Connect this to workflow automation logs too.'
+      },
+      {
+        type: 'One-word-for', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: 'One word for: keeping humans involved in reviewing or approving AI-supported decisions before final action.',
+        answer: 'Human-in-the-loop',
+        explanation: 'Human-in-the-loop design keeps accountability and review in place where model mistakes could be costly.',
+        hint: 'Follow-up: where do you place the human review in the process?'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'Agents',
+        question: '“Agentic AI means the human no longer needs to define goals, boundaries, or evaluation criteria.”',
+        answer: 'Myth',
+        explanation: 'Goals, constraints, permissions, success metrics, and safety boundaries become more important as autonomy increases.',
+        hint: 'Excellent closing discussion: autonomy requires more design, not less.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'Automation & n8n',
+        question: 'Which workflow design choice best separates a demo from a durable business automation?',
+        options: [
+          'Making the flow visually impressive but undocumented.',
+          'Adding observability, exception handling, ownership, and maintenance expectations.',
+          'Using as many nodes as possible.',
+          'Keeping all logic inside one giant prompt.'
+        ],
+        answer: 'B',
+        explanation: 'A durable automation needs operating discipline, not just a successful happy-path run.',
+        hint: 'Ask who owns the workflow after the workshop ends.'
+      },
+      {
+        type: 'True/False', difficulty: 'Advanced', topic: 'Prompting',
+        question: 'A “best” prompt for a model used inside an agent or workflow may differ from the “best” prompt for a standalone chat interaction.',
+        answer: 'True',
+        explanation: 'Workflow prompts often need stronger structure, constrained outputs, machine-readable formatting, and clearer failure behavior.',
+        hint: 'Very useful link between prompting and automation.'
+      },
+      {
+        type: 'MCQ', difficulty: 'Advanced', topic: 'GenAI & LLMs',
+        question: 'Which statement best explains why retrieved documents can improve LLM answers without retraining the model?',
+        options: [
+          'They act as current task-time context that supplements the model’s learned parameters.',
+          'They permanently rewrite the model weights after each question.',
+          'They stop the model from generating language probabilistically.',
+          'They eliminate all need for prompt design.'
+        ],
+        answer: 'A',
+        explanation: 'RAG-like setups improve grounding by supplying relevant context during inference, rather than changing the base model itself.',
+        hint: 'Nice wrap-up question to connect training, prompting, and system design.'
+      },
+      {
+        type: 'Myth/Fact', difficulty: 'Advanced', topic: 'Safety, ethics & ownership',
+        question: '“Responsible AI is only the legal team’s job.”',
+        answer: 'Myth',
+        explanation: 'Responsible AI is cross-functional. Product, engineering, operations, legal, security, and business owners all shape outcomes.',
+        hint: 'Great final conversation starter around organizational readiness.'
+      }
+    ];
+
+    const grid = document.getElementById('cardGrid');
+    const searchBox = document.getElementById('searchBox');
+    const typeFilter = document.getElementById('typeFilter');
+    const topicFilter = document.getElementById('topicFilter');
+    const flipAllBtn = document.getElementById('flipAllBtn');
+
+    function tagClass(type) {
+      if (type === 'MCQ') return 'mcq';
+      if (type === 'True/False') return 'tf';
+      if (type === 'One-word-for') return 'word';
+      return 'mf';
+    }
+
+    function renderCards() {
+      const q = searchBox.value.trim().toLowerCase();
+      const tf = typeFilter.value;
+      const top = topicFilter.value;
+
+      const filtered = questions.filter(item => {
+        const hay = [item.type, item.topic, item.question, item.answer, ...(item.options || [])].join(' ').toLowerCase();
+        const matchesSearch = !q || hay.includes(q);
+        const matchesType = tf === 'all' || item.type === tf;
+        const matchesTopic = top === 'all' || item.topic === top;
+        return matchesSearch && matchesType && matchesTopic;
+      });
+
+      grid.innerHTML = filtered.map((item, idx) => {
+        const number = questions.indexOf(item) + 1;
+        const optionsHtml = item.options ? `
+          <div class="options">
+            ${item.options.map((opt, i) => `<div class="opt">${String.fromCharCode(65 + i)}. ${opt}</div>`).join('')}
+          </div>` : '';
+
+        return `
+          <article class="card" data-visible="true">
+            <div class="card-inner">
+              <div class="face front">
+                <div class="type-row">
+                  <span class="tag ${tagClass(item.type)}">${item.type}</span>
+                  <span class="level">${item.difficulty}</span>
+                </div>
+                <div class="qnum">Q${number} • ${item.topic}</div>
+                <div class="question">${item.question}</div>
+                ${optionsHtml}
+                <div class="hint">${item.hint}</div>
+                <button class="flip-btn" type="button">Flip for answer</button>
+              </div>
+              <div class="face back">
+                <div class="type-row">
+                  <span class="tag ${tagClass(item.type)}">${item.type}</span>
+                  <span class="level">${item.topic}</span>
+                </div>
+                <div class="answer-label">Suggested answer</div>
+                <div class="answer">${item.answer}</div>
+                <div class="explain">${item.explanation}</div>
+                <button class="flip-btn" type="button">Back to question</button>
+              </div>
+            </div>
+          </article>`;
+      }).join('');
+
+      bindFlipEvents();
+      flipAllBtn.textContent = 'Flip visible cards';
+    }
+
+    function bindFlipEvents() {
+      grid.querySelectorAll('.card').forEach(card => {
+        card.querySelectorAll('.flip-btn').forEach(btn => {
+          btn.addEventListener('click', () => card.classList.toggle('flipped'));
+        });
+        card.addEventListener('dblclick', () => card.classList.toggle('flipped'));
+      });
+    }
+
+    let flippedAll = false;
+    flipAllBtn.addEventListener('click', () => {
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      flippedAll = !flippedAll;
+      cards.forEach(card => card.classList.toggle('flipped', flippedAll));
+      flipAllBtn.textContent = flippedAll ? 'Unflip visible cards' : 'Flip visible cards';
+    });
+
+    [searchBox, typeFilter, topicFilter].forEach(el => el.addEventListener('input', renderCards));
+    [typeFilter, topicFilter].forEach(el => el.addEventListener('change', renderCards));
+
+    renderCards();
+  </script>
+</body>
+</html>

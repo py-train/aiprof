@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>AI Strategy &amp; What's Next</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f7f4ee;
+      --color-bg-deep: #efe8db;
+      --color-surface: #fffdf8;
+      --color-text: #1f2937;
+      --color-text-secondary: #475569;
+      --color-text-muted: #6b7280;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #b45309;
+      --color-accent-3: #2563eb;
+      --color-glass-bg: rgba(255,255,255,0.78);
+      --color-glass-border: rgba(15,23,42,0.08);
+      --color-vignette: rgba(15,23,42,0.06);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f7f4ee; --color-text: #1f2937; --glow-color-rgb: 15,118,110; }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--color-bg)}
+    body{font-family:Inter,sans-serif;color:var(--color-text);overflow:hidden;height:100vh;width:100vw}
+    .deck{width:100vw;height:100vh;position:relative}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.97);transition:opacity .6s ease,transform .6s ease;pointer-events:none;overflow:hidden;background:var(--color-bg)}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1180px;padding:clamp(1.4rem,3vw,3rem)}
+    .nav-controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);padding:10px 18px;border-radius:999px;border:1px solid rgba(15,23,42,.08)}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:#fff;color:#0f766e;font-size:1.15rem;cursor:pointer}
+    .slide-dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:50%;background:rgba(15,23,42,.14);cursor:pointer}.dot.active{background:#0f766e;transform:scale(1.2)}
+    .slide-counter{font-size:.8rem;color:#6b7280;min-width:46px;text-align:center}.reveal{opacity:0;transform:translateY(20px)}
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}.blob{position:absolute;border-radius:50%;filter:blur(70px);animation:float 16s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.08)}}
+    .slide::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.02}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%)}
+    .card{background:var(--color-glass-bg);border:1px solid var(--color-glass-border);backdrop-filter:blur(10px);border-radius:24px;box-shadow:0 14px 40px rgba(15,23,42,.06)}
+    .pill{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(15,23,42,.08);color:#0f766e}
+    .pill-optional{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(180,83,9,.18);color:#b45309}
+    .big-number{font-size:clamp(2.3rem,5vw,4.5rem);line-height:.95;font-weight:800;color:#0f766e}
+    .timeline{position:relative;padding-left:1.5rem}.timeline:before{content:'';position:absolute;left:.35rem;top:.2rem;bottom:.2rem;width:2px;background:linear-gradient(#0f766e,#b45309)}
+    .timeline-item{position:relative;padding-left:1.2rem}.timeline-item:before{content:'';position:absolute;left:-.05rem;top:.45rem;width:.7rem;height:.7rem;border-radius:999px;background:#0f766e;box-shadow:0 0 0 6px rgba(15,118,110,.12)}
+    .mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:1.25rem;align-items:start}
+    .codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3efe7;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:1rem}
+    @media (max-width: 900px){.mini-grid,.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 1: Title -->
+  <section class="slide active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:380px;height:380px;top:-80px;right:-60px;background:#99f6e4;opacity:.35"></div>
+      <div class="blob" style="width:260px;height:260px;left:-60px;bottom:-50px;background:#fed7aa;opacity:.4"></div>
+      <div class="blob" style="width:240px;height:240px;left:24%;top:18%;background:#bfdbfe;opacity:.35"></div>
+    </div>
+    <div class="content text-center">
+      <div class="reveal mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-[2rem] border border-black/5 bg-white text-5xl shadow-lg">🧭</div>
+      <p class="reveal pill mx-auto mb-5">AI Strategy · RAG vs fine-tuning · multimodal · what's next</p>
+      <h1 class="reveal mx-auto max-w-4xl font-display text-[clamp(2.8rem,6vw,5.3rem)] leading-[0.95] text-slate-900">AI Strategy &amp; What's Next</h1>
+      <p class="reveal mx-auto mt-5 max-w-3xl text-[clamp(1rem,2vw,1.35rem)] text-slate-600">Making smart decisions about AI adoption — and where this is all going.</p>
+    </div>
+  </section>
+
+  <!-- Slide 2: Three ways to extend AI -->
+  <section class="slide" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#ccfbf1;opacity:.25"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">The three approaches</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">There are only three ways to make an AI model more useful</h2>
+      <p class="reveal mt-4 text-slate-600 text-sm">Most enterprise AI projects fail not because the technology is wrong, but because teams pick the wrong approach for the problem.</p>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Approach</th><th class="px-5 py-3">What it is</th><th class="px-5 py-3">Complexity</th><th class="px-5 py-3">Cost</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-3 font-semibold">Prompting</td><td class="px-5 py-3">Better instructions, no data changes</td><td class="px-5 py-3 text-teal-700">Low</td><td class="px-5 py-3 text-teal-700">Near-zero</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">RAG</td><td class="px-5 py-3">Connect model to your knowledge at query time</td><td class="px-5 py-3 text-amber-600">Medium</td><td class="px-5 py-3 text-amber-600">Low–Medium</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Fine-tuning</td><td class="px-5 py-3">Train the model further on your data</td><td class="px-5 py-3 text-red-600">High</td><td class="px-5 py-3 text-red-600">High</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-teal-50/50">
+        <p class="text-slate-800 font-display text-xl italic">The right order of attempt: prompting first, RAG if needed, fine-tuning rarely.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Prompting -->
+  <section class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#bbf7d0;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Prompting</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Most problems are solved before you touch the data layer</h2>
+        <div class="reveal mt-6 card p-6">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">When prompting alone is enough</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• You need a general-purpose assistant for drafting, summarizing, or reasoning</li>
+            <li>• The information needed is already in the conversation (you paste in the document)</li>
+            <li>• You want consistent tone, format, or behavior → use a well-designed system prompt</li>
+            <li>• Your use case is exploratory or low-volume</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-amber-800 uppercase tracking-widest mb-3">Limitations</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• Doesn't help if the model lacks knowledge you need (internal policies, proprietary data)</li>
+            <li>• Inconsistency at scale: humans prompt differently without structure</li>
+            <li>• Context window is finite — you can't paste in everything</li>
+          </ul>
+        </div>
+        <div class="reveal mt-4 card p-5 bg-teal-50/50">
+          <p class="text-sm text-slate-700">Before building anything, spend a week prompting. You'll be surprised how far you get.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: RAG -->
+  <section class="slide" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">RAG</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Your knowledge, the model's reasoning</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">At query time, retrieve relevant documents from your knowledge base → feed them into the prompt → model reasons over <em>your</em> content, not its training data.</p>
+        <div class="reveal mt-4 card p-6">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">When RAG is the right call</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• You have proprietary knowledge the model doesn't know (policies, contracts, product docs)</li>
+            <li>• You need answers to be grounded in specific, verifiable sources</li>
+            <li>• Your knowledge changes frequently (model training is a snapshot; RAG is live)</li>
+            <li>• You need to cite sources in the output</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-amber-800 uppercase tracking-widest mb-3">Limitations</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• Only as good as your retrieval — garbage in, garbage out</li>
+            <li>• Doesn't change how the model writes or reasons, only what it knows</li>
+            <li>• Needs infrastructure: a vector database, chunking pipeline, embedding step</li>
+          </ul>
+        </div>
+        <div class="reveal mt-4 card p-5 bg-teal-50/50">
+          <p class="text-sm text-slate-700">RAG solves the "the model doesn't know our stuff" problem. Fine-tuning doesn't.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Fine-tuning -->
+  <section class="slide" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#ddd6fe;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Fine-tuning</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Powerful but rarely the first move</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm">Additional training on your labeled dataset shifts the model's style, tone, or domain knowledge at a deeper level than prompting can achieve.</p>
+        <div class="reveal mt-4 card p-6">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">When it's genuinely worth it</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• You need a very specific writing style, consistently, at scale</li>
+            <li>• You're building a specialized domain assistant with thousands of examples</li>
+            <li>• You want to reduce prompt size/cost in a high-volume production system</li>
+          </ul>
+        </div>
+        <div class="reveal mt-3 card p-5 bg-amber-50/40">
+          <p class="text-xs font-semibold text-amber-800 mb-1">Why it's rarely the first move</p>
+          <p class="text-xs text-slate-600">Requires labeled data (expensive), training compute (costly), re-training on model updates. A well-designed RAG + system prompt usually gets 80% of the way there first.</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">Decision matrix</p>
+          <div class="overflow-hidden rounded-2xl border border-black/5 bg-white/70">
+            <table class="w-full text-sm">
+              <thead class="bg-slate-800 text-white"><tr><th class="px-4 py-2 text-left">Problem</th><th class="px-4 py-2 text-left">Try first</th></tr></thead>
+              <tbody class="divide-y divide-black/5">
+                <tr><td class="px-4 py-2 text-sm">"The model doesn't know our policies"</td><td class="px-4 py-2 text-sm font-medium text-teal-700">RAG</td></tr>
+                <tr><td class="px-4 py-2 text-sm">"The model writes in the wrong style"</td><td class="px-4 py-2 text-sm">System prompt → then fine-tune if still wrong</td></tr>
+                <tr><td class="px-4 py-2 text-sm">"The model gets our domain wrong"</td><td class="px-4 py-2 text-sm">Few-shot → RAG → then fine-tune</td></tr>
+                <tr><td class="px-4 py-2 text-sm">"We need low latency at massive scale"</td><td class="px-4 py-2 text-sm">Fine-tune a smaller model</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Multimodal AI -->
+  <section class="slide" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#a7f3d0;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fcd34d;opacity:.18"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Multimodal AI</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Beyond text</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">A single model that can accept and/or produce multiple types of content — not separate specialized tools, but one model that understands context across modalities.</p>
+        <div class="reveal mt-4 overflow-hidden rounded-[24px] border border-black/5 bg-white/70">
+          <table class="w-full text-sm">
+            <thead class="bg-slate-900 text-white"><tr><th class="px-4 py-2.5">Input</th><th class="px-4 py-2.5">What AI can do</th></tr></thead>
+            <tbody class="divide-y divide-black/5">
+              <tr><td class="px-4 py-2">Image / photo</td><td class="px-4 py-2">Describe, analyze, extract text, identify objects, compare</td></tr>
+              <tr><td class="px-4 py-2">Chart / graph</td><td class="px-4 py-2">Read values, summarize trends, explain patterns</td></tr>
+              <tr><td class="px-4 py-2">Document (PDF, screenshot)</td><td class="px-4 py-2">Extract structured data, summarize, answer questions</td></tr>
+              <tr><td class="px-4 py-2">Audio / recording</td><td class="px-4 py-2">Transcribe, translate, summarize meeting notes</td></tr>
+              <tr><td class="px-4 py-2">Voice</td><td class="px-4 py-2">Converse in real time (GPT-4o, Gemini Live)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-7 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">For your roles specifically</p>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li>• <strong>Finance:</strong> paste a screenshot of a chart → ask for a narrative summary</li>
+            <li>• <strong>Legal:</strong> upload a scanned contract → ask for key clause extraction</li>
+            <li>• <strong>HR:</strong> transcribe an interview recording → generate a structured debrief</li>
+            <li>• <strong>Ops:</strong> photograph a whiteboard → convert to structured action items</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Multimodal frontier (optional depth) -->
+  <section class="slide" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#ddd6fe;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill-optional mb-4">Optional depth</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">The modality frontier is moving fast</h2>
+      <div class="reveal mt-6 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="font-semibold mb-3">What's arriving or maturing</h3>
+          <ul class="space-y-3 text-sm text-slate-600">
+            <li>• <strong>Video understanding</strong> — analyze recorded meetings, training videos, product demos (Gemini 1.5, GPT-4o Vision)</li>
+            <li>• <strong>Real-time voice</strong> — low-latency spoken conversation with full reasoning (GPT-4o Realtime, Gemini Live)</li>
+            <li>• <strong>Computer use</strong> — AI agents that can operate a browser or desktop on your behalf (Claude, Operator)</li>
+            <li>• <strong>Rich document processing</strong> — tables, forms, invoices, handwriting at production quality</li>
+          </ul>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold mb-3">The practical signal</h3>
+          <p class="text-sm text-slate-600 mb-4">If a task involves looking at something, listening to something, or navigating a UI — it's now on the table for AI assistance. The text-only mental model is already outdated.</p>
+          <div class="bg-teal-50/60 rounded-2xl p-4">
+            <p class="text-sm text-slate-700 font-medium">Multimodal isn't a feature — it's the new baseline for frontier models.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Where AI creates value -->
+  <section class="slide" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#99f6e4;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Value creation</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">AI value operates at three levels — most organizations only capture one</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Level</th><th class="px-5 py-3">Who benefits</th><th class="px-5 py-3">Example</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-3 font-semibold">Individual productivity</td><td class="px-5 py-3">Every employee</td><td class="px-5 py-3">Drafting, summarizing, researching faster</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Workflow automation</td><td class="px-5 py-3">Teams and processes</td><td class="px-5 py-3">AI-assisted triage, routing, generation at scale</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">Product/service innovation</td><td class="px-5 py-3">The organization</td><td class="px-5 py-3">New offerings, new capabilities, competitive differentiation</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 two-col">
+        <div class="card p-5">
+          <p class="text-sm text-slate-600">Most organizations get stuck at level 1. Level 2 requires process redesign. Level 3 requires strategy.</p>
+        </div>
+        <div class="card p-5 bg-teal-50/50">
+          <p class="text-sm font-semibold text-teal-800 mb-1">The question to ask</p>
+          <p class="text-sm text-slate-700">Are we using AI to do the same things faster, or to do things we couldn't do before?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Build / Buy / Integrate -->
+  <section class="slide" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#a7f3d0;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Build / Buy / Integrate</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">You rarely need to build from scratch — but you do need to make a choice</h2>
+      <div class="reveal mt-6 mini-grid">
+        <div class="card p-7">
+          <h3 class="font-semibold text-lg mb-2">Buy</h3>
+          <p class="text-xs text-slate-400 uppercase tracking-widest mb-3">Use a product as-is</p>
+          <p class="text-sm text-slate-600 mb-3">ChatGPT, Copilot, Gemini Workspace, etc. Fast, zero infrastructure, good for individual productivity.</p>
+          <p class="text-xs text-amber-700">Limited customization, data goes to provider.</p>
+        </div>
+        <div class="card p-7">
+          <h3 class="font-semibold text-lg mb-2">Integrate</h3>
+          <p class="text-xs text-slate-400 uppercase tracking-widest mb-3">API + your own logic</p>
+          <p class="text-sm text-slate-600 mb-3">Connect a model to your systems via API; build your own UX or automation. Flexible, can use your data, production-grade.</p>
+          <p class="text-xs text-amber-700">Requires engineering; you manage reliability and security.</p>
+        </div>
+        <div class="card p-7">
+          <h3 class="font-semibold text-lg mb-2">Build</h3>
+          <p class="text-xs text-slate-400 uppercase tracking-widest mb-3">Train or fine-tune your own</p>
+          <p class="text-sm text-slate-600 mb-3">Maximum control; no external dependency.</p>
+          <p class="text-xs text-amber-700">Expensive, slow, requires ML expertise. Justified only at significant scale or in highly regulated environments.</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-5 bg-teal-50/50">
+        <p class="text-sm text-slate-700"><strong>The default for most teams:</strong> Buy for individual use, Integrate for workflows, Build only when forced to.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Common mistakes -->
+  <section class="slide" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#fca5a5;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Common mistakes</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">The mistakes organizations make are predictable — and avoidable</h2>
+      <div class="reveal mt-6 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">Piloting forever</h3>
+          <p class="text-sm text-slate-600">Running experiments that never become production. A pilot that hasn't shipped after 3 months is probably a culture problem, not a technology problem.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">Ignoring change management</h3>
+          <p class="text-sm text-slate-600">Rolling out an AI tool without training, guidance, or a policy. Technology adoption is 20% tool, 80% behavior change.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">Over-indexing on the tool</h3>
+          <p class="text-sm text-slate-600">Choosing a model before defining the use case. Start with: What specific task takes the most time with the least value? Can AI help with that?</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">No human-in-the-loop</h3>
+          <p class="text-sm text-slate-600">Automating decisions about people, money, or legal matters without review. AI augments judgment; it doesn't replace it for consequential decisions.</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-4 bg-teal-50/50">
+        <p class="text-sm text-slate-700">The organizations winning with AI right now aren't the ones with the best models — they're the ones with the clearest use cases and the best habits around using AI outputs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: What's coming in 12-24 months -->
+  <section class="slide" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#bae6fd;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bbf7d0;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">What's coming</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">The trajectory is clear even when the timeline isn't</h2>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Trend</th><th class="px-5 py-3">What it means practically</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Longer context windows</td><td class="px-5 py-2.5">Feed entire codebases, document archives, call transcripts into one prompt</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Better reasoning</td><td class="px-5 py-2.5">Complex multi-step analysis with fewer errors; less need for chain-of-thought scaffolding</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Cheaper inference</td><td class="px-5 py-2.5">Running AI on tasks that were cost-prohibitive before</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Agent frameworks maturing</td><td class="px-5 py-2.5">AI that completes multi-step tasks autonomously with minimal supervision</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Smaller, faster models</td><td class="px-5 py-2.5">AI embedded in devices, offline, real-time</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-4 card p-5">
+        <p class="text-xs text-slate-500 uppercase tracking-widest mb-2">What this means for you</p>
+        <ul class="space-y-1 text-sm text-slate-600">
+          <li>• The gap between "AI-assisted" and "AI-augmented" work will close fast</li>
+          <li>• Routine information work will be almost entirely AI-assisted within 2–3 years</li>
+          <li>• The bottleneck shifts from "can AI do this?" to "do we have the process to use it well?"</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 12: The skill that won't be automated -->
+  <section class="slide" data-slide="12">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:240px;height:240px;left:-20px;bottom:-20px;background:#99f6e4;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Human edge</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">The most valuable thing you can do is ask the right question</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">As AI handles more of the execution layer, what becomes scarcer — and more valuable:</p>
+        <div class="reveal mt-5 space-y-3">
+          <div class="card p-4">
+            <p class="text-sm font-semibold text-teal-800">Judgment</p>
+            <p class="text-sm text-slate-600 mt-1">Knowing when an AI output is wrong, incomplete, or dangerous to use</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-sm font-semibold text-teal-800">Framing</p>
+            <p class="text-sm text-slate-600 mt-1">Translating a messy real-world problem into a precise AI task</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-sm font-semibold text-teal-800">Evaluation</p>
+            <p class="text-sm text-slate-600 mt-1">Assessing outputs against standards the AI can't fully internalize</p>
+          </div>
+          <div class="card p-4">
+            <p class="text-sm font-semibold text-teal-800">Context</p>
+            <p class="text-sm text-slate-600 mt-1">Understanding the human, organizational, and ethical dimensions of a decision</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-8 mt-14">
+          <p class="font-display text-2xl italic text-slate-800 leading-snug">"The question isn't 'will AI take my job?' — it's 'am I developing the judgment layer that AI can't replicate?'"</p>
+          <div class="mt-5 bg-teal-50/60 rounded-2xl p-4">
+            <p class="text-sm text-slate-700">The skill gap of the next decade isn't coding. It's critical evaluation of AI output.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 13: Where you go from here -->
+  <section class="slide" data-slide="13">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;top:-70px;right:-70px;background:#a7f3d0;opacity:.3"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-60px;background:#fed7aa;opacity:.32"></div>
+      <div class="blob" style="width:220px;height:220px;left:35%;top:20%;background:#dbeafe;opacity:.28"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Closing</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">The foundation is in place — what happens next is up to you</h2>
+        <div class="reveal mt-6 timeline space-y-5">
+          <div class="timeline-item">
+            <h3 class="font-semibold">1. Pick one real task</h3>
+            <p class="mt-1 text-slate-600 text-sm">Something you do weekly that's tedious. Spend 30 minutes this week prompting AI through it. See what's possible.</p>
+          </div>
+          <div class="timeline-item">
+            <h3 class="font-semibold">2. Share one finding</h3>
+            <p class="mt-1 text-slate-600 text-sm">Tell a colleague what worked, what didn't, what surprised you. AI adoption spreads through networks, not mandates.</p>
+          </div>
+          <div class="timeline-item">
+            <h3 class="font-semibold">3. Stay sceptical and curious</h3>
+            <p class="mt-1 text-slate-600 text-sm">Verify outputs for anything consequential. The people who use AI well are the ones who never fully trust it blindly.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-7 mt-12">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-3">This program covered</p>
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li>• <strong>How AI works</strong> — foundations</li>
+            <li>• <strong>How to direct it</strong> — prompting</li>
+            <li>• <strong>How to build with it</strong> — RAG, automation, agents</li>
+            <li>• <strong>How to use it responsibly</strong> — ethics, governance</li>
+            <li>• <strong>How to think strategically</strong> — this deck</li>
+          </ul>
+          <div class="mt-5 bg-teal-50/60 rounded-2xl p-4">
+            <p class="font-display text-lg italic text-slate-800">That's a more complete picture than most practitioners have. Use it.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 13</span>
+</div>
+<script>
+let current=1; const total=document.querySelectorAll('.slide').length; const dotsContainer=document.getElementById('dots'); const counter=document.getElementById('counter');
+for(let i=1;i<=total;i++){const dot=document.createElement('div'); dot.className='dot'+(i===1?' active':''); dot.onclick=()=>goToSlide(i); dotsContainer.appendChild(dot);}
+function goToSlide(n){const prev=document.querySelector('.slide.active'); const next=document.querySelector(`.slide[data-slide="${n}"]`); if(prev) prev.classList.remove('active'); if(next){next.classList.add('active'); animateSlide(next);} current=n; updateNav();}
+function changeSlide(dir){let next=current+dir; if(next<1) next=total; if(next>total) next=1; goToSlide(next);}
+function updateNav(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current)); counter.textContent=current+' / '+total;}
+document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault(); changeSlide(1);} if(e.key==='ArrowLeft'){e.preventDefault(); changeSlide(-1);}});
+let touchStartX=0; document.addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;}); document.addEventListener('touchend',(e)=>{const diff=touchStartX-e.changedTouches[0].clientX; if(Math.abs(diff)>50) changeSlide(diff>0?1:-1);});
+function animateSlide(slide){slide.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transition='none'; el.style.opacity='0'; el.style.transform='translateY(20px)'; el.offsetHeight; const delay=i*0.08; el.style.transition=`opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`; el.style.opacity='1'; el.style.transform='translateY(0)';});}
+animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>

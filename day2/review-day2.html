@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Day 2 Review — Flip Cards</title>
+  <meta name="slides-format" content="viewport" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1324;
+      --bg-deep: #050b16;
+      --surface: rgba(255,255,255,0.08);
+      --surface-strong: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.14);
+      --text: #eef5ff;
+      --text-secondary: #cdd8e8;
+      --text-muted: #97a7c0;
+      --accent-1: #79e0ff;
+      --accent-2: #9c8cff;
+      --accent-3: #8df0c8;
+      --accent-4: #ffd77a;
+      --danger: #ff8fa3;
+      --shadow: 0 20px 60px rgba(0,0,0,0.28);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --maxw: 1280px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; min-height: 100%;
+      background: radial-gradient(circle at 15% 20%, rgba(121,224,255,0.18), transparent 28%), radial-gradient(circle at 82% 18%, rgba(156,140,255,0.18), transparent 30%), radial-gradient(circle at 52% 78%, rgba(141,240,200,0.12), transparent 30%), linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+      color: var(--text); font-family: Inter, system-ui, sans-serif;
+    }
+    body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.08; background-image: radial-gradient(rgba(255,255,255,0.35) 0.7px, transparent 0.7px); background-size: 18px 18px; mask-image: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.08)); }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 32px 20px 56px; position: relative; z-index: 1; }
+    .hero { position: relative; overflow: hidden; border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04)); backdrop-filter: blur(18px); border-radius: 30px; box-shadow: var(--shadow); padding: clamp(28px, 5vw, 54px); margin-bottom: 28px; }
+    .hero::after { content: ""; position: absolute; width: 340px; height: 340px; right: -60px; top: -120px; border-radius: 50%; background: radial-gradient(circle, rgba(156,140,255,0.22), transparent 62%); filter: blur(4px); pointer-events: none; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--accent-2); letter-spacing: 0.16em; text-transform: uppercase; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
+    .eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-2), var(--accent-3)); box-shadow: 0 0 16px rgba(156,140,255,0.8); }
+    h1 { margin: 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; line-height: 0.95; font-size: clamp(2.8rem, 7vw, 5.8rem); letter-spacing: -0.04em; max-width: 11ch; background: linear-gradient(135deg, #ffffff 10%, var(--accent-2) 42%, var(--accent-3) 78%, #ffffff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .sub { margin-top: 18px; max-width: 72ch; color: var(--text-secondary); font-size: clamp(1rem, 2vw, 1.18rem); line-height: 1.65; }
+    .meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .pill { padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.06); color: var(--text-secondary); font-size: 14px; }
+    .toolbar { display: grid; grid-template-columns: 1.3fr 0.9fr 0.9fr auto; gap: 12px; margin-bottom: 24px; }
+    .control { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 16px; padding: 12px 14px; color: var(--text); backdrop-filter: blur(12px); }
+    .control input, .control select { width: 100%; border: 0; outline: none; background: transparent; color: var(--text); font-size: 14px; }
+    .control select option { color: #111; }
+    .btn { border: 1px solid rgba(156,140,255,0.25); background: linear-gradient(135deg, rgba(156,140,255,0.18), rgba(141,240,200,0.16)); color: var(--text); border-radius: 16px; padding: 0 18px; font-weight: 700; cursor: pointer; transition: transform .18s ease, border-color .18s ease, background .18s ease; min-height: 52px; }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(156,140,255,0.45); }
+    .section-title { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 12px 2px 18px; }
+    .section-title h2 { margin: 0; font-size: 1.2rem; letter-spacing: -0.02em; }
+    .section-title p { margin: 0; color: var(--text-muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .card { min-height: 310px; perspective: 1400px; position: relative; }
+    .card-inner { position: relative; width: 100%; height: 100%; min-height: 310px; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(.2,.8,.2,1); }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .face { position: absolute; inset: 0; border-radius: var(--radius-xl); border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.055)); backdrop-filter: blur(16px); box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; backface-visibility: hidden; overflow: hidden; }
+    .face::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 45%, rgba(156,140,255,0.06)); }
+    .back { transform: rotateY(180deg); }
+    .type-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; position: relative; z-index: 1; }
+    .tag, .level { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.12); background: rgba(6, 12, 26, 0.36); }
+    .level { color: var(--accent-4); }
+    .tag.mcq { color: var(--accent-1); }
+    .tag.tf { color: var(--accent-3); }
+    .tag.word { color: var(--accent-2); }
+    .tag.mf { color: var(--danger); }
+    .tag.match { color: var(--accent-4); }
+    .qnum { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .question { position: relative; z-index: 1; font-size: 1.05rem; font-weight: 600; line-height: 1.5; letter-spacing: -0.01em; margin-bottom: 14px; }
+    .options { position: relative; z-index: 1; display: grid; gap: 8px; margin-top: auto; }
+    .opt { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-size: 14px; line-height: 1.45; }
+    .hint { position: relative; z-index: 1; margin-top: auto; color: var(--text-muted); font-size: 13px; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; }
+    .answer-label { position: relative; z-index: 1; font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent-2); margin-bottom: 10px; font-weight: 700; }
+    .answer { position: relative; z-index: 1; font-size: 1rem; font-weight: 700; line-height: 1.5; color: #fff; margin-bottom: 12px; }
+    .explain { position: relative; z-index: 1; color: var(--text-secondary); line-height: 1.6; font-size: 14px; }
+    .flip-btn { position: relative; z-index: 1; margin-top: auto; align-self: start; padding: 10px 13px; border-radius: 999px; border: 1px solid rgba(156,140,255,0.18); background: rgba(156,140,255,0.1); color: var(--text); font-weight: 700; font-size: 13px; cursor: pointer; }
+    .footer-note { margin-top: 26px; padding: 16px 18px; border-radius: 18px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+    @media (max-width: 1080px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .toolbar { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .wrap { padding: 18px 14px 40px; } .grid { grid-template-columns: 1fr; } .toolbar { grid-template-columns: 1fr; } .section-title { flex-direction: column; align-items: start; } .card, .card-inner { min-height: 330px; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> Day 2 review deck</div>
+      <h1>Day 2 review</h1>
+      <p class="sub">RAG, APIs &amp; Tools, n8n Workflow Automation, Agentic AI, and Multi-Agent Systems. Use as an end-of-day wrap-up or a Day 3 warm-up. Flip each card to reveal the answer and a short explanation.</p>
+      <div class="meta">
+        <span class="pill">30 cards</span>
+        <span class="pill">Easy · Intermediate · Advanced</span>
+        <span class="pill">MCQ · True/False · Myth/Fact · One-word-for · Matching</span>
+        <span class="pill">RAG · APIs &amp; Tools · n8n · Agentic AI · Multi-Agent</span>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Filters">
+      <label class="control"><input id="searchBox" type="text" placeholder="Search topic, keyword, or question type" /></label>
+      <label class="control">
+        <select id="typeFilter">
+          <option value="all">All question types</option>
+          <option value="MCQ">MCQ</option>
+          <option value="True/False">True/False</option>
+          <option value="Myth/Fact">Myth/Fact</option>
+          <option value="One-word-for">One-word-for</option>
+          <option value="Matching">Matching</option>
+        </select>
+      </label>
+      <label class="control">
+        <select id="topicFilter">
+          <option value="all">All topics</option>
+          <option>RAG</option>
+          <option>APIs &amp; Tools</option>
+          <option>n8n</option>
+          <option>Agentic AI</option>
+          <option>Multi-Agent</option>
+        </select>
+      </label>
+      <button class="btn" id="flipAllBtn" type="button">Flip visible cards</button>
+    </section>
+
+    <div class="section-title">
+      <h2>Flip-card deck</h2>
+      <p>30 cards · RAG, APIs &amp; Tools, n8n, Agentic AI, Multi-Agent</p>
+    </div>
+
+    <section class="grid" id="cardGrid"></section>
+
+    <div class="footer-note">
+      These questions are designed for discussion and reflection. For MCQ cards, consider discussing why the wrong options are wrong — not just why the right one is right.
+    </div>
+  </main>
+
+  <script>
+    const questions = [
+      {type:'MCQ',difficulty:'Intermediate',topic:'RAG',question:'What problem does RAG (Retrieval-Augmented Generation) primarily solve?',options:['It eliminates the need to write prompts.','It gives the model access to up-to-date or domain-specific information at inference time without retraining.','It makes the model run faster on older hardware.','It permanently adds new knowledge to the model\'s weights.'],answer:'B — It gives the model access to up-to-date or domain-specific information at inference time without retraining.',explanation:"RAG retrieves relevant documents at query time and includes them in the prompt context, grounding the model's response without changing its parameters."},
+      {type:'MCQ',difficulty:'Intermediate',topic:'APIs & Tools',question:'What is the most accurate description of an API key?',options:['A prompt template stored in a browser tab.','A credential used to authenticate and authorize access to a service.','A way to increase model intelligence.','A type of encrypted PDF.'],answer:'B — A credential used to authenticate and authorize access to a service.',explanation:'API keys help services identify who is making requests and what access should be granted.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'n8n',question:'What is n8n best thought of as?',options:['Only a chatbot front-end.','A workflow automation platform that can connect apps, logic, and AI steps.','A graphics design tool for dashboards.','A database engine replacing all APIs.'],answer:'B — A workflow automation platform that can connect apps, logic, and AI steps.',explanation:'n8n is used to connect triggers, nodes, logic, transformations, APIs, and AI-enabled workflow patterns.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'RAG',question:'One word for: a numerical vector representation that captures the semantic meaning of a piece of text.',answer:'Embedding',explanation:'Embeddings place semantically similar texts close together in vector space, enabling similarity-based retrieval.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Agentic AI',question:'Which description best matches agentic AI?',options:['A model that always replies in one message and never uses tools.','A system that can plan, act, use tools, and iterate toward a goal with some autonomy.','A spreadsheet macro with no reasoning layer.','Any chatbot with a branded avatar.'],answer:'B — A system that can plan, act, use tools, and iterate toward a goal with some autonomy.',explanation:'Agentic systems typically combine models with memory, planning, tool use, execution steps, and feedback loops.'},
+      {type:'One-word-for',difficulty:'Easy',topic:'RAG',question:'One word for: splitting documents into smaller pieces before embedding them for storage in a vector database.',answer:'Chunking',explanation:'Chunking ensures each stored unit is small enough to be meaningfully similar or dissimilar to a query — too large and similarity becomes diluted.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'n8n',question:'In workflow automation, what is usually the best first candidate for automation?',options:['A chaotic process no one understands yet.','A repeatable process with known inputs, outputs, and exception cases.','Any task involving strategy and ambiguity.','A process that changes every hour.'],answer:'B — A repeatable process with known inputs, outputs, and exception cases.',explanation:'The clearest early wins come from repeatable, structured workflows where the process is already reasonably understood.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'APIs & Tools',question:'In the OpenAI messages API format, what is the purpose of a message with <code>role: "system"</code>?',options:['It triggers a system reboot on the server.','It sets the model\'s persistent instructions, persona, and constraints for the conversation.','It is the user\'s first question.','It contains the model\'s final answer.'],answer:'B — It sets the model\'s persistent instructions, persona, and constraints for the conversation.',explanation:"The system role message acts like a persistent instruction set — it shapes the model's behavior throughout the conversation, similar to a system prompt in other interfaces."},
+      {type:'True/False',difficulty:'Intermediate',topic:'RAG',question:'A vector database stores and retrieves data based on semantic similarity, not exact keyword matching.',answer:'True',explanation:'Vector databases use distance metrics like cosine similarity to find the most semantically relevant documents, not just those containing the same words.'},
+      {type:'True/False',difficulty:'Advanced',topic:'Agentic AI',question:'A well-designed human approval checkpoint can improve safety without eliminating all productivity gains from agentic workflows.',answer:'True',explanation:'The right intervention point can reduce high-risk failures while still letting the system automate the low-risk parts.'},
+      {type:'True/False',difficulty:'Advanced',topic:'APIs & Tools',question:'Hardcoding a production API key into a shared client-side HTML file is usually a bad practice.',answer:'True',explanation:'Client-side code can expose secrets to anyone who can inspect the page or network calls.'},
+      {type:'MCQ',difficulty:'Intermediate',topic:'RAG',question:'What does cosine similarity measure in the context of RAG?',options:['The character-by-character distance between two text strings.','How semantically similar two embedding vectors are.','The number of shared keywords between two documents.','The file size difference between two documents.'],answer:'B — How semantically similar two embedding vectors are.',explanation:'Cosine similarity measures the angle between two vectors — a score near 1 means the texts are semantically close; near 0 means they are unrelated.'},
+      {type:'One-word-for',difficulty:'Advanced',topic:'n8n',question:'One word for: the n8n capability that lets a field dynamically reference values from earlier nodes.',answer:'Expressions',explanation:'Expressions allow values to be computed or pulled from the workflow context dynamically, reducing hardcoding.'},
+      {type:'One-word-for',difficulty:'Intermediate',topic:'Agentic AI',question:'One word or short phrase for: a defined capability (e.g., web search, calculator, database query) that an AI agent can invoke to interact with external systems.',answer:'Tool (or function calling)',explanation:'Tools extend what an agent can do beyond pure language generation — enabling actions like searching, computing, and retrieving live data.'},
+      {type:'Matching',difficulty:'Advanced',topic:'RAG',question:'Match each RAG pipeline stage to its role:',options:['Chunking &amp; embedding → ?','Vector retrieval → ?','Augmented generation → ?'],answer:'Chunking &amp; embedding → Converts documents into searchable vector representations<br>Vector retrieval → Finds the most semantically relevant chunks for a query<br>Augmented generation → Passes retrieved context + user question to the LLM to produce a grounded answer',explanation:'These three stages form the core RAG pipeline: prepare → retrieve → generate.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'n8n',question:'When should you prefer a Code node over only chaining basic no-code nodes?',options:['Whenever you want the workflow to look more technical.','When transformation logic becomes complex, repetitive, or awkward to express visually.','Only when the workflow has already failed in production.','Never, because code always makes automation worse.'],answer:'B — When transformation logic becomes complex, repetitive, or awkward to express visually.',explanation:'Code nodes are valuable when logic is clearer, shorter, or more maintainable in JavaScript than in a long chain of visual transformations.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'Multi-Agent',question:'In a multi-agent pipeline (e.g., Researcher → Writer → Editor), what is the primary advantage of separating tasks into distinct agents?',options:['Each agent uses a different programming language.','Each agent can be given a focused role, instructions, and context window relevant to its specific task.','Separating agents reduces token costs to zero.','Multi-agent systems never hallucinate.'],answer:'B — Each agent can be given a focused role, instructions, and context window relevant to its specific task.',explanation:'Role separation allows each agent to be precisely instructed and evaluated for its subtask, improving overall output quality and debuggability.'},
+      {type:'One-word-for',difficulty:'Advanced',topic:'APIs & Tools',question:'One word or short phrase for: limiting how many requests a client can make to a service over time.',answer:'Rate limiting',explanation:'Rate limiting protects systems from abuse, overload, and unfair usage patterns — ignoring it can break automations at scale.'},
+      {type:'Myth/Fact',difficulty:'Intermediate',topic:'RAG',question:'"RAG permanently retrains the model on your documents each time you run a query."',answer:'Myth',explanation:"RAG retrieves documents and adds them to the prompt context at inference time. The model's weights are not changed — only the information available in that specific interaction is updated."},
+      {type:'MCQ',difficulty:'Advanced',topic:'Agentic AI',question:'What is a major risk when giving an agent too much autonomy without controls?',options:['It becomes impossible to use APIs at all.','It may take incorrect actions at scale before humans notice.','It will always become slower than manual work.','It can no longer call external tools.'],answer:'B — It may take incorrect actions at scale before humans notice.',explanation:'Autonomy amplifies both value and error. Without approvals, logs, limits, and rollback paths, mistakes can cascade.'},
+      {type:'True/False',difficulty:'Advanced',topic:'n8n',question:'In n8n, using expressions to reference data from previous nodes is often more maintainable than manually duplicating values across the workflow.',answer:'True',explanation:'Expressions reduce hardcoding and make workflows more dynamic, reusable, and less error-prone.'},
+      {type:'True/False',difficulty:'Advanced',topic:'Multi-Agent',question:'In a sequential multi-agent workflow, the output of one agent can be passed as input context to the next.',answer:'True',explanation:'Sequential pipelines pass results downstream — this is how research → writing → editing patterns work in frameworks like CrewAI.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'n8n',question:'Which pattern most improves reliability in an automation that calls an external API?',options:['Assuming the API always responds correctly.','Adding retries, error handling, logging, and fallback behavior.','Removing all conditional branches.','Calling more APIs at once without validation.'],answer:'B — Adding retries, error handling, logging, and fallback behavior.',explanation:'External services fail, rate-limit, timeout, or return bad payloads. Robust workflows handle that reality explicitly.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'RAG',question:'A team has built a RAG system but users report answers sometimes miss relevant information. Which is the most likely cause to investigate first?',options:['The LLM is too large.','The chunking strategy or retrieval (k value, similarity threshold) is not surfacing the right documents.','The vector database has too many entries.','The prompts are written in complete sentences.'],answer:'B — The chunking strategy or retrieval is not surfacing the right documents.',explanation:'Retrieval quality is the most common RAG failure point — if the right chunks aren\'t retrieved, even a perfect LLM cannot produce a good answer.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Agentic AI',question:'"An agent is just a bigger prompt."',answer:'Myth',explanation:'Prompts matter, but agents usually involve state, tools, loops, decision policies, and execution logic beyond a single prompt.'},
+      {type:'True/False',difficulty:'Intermediate',topic:'APIs & Tools',question:'Including the full conversation history in the messages array allows the model to maintain context across multiple turns.',answer:'True',explanation:'The model has no memory between API calls — context continuity is achieved by passing the accumulated message history in each new request.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'n8n',question:'"If a workflow runs once successfully, it is production-ready."',answer:'Myth',explanation:'Production readiness requires testing with edge cases, retries, error paths, permissions, monitoring, and maintenance plans.'},
+      {type:'Myth/Fact',difficulty:'Advanced',topic:'Multi-Agent',question:'"Multi-agent systems always outperform a single well-prompted agent."',answer:'Myth',explanation:'Multi-agent systems add coordination overhead and failure points. For simple tasks, a single well-prompted agent is often faster and more reliable.'},
+      {type:'MCQ',difficulty:'Advanced',topic:'APIs & Tools',question:'If you are choosing between multiple AI providers for a workflow, which criterion is usually least sufficient on its own?',options:['Price per token or request.','Model quality on your real tasks.','Latency, reliability, and operational fit.','A single benchmark score viewed in isolation.'],answer:'D — A single benchmark score viewed in isolation.',explanation:'Benchmarks help, but real-world selection should also consider cost, latency, safety controls, tool use, rate limits, and task-specific performance.'},
+      {type:'Matching',difficulty:'Intermediate',topic:'n8n',question:'Match each n8n node type to its primary function:',options:['Schedule Trigger → ?','HTTP Request → ?','IF → ?'],answer:'Schedule Trigger → Starts the workflow automatically at defined times<br>HTTP Request → Calls an external API and returns the response data<br>IF → Branches the workflow into different paths based on a condition',explanation:'These three node types appear in nearly every production n8n workflow — trigger, fetch, decide.'}
+    ];
+
+    const grid = document.getElementById('cardGrid');
+    const searchBox = document.getElementById('searchBox');
+    const typeFilter = document.getElementById('typeFilter');
+    const topicFilter = document.getElementById('topicFilter');
+    const flipAllBtn = document.getElementById('flipAllBtn');
+
+    function tagClass(type) {
+      if (type === 'MCQ') return 'mcq';
+      if (type === 'True/False') return 'tf';
+      if (type === 'One-word-for') return 'word';
+      if (type === 'Matching') return 'match';
+      return 'mf';
+    }
+
+    function renderCards() {
+      const q = searchBox.value.trim().toLowerCase();
+      const tf = typeFilter.value;
+      const top = topicFilter.value;
+      const filtered = questions.filter(item => {
+        const hay = [item.type, item.topic, item.question, item.answer, ...(item.options || [])].join(' ').toLowerCase();
+        return (!q || hay.includes(q)) && (tf === 'all' || item.type === tf) && (top === 'all' || item.topic === top);
+      });
+      grid.innerHTML = filtered.map(item => {
+        const number = questions.indexOf(item) + 1;
+        const optionsHtml = item.options ? `<div class="options">${item.options.map((opt, i) => `<div class="opt">${String.fromCharCode(65+i)}. ${opt}</div>`).join('')}</div>` : '';
+        const hintHtml = item.hint ? `<div class="hint">${item.hint}</div>` : '';
+        return `<article class="card"><div class="card-inner"><div class="face front"><div class="type-row"><span class="tag ${tagClass(item.type)}">${item.type}</span><span class="level">${item.difficulty}</span></div><div class="qnum">Q${number} &bull; ${item.topic}</div><div class="question">${item.question}</div>${optionsHtml}${hintHtml}<button class="flip-btn" type="button">Flip for answer</button></div><div class="face back"><div class="type-row"><span class="tag ${tagClass(item.type)}">${item.type}</span><span class="level">${item.topic}</span></div><div class="answer-label">Suggested answer</div><div class="answer">${item.answer}</div><div class="explain">${item.explanation}</div><button class="flip-btn" type="button">Back to question</button></div></div></article>`;
+      }).join('');
+      bindFlipEvents();
+      flipAllBtn.textContent = 'Flip visible cards';
+    }
+
+    function bindFlipEvents() {
+      grid.querySelectorAll('.card').forEach(card => {
+        card.querySelectorAll('.flip-btn').forEach(btn => { btn.addEventListener('click', () => card.classList.toggle('flipped')); });
+        card.addEventListener('dblclick', () => card.classList.toggle('flipped'));
+      });
+    }
+
+    let flippedAll = false;
+    flipAllBtn.addEventListener('click', () => {
+      const cards = Array.from(grid.querySelectorAll('.card'));
+      flippedAll = !flippedAll;
+      cards.forEach(card => card.classList.toggle('flipped', flippedAll));
+      flipAllBtn.textContent = flippedAll ? 'Unflip visible cards' : 'Flip visible cards';
+    });
+
+    [searchBox, typeFilter, topicFilter].forEach(el => el.addEventListener('input', renderCards));
+    [typeFilter, topicFilter].forEach(el => el.addEventListener('change', renderCards));
+    renderCards();
+  </script>
+</body>
+</html>

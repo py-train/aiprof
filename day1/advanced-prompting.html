@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>Advanced Prompting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f7f4ee;
+      --color-bg-deep: #efe8db;
+      --color-surface: #fffdf8;
+      --color-text: #1f2937;
+      --color-text-secondary: #475569;
+      --color-text-muted: #6b7280;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #b45309;
+      --color-accent-3: #2563eb;
+      --color-glass-bg: rgba(255,255,255,0.78);
+      --color-glass-border: rgba(15,23,42,0.08);
+      --color-vignette: rgba(15,23,42,0.06);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f7f4ee; --color-text: #1f2937; --glow-color-rgb: 15,118,110; }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--color-bg)}
+    body{font-family:Inter,sans-serif;color:var(--color-text);overflow:hidden;height:100vh;width:100vw}
+    .deck{width:100vw;height:100vh;position:relative}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.97);transition:opacity .6s ease,transform .6s ease;pointer-events:none;overflow:hidden;background:var(--color-bg)}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1180px;padding:clamp(1.4rem,3vw,3rem)}
+    .nav-controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);padding:10px 18px;border-radius:999px;border:1px solid rgba(15,23,42,.08)}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:#fff;color:#0f766e;font-size:1.15rem;cursor:pointer}
+    .slide-dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:50%;background:rgba(15,23,42,.14);cursor:pointer}.dot.active{background:#0f766e;transform:scale(1.2)}
+    .slide-counter{font-size:.8rem;color:#6b7280;min-width:46px;text-align:center}.reveal{opacity:0;transform:translateY(20px)}
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}.blob{position:absolute;border-radius:50%;filter:blur(70px);animation:float 16s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.08)}}
+    .slide::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.02}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%)}
+    .card{background:var(--color-glass-bg);border:1px solid var(--color-glass-border);backdrop-filter:blur(10px);border-radius:24px;box-shadow:0 14px 40px rgba(15,23,42,.06)}
+    .pill{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(15,23,42,.08);color:#0f766e}
+    .pill-optional{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(180,83,9,.18);color:#b45309}
+    .big-number{font-size:clamp(2.3rem,5vw,4.5rem);line-height:.95;font-weight:800;color:#0f766e}
+    .timeline{position:relative;padding-left:1.5rem}.timeline:before{content:'';position:absolute;left:.35rem;top:.2rem;bottom:.2rem;width:2px;background:linear-gradient(#0f766e,#b45309)}
+    .timeline-item{position:relative;padding-left:1.2rem}.timeline-item:before{content:'';position:absolute;left:-.05rem;top:.45rem;width:.7rem;height:.7rem;border-radius:999px;background:#0f766e;box-shadow:0 0 0 6px rgba(15,118,110,.12)}
+    .mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:1.25rem;align-items:start}
+    .codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3efe7;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:1rem}
+    @media (max-width: 900px){.mini-grid,.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 1: Title -->
+  <section class="slide active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:380px;height:380px;top:-80px;right:-60px;background:#99f6e4;opacity:.35"></div>
+      <div class="blob" style="width:260px;height:260px;left:-60px;bottom:-50px;background:#fed7aa;opacity:.4"></div>
+      <div class="blob" style="width:240px;height:240px;left:24%;top:18%;background:#bfdbfe;opacity:.35"></div>
+    </div>
+    <div class="content text-center">
+      <div class="reveal mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-[2rem] border border-black/5 bg-white text-5xl shadow-lg">✏️</div>
+      <p class="reveal pill mx-auto mb-5">Advanced Prompting · system prompts · structured output · evaluation</p>
+      <h1 class="reveal mx-auto max-w-4xl font-display text-[clamp(2.8rem,6vw,5.3rem)] leading-[0.95] text-slate-900">Advanced Prompting</h1>
+      <p class="reveal mx-auto mt-5 max-w-3xl text-[clamp(1rem,2vw,1.35rem)] text-slate-600">System prompts, structured output, iteration, and knowing when to trust the answer.</p>
+    </div>
+  </section>
+
+  <!-- Slide 2: The conversation has a hidden layer -->
+  <section class="slide" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-40px;right:-20px;background:#ccfbf1;opacity:.28"></div>
+      <div class="blob" style="width:240px;height:240px;left:-30px;bottom:-40px;background:#ddd6fe;opacity:.25"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">The conversation</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">The conversation has a hidden layer</h2>
+      <p class="reveal mt-4 text-lg text-slate-600">Most AI chat interfaces show you one box. Under the hood, there are two:</p>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Layer</th><th class="px-5 py-3">Who writes it</th><th class="px-5 py-3">What it does</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-3 font-semibold">System prompt</td><td class="px-5 py-3">Developer or power user — set once</td><td class="px-5 py-3">Establishes identity, rules, output style, and constraints before the conversation starts</td></tr>
+            <tr><td class="px-5 py-3 font-semibold">User message</td><td class="px-5 py-3">You — each turn</td><td class="px-5 py-3">The actual request, question, or task</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 codebox text-sm">
+        <p class="text-teal-700 font-medium">System:</p>
+        <p class="mt-1 text-slate-600 italic">"You are a professional business writing assistant. Respond only in formal English. Always structure answers with a summary paragraph followed by bullet details."</p>
+        <p class="mt-3 text-amber-700 font-medium">User:</p>
+        <p class="mt-1 text-slate-600 italic">"Draft a status update for the Q3 budget review."</p>
+      </div>
+      <div class="reveal mt-4 card p-5"><p class="text-slate-700">The system prompt is the model's job description. Write it the way you'd brief a very capable new hire on their first day.</p></div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Four ingredients of a well-written system prompt -->
+  <section class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:320px;height:320px;top:-30px;right:5%;background:#fde68a;opacity:.22"></div>
+      <div class="blob" style="width:220px;height:220px;left:0;bottom:0;background:#bbf7d0;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">System prompts</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Four ingredients of a well-written system prompt</h2>
+      <div class="reveal mt-7 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="font-semibold text-teal-800">1. Role / Identity</h3>
+          <p class="mt-2 text-slate-600 text-sm">Who the model is playing. Grounds tone and vocabulary.</p>
+          <p class="mt-3 text-slate-500 text-xs italic">"You are a senior financial analyst at a global professional services firm."</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-teal-800">2. Constraints</h3>
+          <p class="mt-2 text-slate-600 text-sm">What it must not do. Prevents drift.</p>
+          <p class="mt-3 text-slate-500 text-xs italic">"Do not provide legal advice. Do not fabricate data. If you are uncertain, say so."</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-teal-800">3. Output format</h3>
+          <p class="mt-2 text-slate-600 text-sm">How answers should be structured by default.</p>
+          <p class="mt-3 text-slate-500 text-xs italic">"Always respond in this format: [Executive Summary], [Key Points], [Recommended Next Steps]."</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-teal-800">4. Tone and audience</h3>
+          <p class="mt-2 text-slate-600 text-sm">Register and formality level.</p>
+          <p class="mt-3 text-slate-500 text-xs italic">"Write for a non-technical executive audience. Use plain English. Avoid acronyms unless you define them."</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-5"><p class="text-slate-700">You don't need all four every time. Identify which ones the task actually needs — then add only those.</p></div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Personas -->
+  <section class="slide" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:0;right:8%;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:0;bottom:-20px;background:#fcd34d;opacity:.18"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Personas</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">Giving the model a role to play</h2>
+        <div class="reveal mt-6 card p-6">
+          <h3 class="font-semibold text-teal-800 mb-3">When personas help</h3>
+          <ul class="space-y-2 text-slate-600 text-sm">
+            <li>• They prime the model to frame responses the way an expert would</li>
+            <li>• They set vocabulary, tone, and default assumptions</li>
+            <li>• They help apply the right lens to an ambiguous request</li>
+          </ul>
+          <p class="mt-3 text-slate-500 text-xs italic">"You are a skeptical risk consultant." → The model will probe for weaknesses, not just validate.</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-16">
+          <h3 class="font-semibold text-amber-800 mb-3">When personas don't help</h3>
+          <ul class="space-y-2 text-slate-600 text-sm">
+            <li>• The model doesn't become the person — it can't access their private knowledge</li>
+            <li>• A persona won't fix a bad question or compensate for missing context</li>
+          </ul>
+          <p class="mt-3 text-slate-500 text-xs italic">"You are Warren Buffett. What should I invest in?" → Still just the model's training data, in Buffett's style.</p>
+        </div>
+        <div class="reveal mt-4 card p-6 bg-teal-50/60">
+          <p class="text-sm text-slate-500 uppercase tracking-widest mb-2">The honest mental model</p>
+          <p class="text-slate-700 text-sm">A persona changes the <em>angle</em>, not the underlying capability. It's like telling a consultant "put on your risk hat for this" — useful framing, not a skill transplant.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Structured output -->
+  <section class="slide" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:310px;height:310px;top:-30px;right:0;background:#99f6e4;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fed7aa;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Structured output</p>
+        <h2 class="reveal font-display text-5xl text-slate-900">If you need a specific format, say so explicitly</h2>
+        <p class="reveal mt-4 text-slate-600 text-sm">By default, models give conversational prose. If you need something machine-readable or consistently structured — you have to ask for it.</p>
+        <div class="reveal mt-4 card p-5 border-l-4 border-slate-300">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-1">Unspecified</p>
+          <p class="text-sm text-slate-600 italic">"Summarise the risks in this document."</p>
+          <p class="mt-2 text-xs text-slate-400">→ Three paragraphs of flowing text. Hard to paste into a report template.</p>
+        </div>
+        <div class="reveal mt-3 card p-5 border-l-4 border-teal-400">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-1">Specified</p>
+          <p class="text-sm text-slate-600 italic">"Summarise the risks. Return a markdown table: Risk, Likelihood (High/Medium/Low), Recommended Action."</p>
+          <p class="mt-2 text-xs text-slate-400">→ A clean, copy-pasteable table every time.</p>
+        </div>
+      </div>
+      <div class="reveal card p-7">
+        <h3 class="font-semibold text-lg mb-4">Common formats to request</h3>
+        <ul class="space-y-3 text-slate-600 text-sm">
+          <li>• <strong>Markdown table</strong> — for structured comparisons</li>
+          <li>• <strong>Numbered / bullet list</strong> with defined hierarchy</li>
+          <li>• <strong>JSON with defined fields</strong> — for developers piping output into systems</li>
+          <li>• <strong>Document section structure</strong> — "use headings: Background, Findings, Recommendations"</li>
+          <li>• <strong>Fill-in-the-blank template</strong> — give the template, ask the model to complete it</li>
+        </ul>
+        <div class="mt-5 bg-teal-50/60 rounded-2xl p-4">
+          <p class="text-sm text-slate-700">Structured output is not about being fancy — it's about getting output you can actually use without reformatting it yourself.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Structured output worked example (optional depth) -->
+  <section class="slide" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#ddd6fe;opacity:.25"></div>
+      <div class="blob" style="width:220px;height:220px;left:-20px;bottom:-20px;background:#fed7aa;opacity:.22"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill-optional mb-4">Optional depth</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">From prose to JSON — the same task, two outputs</h2>
+        <div class="reveal mt-6 card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-2">Without format instruction</p>
+          <p class="text-sm text-slate-600 italic">"Extract the key action items from this meeting transcript."</p>
+          <p class="mt-3 text-sm text-slate-500">Output: A paragraph listing things that came up in the meeting, loosely worded.</p>
+        </div>
+        <div class="reveal mt-4 card p-5 bg-teal-50/40">
+          <p class="text-sm text-slate-700">This output can feed directly into a project tracker, spreadsheet import, or downstream app — no manual reformatting.</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-10">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-2">With format instruction</p>
+          <p class="text-sm text-slate-600 italic mb-3">"Extract action items. Return a JSON array. Each item: owner (string), task (string), due_date (string or null), priority (High / Medium / Low)."</p>
+          <div class="codebox text-xs mt-2">
+            <p>[</p>
+            <p class="pl-4">{"owner": "Sarah", "task": "Send revised proposal", "due_date": "2025-10-15", "priority": "High"},</p>
+            <p class="pl-4">{"owner": "James", "task": "Book venue for workshop", "due_date": null, "priority": "Medium"}</p>
+            <p>]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Why prompts fail -->
+  <section class="slide" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:0;background:#bae6fd;opacity:.25"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fed7aa;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Prompt failures</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">When the output is wrong, here's where to look</h2>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-4 py-3">Failure type</th><th class="px-4 py-3">What it looks like</th><th class="px-4 py-3">Fix</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-4 py-2.5 font-semibold">Too vague</td><td class="px-4 py-2.5">Model guesses what you wanted and guesses wrong</td><td class="px-4 py-2.5">Add context: who is this for, what decision does it support?</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Missing context</td><td class="px-4 py-2.5">Model uses generic knowledge when you needed specific</td><td class="px-4 py-2.5">Paste in the relevant document, data, or background</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Conflicting instructions</td><td class="px-4 py-2.5">Model compromises between two things you asked for</td><td class="px-4 py-2.5">Pick one priority; don't ask for "concise but comprehensive"</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">No example</td><td class="px-4 py-2.5">Model uses a different structure or style than you imagined</td><td class="px-4 py-2.5">Show it one example of the output you want</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 two-col">
+        <div class="card p-5">
+          <p class="text-sm font-semibold mb-3">The iteration loop</p>
+          <ol class="space-y-1 text-sm text-slate-600">
+            <li>1. Run the prompt</li>
+            <li>2. Identify which failure type applies</li>
+            <li>3. Fix <em>that</em> — not everything at once</li>
+            <li>4. Re-run and compare</li>
+          </ol>
+        </div>
+        <div class="card p-5 bg-teal-50/40">
+          <p class="text-sm text-slate-700">Prompt debugging is a skill, not a mystery. Each failure tells you something specific about what the model was missing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Anti-patterns -->
+  <section class="slide" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:0;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#a7f3d0;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Anti-patterns</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Mistakes that reliably produce bad output</h2>
+      <div class="reveal mt-7 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">"Do everything at once"</h3>
+          <p class="text-sm text-slate-500 italic mb-2">"Write a full market analysis covering competitors, regulatory risks, pricing strategy, and go-to-market timeline."</p>
+          <p class="text-sm text-slate-600">→ The model covers everything shallowly. Break it into separate prompts.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">"Be smart about it"</h3>
+          <p class="text-sm text-slate-500 italic mb-2">"Use your best judgment to decide the format and length."</p>
+          <p class="text-sm text-slate-600">→ You'll get something. Whether it's what you needed is luck. Specify.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">"Keep it short but include everything"</h3>
+          <p class="text-sm text-slate-500 italic mb-2">"Write a brief but comprehensive summary."</p>
+          <p class="text-sm text-slate-600">→ Brief and comprehensive conflict. Pick a word count or required sections — not both adjectives.</p>
+        </div>
+        <div class="card p-6">
+          <h3 class="font-semibold text-amber-800 mb-2">"Assume it remembers"</h3>
+          <p class="text-sm text-slate-500 italic mb-2">(New session) "Continue where we left off."</p>
+          <p class="text-sm text-slate-600">→ Every session starts fresh. Relevant prior context must be re-supplied.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Evaluating AI output -->
+  <section class="slide" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:8%;background:#bbf7d0;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Evaluation</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">"It looks good" is not a quality check</h2>
+      <div class="reveal mt-5 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-4 py-3">Check</th><th class="px-4 py-3">Ask yourself</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-4 py-2.5 font-semibold">Accuracy</td><td class="px-4 py-2.5">Are the facts, figures, and names correct? Can I verify the critical ones?</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Completeness</td><td class="px-4 py-2.5">Did it address everything the prompt asked for? Are there obvious gaps?</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Format</td><td class="px-4 py-2.5">Is it structured the way I need it? Does it fit where it's going?</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Tone</td><td class="px-4 py-2.5">Is the register right for the audience — not too casual, not too stiff?</td></tr>
+            <tr><td class="px-4 py-2.5 font-semibold">Safety</td><td class="px-4 py-2.5">Could anything here cause harm, embarrassment, or legal exposure if used as-is?</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 mini-grid">
+        <div class="card p-5">
+          <p class="text-xs font-semibold text-teal-800 mb-2">High-stakes output</p>
+          <p class="text-sm text-slate-600">Client-facing, financial, legal → verify facts independently</p>
+        </div>
+        <div class="card p-5">
+          <p class="text-xs font-semibold text-teal-800 mb-2">Internal draft</p>
+          <p class="text-sm text-slate-600">Trust the structure, spot-check the substance</p>
+        </div>
+        <div class="card p-5">
+          <p class="text-xs font-semibold text-teal-800 mb-2">Purely stylistic</p>
+          <p class="text-sm text-slate-600">Tone, formatting → safe to trust more freely</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-5 bg-amber-50/50"><p class="text-sm text-slate-700">AI is a first drafter, not a final approver. You are still the quality gate.</p></div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Prompt makeover — Versions 1 & 2 -->
+  <section class="slide" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:-20px;background:#99f6e4;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#ddd6fe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Prompt makeover</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">One task. Four versions.</h2>
+      <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> Summarise a supplier contract to help a procurement manager decide whether to renew.</p>
+      <div class="reveal mt-5 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-2">Version 1 — Bare minimum</p>
+          <div class="codebox text-xs p-3 mb-3">"Summarise this contract."</div>
+          <p class="text-sm text-slate-600">Generic summary. Dates, parties, payment terms. Nothing about whether to renew.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-2">Version 2 — Add task framing</p>
+          <div class="codebox text-xs p-3 mb-3">"Summarise this contract. Focus on anything relevant to a renewal decision."</div>
+          <p class="text-sm text-slate-600">Better. Highlights renewal clauses and key dates. Still prose — hard to act on directly.</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-5 bg-slate-50/60">
+        <p class="text-sm text-slate-600">Each version is adding one thing. That's the iteration pattern — a targeted addition, not a full rewrite.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: Prompt makeover — Versions 3 & 4 (contd.) -->
+  <section class="slide" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#ccfbf1;opacity:.25"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Prompt makeover (contd.)</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Adding format, then context</h2>
+      <div class="reveal mt-5 grid gap-4 md:grid-cols-2">
+        <div class="card p-6">
+          <p class="text-xs text-slate-500 uppercase tracking-widest mb-2">Version 3 — Add format</p>
+          <div class="codebox text-xs p-3 mb-3">"Summarise this contract for a procurement manager. Return a table: Topic, Current Terms, Risk Level (High/Medium/Low), Renewal Recommendation."</div>
+          <p class="text-sm text-slate-600">Structured and actionable. But the model invents risk levels with no criteria.</p>
+        </div>
+        <div class="card p-6">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-2">Version 4 — System context + criteria</p>
+          <div class="codebox text-xs p-3 mb-3">
+            <p class="text-teal-600">System: "You are a contract risk analyst. Flag High risk if terms expose the company to financial liability. Medium if limiting but manageable. Low if standard."</p>
+            <p class="mt-2 text-amber-700">User: "Summarise for renewal decision. Table: Topic | Current Terms | Risk Level | Recommendation."</p>
+          </div>
+          <p class="text-sm text-slate-600">Consistent risk assessment grounded in clear criteria. Repeatable across 50 contracts.</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 card p-5 bg-teal-50/50"><p class="text-sm text-slate-700">Each version added one thing. That's the iteration pattern — not a rewrite, a targeted addition.</p></div>
+    </div>
+  </section>
+
+  <!-- Slide 12: Habits -->
+  <section class="slide" data-slide="12">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:0;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:240px;height:240px;left:-20px;bottom:-20px;background:#bbf7d0;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Habits</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">It's not about knowing magic words</h2>
+      <p class="reveal mt-4 text-slate-600">Three habits that compound over time:</p>
+      <div class="reveal mt-6 mini-grid">
+        <div class="card p-7">
+          <div class="mb-3 text-3xl">📚</div>
+          <h3 class="font-semibold">Write for reuse</h3>
+          <p class="mt-2 text-slate-600 text-sm">If you've written a good prompt once, save it. Prompt libraries — even a simple shared doc — let teams build on each other's work instead of starting from scratch.</p>
+        </div>
+        <div class="card p-7">
+          <div class="mb-3 text-3xl">⬆️</div>
+          <h3 class="font-semibold">Front-load context</h3>
+          <p class="mt-2 text-slate-600 text-sm">The model reads top to bottom. Put the most important constraints and context at the start — don't bury them after a long preamble.</p>
+        </div>
+        <div class="card p-7">
+          <div class="mb-3 text-3xl">🧪</div>
+          <h3 class="font-semibold">Test with boundary cases</h3>
+          <p class="mt-2 text-slate-600 text-sm">Before deploying a prompt for repeated use, test what happens when the input is messy, incomplete, or off-topic. A prompt that breaks on real data is a problem waiting to happen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 13: Up next — the prompting lab -->
+  <section class="slide" data-slide="13">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;top:-70px;right:-70px;background:#a7f3d0;opacity:.3"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-60px;background:#fed7aa;opacity:.32"></div>
+      <div class="blob" style="width:220px;height:220px;left:35%;top:20%;background:#dbeafe;opacity:.28"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Lab</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Now you try it</h2>
+      <p class="reveal mt-4 text-slate-600">In the next session, you'll practice applying today's techniques to tasks from your own role.</p>
+      <div class="reveal mt-6 mini-grid">
+        <div class="card p-6">
+          <div class="text-2xl mb-3">🔄</div>
+          <h3 class="font-semibold">Cold-start to polished</h3>
+          <p class="mt-2 text-slate-600 text-sm">Start with a bare prompt, iterate to a polished version using the techniques from this session.</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-2xl mb-3">📊</div>
+          <h3 class="font-semibold">Structured output</h3>
+          <p class="mt-2 text-slate-600 text-sm">Turn a document into an actionable table — practice format specification for real.</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-2xl mb-3">🔍</div>
+          <h3 class="font-semibold">Prompt debugging</h3>
+          <p class="mt-2 text-slate-600 text-sm">Identify what's wrong with a broken prompt and fix it using the diagnostic framework.</p>
+        </div>
+      </div>
+      <div class="reveal mt-6 card p-6 text-center">
+        <p class="text-xl text-slate-700 font-display italic">The gap between "AI is underwhelming" and "AI is genuinely useful" is almost always in the quality of the prompt.</p>
+        <p class="mt-3 text-sm text-slate-500">Bring a real task from your work — that's your raw material.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 13</span>
+</div>
+<script>
+let current=1; const total=document.querySelectorAll('.slide').length; const dotsContainer=document.getElementById('dots'); const counter=document.getElementById('counter');
+for(let i=1;i<=total;i++){const dot=document.createElement('div'); dot.className='dot'+(i===1?' active':''); dot.onclick=()=>goToSlide(i); dotsContainer.appendChild(dot);}
+function goToSlide(n){const prev=document.querySelector('.slide.active'); const next=document.querySelector(`.slide[data-slide="${n}"]`); if(prev) prev.classList.remove('active'); if(next){next.classList.add('active'); animateSlide(next);} current=n; updateNav();}
+function changeSlide(dir){let next=current+dir; if(next<1) next=total; if(next>total) next=1; goToSlide(next);}
+function updateNav(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current)); counter.textContent=current+' / '+total;}
+document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault(); changeSlide(1);} if(e.key==='ArrowLeft'){e.preventDefault(); changeSlide(-1);}});
+let touchStartX=0; document.addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;}); document.addEventListener('touchend',(e)=>{const diff=touchStartX-e.changedTouches[0].clientX; if(Math.abs(diff)>50) changeSlide(diff>0?1:-1);});
+function animateSlide(slide){slide.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transition='none'; el.style.opacity='0'; el.style.transform='translateY(20px)'; el.offsetHeight; const delay=i*0.08; el.style.transition=`opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`; el.style.opacity='1'; el.style.transform='translateY(0)';});}
+animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>

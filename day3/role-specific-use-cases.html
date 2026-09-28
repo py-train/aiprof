@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="slides-format" content="viewport" />
+  <title>AI Use Cases by Role</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --color-bg: #f7f4ee;
+      --color-bg-deep: #efe8db;
+      --color-surface: #fffdf8;
+      --color-text: #1f2937;
+      --color-text-secondary: #475569;
+      --color-text-muted: #6b7280;
+      --color-accent-1: #0f766e;
+      --color-accent-2: #b45309;
+      --color-accent-3: #2563eb;
+      --color-glass-bg: rgba(255,255,255,0.78);
+      --color-glass-border: rgba(15,23,42,0.08);
+      --color-vignette: rgba(15,23,42,0.06);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+  </style>
+  <style>
+    :root { --color-bg: #f7f4ee; --color-text: #1f2937; --glow-color-rgb: 15,118,110; }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;background:var(--color-bg)}
+    body{font-family:Inter,sans-serif;color:var(--color-text);overflow:hidden;height:100vh;width:100vw}
+    .deck{width:100vw;height:100vh;position:relative}
+    .slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.97);transition:opacity .6s ease,transform .6s ease;pointer-events:none;overflow:hidden;background:var(--color-bg)}
+    .slide.active{opacity:1;transform:scale(1);pointer-events:auto}
+    .slide>.content{position:relative;z-index:2;width:100%;max-width:1180px;padding:clamp(1.4rem,3vw,3rem)}
+    .nav-controls{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:100;background:rgba(255,255,255,.72);backdrop-filter:blur(14px);padding:10px 18px;border-radius:999px;border:1px solid rgba(15,23,42,.08)}
+    .nav-btn{width:38px;height:38px;border:none;border-radius:999px;background:#fff;color:#0f766e;font-size:1.15rem;cursor:pointer}
+    .slide-dots{display:flex;gap:8px}.dot{width:10px;height:10px;border-radius:50%;background:rgba(15,23,42,.14);cursor:pointer}.dot.active{background:#0f766e;transform:scale(1.2)}
+    .slide-counter{font-size:.8rem;color:#6b7280;min-width:46px;text-align:center}.reveal{opacity:0;transform:translateY(20px)}
+    .gradient-mesh{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}.blob{position:absolute;border-radius:50%;filter:blur(70px);animation:float 16s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.08)}}
+    .slide::before{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.02}
+    .slide::after{content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 52%,var(--color-vignette) 100%)}
+    .card{background:var(--color-glass-bg);border:1px solid var(--color-glass-border);backdrop-filter:blur(10px);border-radius:24px;box-shadow:0 14px 40px rgba(15,23,42,.06)}
+    .pill{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(15,23,42,.08);color:#0f766e}
+    .pill-optional{display:inline-flex;align-items:center;gap:.45rem;padding:.45rem .8rem;border-radius:999px;font-size:.82rem;font-weight:600;background:#fff;border:1px solid rgba(180,83,9,.18);color:#b45309}
+    .big-number{font-size:clamp(2.3rem,5vw,4.5rem);line-height:.95;font-weight:800;color:#0f766e}
+    .timeline{position:relative;padding-left:1.5rem}.timeline:before{content:'';position:absolute;left:.35rem;top:.2rem;bottom:.2rem;width:2px;background:linear-gradient(#0f766e,#b45309)}
+    .timeline-item{position:relative;padding-left:1.2rem}.timeline-item:before{content:'';position:absolute;left:-.05rem;top:.45rem;width:.7rem;height:.7rem;border-radius:999px;background:#0f766e;box-shadow:0 0 0 6px rgba(15,118,110,.12)}
+    .mini-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+    .two-col{display:grid;grid-template-columns:1.05fr .95fr;gap:1.25rem;align-items:start}
+    .codebox{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f3efe7;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:1rem}
+    @media (max-width: 900px){.mini-grid,.two-col{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 1: Title -->
+  <section class="slide active" data-slide="1">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:380px;height:380px;top:-80px;right:-60px;background:#99f6e4;opacity:.35"></div>
+      <div class="blob" style="width:260px;height:260px;left:-60px;bottom:-50px;background:#fed7aa;opacity:.4"></div>
+      <div class="blob" style="width:240px;height:240px;left:24%;top:18%;background:#bfdbfe;opacity:.35"></div>
+    </div>
+    <div class="content text-center">
+      <div class="reveal mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-[2rem] border border-black/5 bg-white text-5xl shadow-lg">👥</div>
+      <p class="reveal pill mx-auto mb-5">Role-specific use cases · practical examples · real tasks</p>
+      <h1 class="reveal mx-auto max-w-4xl font-display text-[clamp(2.8rem,6vw,5.3rem)] leading-[0.95] text-slate-900">AI at Work — Use Cases by Role</h1>
+      <p class="reveal mx-auto mt-5 max-w-3xl text-[clamp(1rem,2vw,1.35rem)] text-slate-600">What it actually looks like in your job.</p>
+    </div>
+  </section>
+
+  <!-- Slide 2: It shows up differently by role -->
+  <section class="slide" data-slide="2">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:290px;height:290px;top:-20px;right:5%;background:#ccfbf1;opacity:.25"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#ddd6fe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Overview</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">AI isn't one-size-fits-all</h2>
+      <p class="reveal mt-4 text-slate-600">The same underlying model can do very different things depending on what you give it.</p>
+      <div class="reveal mt-6 grid gap-4 md:grid-cols-4">
+        <div class="card p-5">
+          <h3 class="font-semibold text-sm mb-2">Type of task</h3>
+          <p class="text-sm text-slate-600">Writing, analysis, code, research, decision support</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-sm mb-2">Risk profile</h3>
+          <p class="text-sm text-slate-600">A wrong answer in a legal memo has different consequences than in a brainstorm</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-sm mb-2">Inputs you work with</h3>
+          <p class="text-sm text-slate-600">Structured data vs. unstructured documents vs. code</p>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-semibold text-sm mb-2">Output format needed</h3>
+          <p class="text-sm text-slate-600">A paragraph, a table, a script, a slide</p>
+        </div>
+      </div>
+      <div class="reveal mt-6 card p-6 bg-teal-50/40">
+        <p class="text-slate-700">Identify 2–3 use cases from your role that you want to try this week. We'll do a short exercise at the end.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Business & Strategy — Use Cases -->
+  <section class="slide" data-slide="3">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#99f6e4;opacity:.2"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Business &amp; Strategy</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Where AI compresses thinking time</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Use Case</th><th class="px-5 py-3">What to ask AI to do</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Executive briefing</td><td class="px-5 py-2.5">Summarize a long report into a 5-bullet brief with key decisions highlighted</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Competitor scan</td><td class="px-5 py-2.5">Given 3 competitor press releases, synthesize positioning differences and flag strategic gaps</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Workshop facilitation</td><td class="px-5 py-2.5">Generate a structured agenda, discussion questions, and a pre-read summary from a brief</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Stakeholder communication</td><td class="px-5 py-2.5">Draft a "what this means for you" message tailored to a specific audience (board, client, frontline)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm font-semibold text-amber-800 mb-1">One thing to watch out for</p>
+        <p class="text-sm text-slate-600">AI will give you confident-sounding strategic analysis — but it doesn't know your client, market context, or internal politics. Use it to structure thinking, not replace it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Business & Strategy — Worked Example -->
+  <section class="slide" data-slide="4">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#fde68a;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bbf7d0;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Business &amp; Strategy — worked example</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">From a 40-page report to a 5-minute read</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> Executive summary of a market entry report for a leadership review.</p>
+        <div class="reveal mt-4 codebox text-xs">
+          <p class="text-teal-700 mb-1">System: "You are a strategy consultant preparing a briefing for a C-suite audience."</p>
+          <p>Below is a market entry analysis report. Extract:</p>
+          <p>1. The 3 most important findings</p>
+          <p>2. The key recommendation and its rationale</p>
+          <p>3. The top 2 risks and proposed mitigations</p>
+          <p>4. One open question the leadership team needs to resolve</p>
+          <p class="mt-1">Format as a one-page briefing. Use plain, direct language — no jargon.</p>
+          <p class="mt-1 text-slate-400">[PASTE REPORT TEXT]</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Output excerpt</p>
+          <p class="text-sm text-slate-700 italic">"Key Finding 1: The target segment is growing at 18% YoY, but 60% of that growth is concentrated in two metropolitan corridors — expansion outside those markets carries significantly higher execution risk.</p>
+          <p class="mt-2 text-sm text-slate-700 italic">Recommendation: Enter via a partnership model in Year 1 rather than organic build, to reduce time-to-market and capital exposure..."</p>
+        </div>
+        <div class="reveal mt-4 card p-5 bg-teal-50/40">
+          <p class="text-sm font-semibold text-teal-800">Time saved</p>
+          <p class="text-sm text-slate-600">~2 hours of summarising → ~10 minutes of prompting and editing.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Finance & Accounting — Use Cases -->
+  <section class="slide" data-slide="5">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#bfdbfe;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fed7aa;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Finance &amp; Accounting</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">From numbers to narrative, faster</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Use Case</th><th class="px-5 py-3">What to ask AI to do</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Variance commentary</td><td class="px-5 py-2.5">Paste actuals vs. budget table; ask for a 3-paragraph CFO commentary draft with key drivers</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Audit prep</td><td class="px-5 py-2.5">Summarize a standard (e.g., IFRS 16) in plain language; generate a checklist of disclosure requirements</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Financial model documentation</td><td class="px-5 py-2.5">Describe assumptions embedded in a model; AI drafts the methodology section</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Client reporting</td><td class="px-5 py-2.5">Convert a raw data table into a narrative paragraph for a client report</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm font-semibold text-amber-800 mb-1">One thing to watch out for</p>
+        <p class="text-sm text-slate-600">Numbers don't go into public AI tools unless your firm has an enterprise agreement with data isolation. Paste anonymized or dummy data for testing; use the enterprise-approved tool for real figures.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Finance & Accounting — Worked Example -->
+  <section class="slide" data-slide="6">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#bfdbfe;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Finance — worked example</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">Variance analysis in plain English</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> Draft management commentary for a monthly P&amp;L review.</p>
+        <div class="reveal mt-4 codebox text-xs">
+          <p class="text-teal-700 mb-1">System: "You are a senior finance analyst."</p>
+          <p>Here is the P&amp;L variance table for Q3: [PASTE TABLE]</p>
+          <p class="mt-1">Write 3 paragraphs of management commentary:</p>
+          <p>- Para 1: Overall performance vs. budget</p>
+          <p>- Para 2: Key drivers of variance (positive and negative)</p>
+          <p>- Para 3: Outlook and items requiring leadership attention</p>
+          <p class="mt-1">Use precise financial language. Flag line items where variance exceeds 10%.</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Output excerpt</p>
+          <p class="text-sm text-slate-700 italic">"Q3 revenue came in 4.2% below budget, primarily driven by a shortfall in the APAC region (−8.1%) which offset a modest outperformance in EMEA (+2.4%). Gross margin held steady at 38.6%, within 0.3pp of plan, as cost discipline offset the revenue miss..."</p>
+        </div>
+        <div class="reveal mt-4 card p-5 bg-teal-50/40">
+          <p class="text-sm font-semibold text-teal-800">Time saved</p>
+          <p class="text-sm text-slate-600">First draft of management commentary in under 5 minutes vs. 45–60 min from scratch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: HR & Talent — Use Cases -->
+  <section class="slide" data-slide="7">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#a7f3d0;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#ddd6fe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">HR &amp; Talent</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Consistency and speed across the employee lifecycle</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Use Case</th><th class="px-5 py-3">What to ask AI to do</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Job descriptions</td><td class="px-5 py-2.5">Draft a JD from a role brief; calibrate language to seniority level and inclusion standards</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Interview scorecards</td><td class="px-5 py-2.5">From a JD, generate behavioral competencies + interview questions + scoring rubric</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Policy drafting</td><td class="px-5 py-2.5">Draft a first version of an HR policy (e.g., flexible working, AI use) from a set of principles</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">L&amp;D content</td><td class="px-5 py-2.5">Convert a SME interview or notes into a structured learning module outline or case study</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm font-semibold text-amber-800 mb-1">One thing to watch out for</p>
+        <p class="text-sm text-slate-600">AI-generated JDs and policies can carry inherited bias (gendered language, credential inflation). Always review with an inclusion lens before publishing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: HR & Talent — Worked Example -->
+  <section class="slide" data-slide="8">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#a7f3d0;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fed7aa;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">HR — worked example</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">Interview scorecard from a job description</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> Build a structured interview guide for a Senior Financial Analyst role.</p>
+        <div class="reveal mt-4 codebox text-xs">
+          <p class="text-teal-700 mb-1">System: "You are an experienced HR business partner."</p>
+          <p>Based on the JD below, create a structured interview scorecard.</p>
+          <p class="mt-1">Include:</p>
+          <p>- 5 behavioral competencies relevant to this role</p>
+          <p>- 2 interview questions per competency</p>
+          <p>- A 1–4 scoring rubric (what "1" and "4" look like)</p>
+          <p>- One technical question per competency where relevant</p>
+          <p class="mt-1 text-slate-400">[PASTE JD]</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Output excerpt</p>
+          <p class="text-sm font-semibold mb-1">Competency: Analytical Rigour</p>
+          <p class="text-sm text-slate-600 italic mb-2">Q1: Tell me about a time you found an error in a financial model that others had missed. How did you catch it?</p>
+          <p class="text-xs text-slate-500"><strong>Score 1:</strong> Describes finding an error by chance, no systematic approach</p>
+          <p class="text-xs text-slate-500 mt-1"><strong>Score 4:</strong> Describes a repeatable review process; caught the error before it reached stakeholders; quantified impact</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Legal, Risk & Compliance — Use Cases -->
+  <section class="slide" data-slide="9">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#bae6fd;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Legal, Risk &amp; Compliance</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">Research and drafting speed with human sign-off</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Use Case</th><th class="px-5 py-3">What to ask AI to do</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Contract first-read</td><td class="px-5 py-2.5">Summarize key obligations, rights, termination clauses, and red flags in a contract draft</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Regulatory research</td><td class="px-5 py-2.5">Explain a regulation in plain language; identify which sections apply to a specific scenario</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Policy gap analysis</td><td class="px-5 py-2.5">Compare two policy documents; flag differences and identify gaps against a standard</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Risk register drafting</td><td class="px-5 py-2.5">From a project description, generate a first-pass risk register with likelihood/impact ratings</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm font-semibold text-amber-800 mb-1">One thing to watch out for</p>
+        <p class="text-sm text-slate-600">AI is not a lawyer and does not have access to current case law or jurisdiction-specific updates. Use it for first-pass research and drafting — every substantive output needs legal review before use.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10: Legal, Risk & Compliance — Worked Example -->
+  <section class="slide" data-slide="10">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#bae6fd;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bbf7d0;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Legal — worked example</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">Contract summary in minutes, not hours</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> First-read summary of a vendor services agreement.</p>
+        <div class="reveal mt-4 codebox text-xs">
+          <p class="text-teal-700 mb-1">System: "You are a commercial lawyer conducting a first-read review."</p>
+          <p>Summarize the following contract and flag:</p>
+          <p>1. Key obligations on each party</p>
+          <p>2. Payment terms and any unusual fee structures</p>
+          <p>3. Termination rights (for cause and for convenience)</p>
+          <p>4. Liability caps and exclusions</p>
+          <p>5. Any clauses that are unusual, one-sided, or worth negotiating</p>
+          <p class="mt-1">Use a table format. Flag high-risk items in bold.</p>
+          <p class="mt-1 text-slate-400">[PASTE CONTRACT TEXT]</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Output excerpt</p>
+          <div class="overflow-hidden rounded-2xl border border-black/5 bg-white/70">
+            <table class="w-full text-xs">
+              <thead class="bg-slate-800 text-white"><tr><th class="px-3 py-2">Clause</th><th class="px-3 py-2">Summary</th><th class="px-3 py-2">Risk</th></tr></thead>
+              <tbody class="divide-y divide-black/5">
+                <tr><td class="px-3 py-2">Payment (8.2)</td><td class="px-3 py-2">Net-60; late interest 12% p.a.</td><td class="px-3 py-2 text-amber-700 font-medium">⚠️ Unusual — standard is Net-30</td></tr>
+                <tr><td class="px-3 py-2">Liability cap (14)</td><td class="px-3 py-2">Capped at 1× fees paid in prior 3 months</td><td class="px-3 py-2 text-red-700 font-medium">⚠️ Low cap — consider 12 months</td></tr>
+                <tr><td class="px-3 py-2">Termination (19)</td><td class="px-3 py-2">Vendor can terminate with 7 days' notice</td><td class="px-3 py-2 text-red-700 font-medium">⚠️ Asymmetric — client requires 90 days</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11: Technology & Engineering — Use Cases -->
+  <section class="slide" data-slide="11">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#99f6e4;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#bfdbfe;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Technology &amp; Engineering</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">AI as a tireless coding partner</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Use Case</th><th class="px-5 py-3">What to ask AI to do</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">Code generation</td><td class="px-5 py-2.5">Write a function from a plain-English description; generate boilerplate, tests, or data fixtures</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Code review</td><td class="px-5 py-2.5">Explain what a code block does; identify potential bugs, edge cases, or security issues</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Documentation</td><td class="px-5 py-2.5">Generate docstrings, README sections, or API documentation from code</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Debugging</td><td class="px-5 py-2.5">Paste an error + stack trace; get a diagnosis and suggested fix</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Architecture discussion</td><td class="px-5 py-2.5">Describe a design problem; get a structured trade-off analysis of 2–3 approaches</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm font-semibold text-amber-800 mb-1">One thing to watch out for</p>
+        <p class="text-sm text-slate-600">AI-generated code is plausible, not guaranteed correct. It confidently writes code with subtle bugs, outdated APIs, or security holes. Always review and test — treat it like output from a fast junior developer.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 12: Technology & Engineering — Worked Example -->
+  <section class="slide" data-slide="12">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#99f6e4;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fde68a;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Engineering — worked example</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">From stack trace to root cause in 2 minutes</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> Debug a production error in a Python data pipeline.</p>
+        <div class="reveal mt-4 codebox text-xs">
+          <p>I'm getting this error in a Python ETL pipeline.</p>
+          <p>Here's the traceback and the relevant function:</p>
+          <p class="text-slate-400">[PASTE ERROR + CODE]</p>
+          <p class="mt-1">1. Explain what is causing this error in plain language</p>
+          <p>2. Identify the exact line where it originates</p>
+          <p>3. Suggest a fix with a code snippet</p>
+          <p>4. Are there related edge cases I should handle at the same time?</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Output excerpt</p>
+          <p class="text-sm text-slate-700 italic mb-2">"The error is a <code class="bg-slate-100 px-1 rounded text-xs">KeyError</code> on line 47, occurring because the function assumes the key <code class="bg-slate-100 px-1 rounded text-xs">'transaction_date'</code> always exists, but records from the legacy system omit it when the date is null."</p>
+          <p class="text-sm text-slate-700 italic mb-2"><strong>Fix:</strong> Replace <code class="bg-slate-100 px-1 rounded text-xs">record['transaction_date']</code> with <code class="bg-slate-100 px-1 rounded text-xs">record.get('transaction_date', None)</code></p>
+          <p class="text-xs text-slate-500"><strong>Edge cases:</strong> (1) Date exists but is empty string <code class="text-xs">&quot;&quot;</code>; (2) Legacy format <code class="text-xs">DD/MM/YYYY</code> vs. new system ISO format.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 13: Data & Analytics — Use Cases -->
+  <section class="slide" data-slide="13">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:300px;height:300px;top:-30px;right:5%;background:#ddd6fe;opacity:.22"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#fed7aa;opacity:.22"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Data &amp; Analytics</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">From query to insight, faster</h2>
+      <div class="reveal mt-6 overflow-hidden rounded-[28px] border border-black/5 bg-white/70">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900 text-white"><tr><th class="px-5 py-3">Use Case</th><th class="px-5 py-3">What to ask AI to do</th></tr></thead>
+          <tbody class="divide-y divide-black/5">
+            <tr><td class="px-5 py-2.5 font-semibold">SQL generation</td><td class="px-5 py-2.5">Describe the query in plain English; AI writes the SQL; you review and run it</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Insight narration</td><td class="px-5 py-2.5">Paste a table of results; ask for a 2-paragraph insight summary for a non-technical audience</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Dashboard copy</td><td class="px-5 py-2.5">Write chart titles, axis labels, and tooltips that communicate meaning, not just data</td></tr>
+            <tr><td class="px-5 py-2.5 font-semibold">Exploratory analysis plan</td><td class="px-5 py-2.5">Describe a dataset and business question; AI proposes an analysis approach and metrics to track</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="reveal mt-5 card p-5 bg-amber-50/50">
+        <p class="text-sm font-semibold text-amber-800 mb-1">One thing to watch out for</p>
+        <p class="text-sm text-slate-600">AI-generated SQL can be syntactically correct but logically wrong (wrong join type, missing filter, incorrect aggregation). Always validate query results against a known small dataset before running at scale.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 14: Data & Analytics — Worked Example -->
+  <section class="slide" data-slide="14">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:280px;height:280px;top:-20px;right:5%;background:#ddd6fe;opacity:.2"></div>
+      <div class="blob" style="width:230px;height:230px;left:-20px;bottom:-20px;background:#99f6e4;opacity:.2"></div>
+    </div>
+    <div class="content two-col">
+      <div>
+        <p class="reveal pill mb-4">Data — worked example</p>
+        <h2 class="reveal font-display text-4xl text-slate-900">Turning a result set into a narrative</h2>
+        <p class="reveal mt-3 text-slate-600 text-sm"><strong>Task:</strong> Write an insight paragraph from a churn analysis for a business review.</p>
+        <div class="reveal mt-4 codebox text-xs">
+          <p class="text-teal-700 mb-1">System: "You are a data analyst presenting to a non-technical business audience."</p>
+          <p>Here are the results of a customer churn analysis:</p>
+          <p class="text-slate-400">[PASTE TABLE: churn rate by segment, tenure, product type]</p>
+          <p class="mt-1">Write 2 paragraphs:</p>
+          <p>- Para 1: What the data shows (key patterns, highest-risk segments)</p>
+          <p>- Para 2: What this means for the business and what action it suggests</p>
+          <p class="mt-1">Avoid technical jargon. Write for a VP of Sales who reads fast.</p>
+        </div>
+      </div>
+      <div>
+        <div class="reveal card p-6 mt-14">
+          <p class="text-xs text-teal-700 uppercase tracking-widest mb-3">Output excerpt</p>
+          <p class="text-sm text-slate-700 italic mb-3">"Churn is heavily concentrated among customers in their first 90 days, particularly in the SMB segment using the entry-level product tier — this group churns at 3.4x the rate of mid-market customers on the standard plan. Customers who complete onboarding in the first two weeks show dramatically better retention regardless of segment.</p>
+          <p class="text-sm text-slate-700 italic">The data points to a clear early-intervention opportunity: if the onboarding gap can be closed for SMB customers, the model suggests a 12–15% reduction in overall churn is achievable without acquiring a single new customer..."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 15: Closing — find your starting point -->
+  <section class="slide" data-slide="15">
+    <div class="gradient-mesh">
+      <div class="blob" style="width:360px;height:360px;top:-70px;right:-70px;background:#a7f3d0;opacity:.3"></div>
+      <div class="blob" style="width:260px;height:260px;left:-50px;bottom:-60px;background:#fed7aa;opacity:.32"></div>
+      <div class="blob" style="width:220px;height:220px;left:35%;top:20%;background:#dbeafe;opacity:.28"></div>
+    </div>
+    <div class="content">
+      <p class="reveal pill mb-4">Your next step</p>
+      <h2 class="reveal font-display text-5xl text-slate-900">One real task, this week</h2>
+      <div class="reveal mt-6 mini-grid">
+        <div class="card p-6">
+          <div class="text-2xl mb-2">✍️</div>
+          <p class="text-sm text-slate-700">What task do you do regularly that involves a lot of writing, summarizing, or formatting?</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-2xl mb-2">🔎</div>
+          <p class="text-sm text-slate-700">What research or analysis task always takes longer than it should?</p>
+        </div>
+        <div class="card p-6">
+          <div class="text-2xl mb-2">📋</div>
+          <p class="text-sm text-slate-700">What document do you produce that follows a predictable structure every time?</p>
+        </div>
+      </div>
+      <div class="reveal mt-5 card p-6">
+        <p class="text-sm font-semibold mb-2">Quick exercise (5 min)</p>
+        <p class="text-sm text-slate-600 mb-3">Write down one specific task from your role. Draft a prompt for it using the structure from Day 1:</p>
+        <p class="text-sm text-teal-700 font-medium">Role / context → Task → Constraints → Output format</p>
+        <p class="text-sm text-slate-500 mt-2">Share one with the group.</p>
+      </div>
+      <div class="reveal mt-4 card p-5 bg-teal-50/50 text-center">
+        <p class="font-display text-lg italic text-slate-800">The best AI use case isn't the most impressive one. It's the one you'll actually use on Tuesday morning.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+<div class="nav-controls">
+  <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+  <div class="slide-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+  <span class="slide-counter" id="counter">1 / 15</span>
+</div>
+<script>
+let current=1; const total=document.querySelectorAll('.slide').length; const dotsContainer=document.getElementById('dots'); const counter=document.getElementById('counter');
+for(let i=1;i<=total;i++){const dot=document.createElement('div'); dot.className='dot'+(i===1?' active':''); dot.onclick=()=>goToSlide(i); dotsContainer.appendChild(dot);}
+function goToSlide(n){const prev=document.querySelector('.slide.active'); const next=document.querySelector(`.slide[data-slide="${n}"]`); if(prev) prev.classList.remove('active'); if(next){next.classList.add('active'); animateSlide(next);} current=n; updateNav();}
+function changeSlide(dir){let next=current+dir; if(next<1) next=total; if(next>total) next=1; goToSlide(next);}
+function updateNav(){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===current)); counter.textContent=current+' / '+total;}
+document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault(); changeSlide(1);} if(e.key==='ArrowLeft'){e.preventDefault(); changeSlide(-1);}});
+let touchStartX=0; document.addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;}); document.addEventListener('touchend',(e)=>{const diff=touchStartX-e.changedTouches[0].clientX; if(Math.abs(diff)>50) changeSlide(diff>0?1:-1);});
+function animateSlide(slide){slide.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transition='none'; el.style.opacity='0'; el.style.transform='translateY(20px)'; el.offsetHeight; const delay=i*0.08; el.style.transition=`opacity 0.35s ease ${delay}s, transform 0.35s ease ${delay}s`; el.style.opacity='1'; el.style.transform='translateY(0)';});}
+animateSlide(document.querySelector('.slide.active'));
+</script>
+</body>
+</html>
