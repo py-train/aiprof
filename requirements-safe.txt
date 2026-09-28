@@ -1,0 +1,39 @@
+# All packages pinned to exact versions to prevent pip resolver depth issues.
+#
+# Key constraints verified via dry-run:
+#   - crewai requires chromadb~=1.1.0 AND openai<3
+#   - langchain-classic/langchain-chroma 0.2.x require langchain-core>=1.4.4
+#     (forces the entire langchain stack to 1.x)
+#   - langchain-openai 1.x requires openai>=2.45.0, <4.0.0
+#     → openai==2.54.0 satisfies both crewai (<3) and langchain-openai (>=2.45)
+
+# LangChain 1.x ecosystem
+langchain==1.4.2
+langchain-core==1.6.5
+langchain-openai==1.6.6
+langchain-community==0.4.2
+langchain-text-splitters==1.1.2
+langchain-chroma==0.2.6
+langchain-classic==1.0.8
+
+# OpenAI SDK — 2.x required (crewai blocks 3.x)
+openai==2.54.0
+
+# Vector database — pinned to 1.1.x (crewai requires chromadb~=1.1.0)
+chromadb==1.1.1
+
+# Agentic AI framework
+crewai==1.15.22
+crewai-tools==1.15.22
+
+# UI
+gradio==6.28.0
+
+# Semantic search / local embeddings
+sentence-transformers==6.1.0
+
+# PDF loading (used by PyPDFLoader)
+pypdf==6.19.0
+
+# Environment / config
+python-dotenv==1.2.3
